@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14262E">
+<link rel="icon" href="icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>AP Plastic Factory ERP</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Myanmar:wght@400;600&display=swap">
+<style>
+/* Layout: left department rail + work area; tables run full width and behave like the factory's ledger sheets. */
+:root{
+  --bg:#EEF1F3; --surface:#FFFFFF; --sunk:#F6F8F9; --ink:#15202A; --muted:#5B6975; --line:#D5DCE2;
+  --accent:#0B6E78; --accent-ink:#FFFFFF; --accent-soft:#DDEFF0;
+  --paper:#F6C945; --paper-soft:#FDF3D2; --paper-ink:#5A4300;
+  --good:#1E7B4A; --good-soft:#DDF1E5; --warn:#A46200; --warn-soft:#FBEBCF; --bad:#B4322A; --bad-soft:#F8DEDB;
+  --rail:#14262E; --rail-ink:#C9D6DB; --rail-active:#F6C945;
+  --s1:#0B6E78; --s2:#D9822B; --s3:#5B5FC7; --s4:#C2416B; --s5:#3F8F3A; --s6:#8A6D3B;
+  --f-display:"Archivo","Noto Sans Myanmar",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Noto Sans Myanmar",system-ui,sans-serif;
+  --f-data:"IBM Plex Mono","Noto Sans Myanmar",ui-monospace,monospace;
+  --f-my:"Noto Sans Myanmar","Padauk",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1519; --surface:#152027; --sunk:#111A20; --ink:#E4ECEF; --muted:#93A4AE; --line:#26343C;
+  --accent:#4FBFC8; --accent-ink:#06282B; --accent-soft:#16363B;
+  --paper:#E9BC3A; --paper-soft:#2E2812; --paper-ink:#F3D88A;
+  --good:#5CC98C; --good-soft:#143224; --warn:#E5A84A; --warn-soft:#33260F; --bad:#EF7A70; --bad-soft:#3A1916;
+  --rail:#0A1115; --rail-ink:#A9B9C0; --rail-active:#E9BC3A;
+  --s1:#4FBFC8; --s2:#F0A55A; --s3:#8E92F0; --s4:#EC7FA0; --s5:#79C26F; --s6:#C9A770; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1519; --surface:#152027; --sunk:#111A20; --ink:#E4ECEF; --muted:#93A4AE; --line:#26343C;
+  --accent:#4FBFC8; --accent-ink:#06282B; --accent-soft:#16363B;
+  --paper:#E9BC3A; --paper-soft:#2E2812; --paper-ink:#F3D88A;
+  --good:#5CC98C; --good-soft:#143224; --warn:#E5A84A; --warn-soft:#33260F; --bad:#EF7A70; --bad-soft:#3A1916;
+  --rail:#0A1115; --rail-ink:#A9B9C0; --rail-active:#E9BC3A;
+  --s1:#4FBFC8; --s2:#F0A55A; --s3:#8E92F0; --s4:#EC7FA0; --s5:#79C26F; --s6:#C9A770; color-scheme:dark}
+html,body{height:100%}
+/* trends */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chipbtn{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:3px 10px;font-size:12px;display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+.chipbtn[aria-pressed="true"]{color:var(--ink);border-color:var(--ink)}
+.chipbtn i{width:9px;height:9px;border-radius:50%;display:inline-block;background:var(--line)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:5px 11px;font-size:13px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.seg button:focus-visible{outline:2px solid var(--accent)}
+svg.chart .ln{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+/* colour lab */
+.lab{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:16px;align-items:start}
+.wheelbox{position:relative;width:240px;height:240px;margin:0 auto;touch-action:none}
+.wheelbox canvas{width:240px;height:240px;border-radius:50%;cursor:crosshair;display:block}
+.marker{position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.6),0 1px 4px rgba(0,0,0,.4);transform:translate(-50%,-50%);pointer-events:none}
+.tgt{height:56px;border-radius:8px;border:1px solid var(--line)}
+.pair{display:grid;grid-template-columns:1fr 1fr;border-radius:8px;overflow:hidden;border:1px solid var(--line);height:72px}
+.pair div{display:flex;align-items:flex-end;padding:6px 8px;font-size:11px;font-weight:600}
+.pair .lt{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.sugs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.sug{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.sug .ratio{font:600 14px var(--f-data)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.2);vertical-align:-2px}
+.swbtn{cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:4px 8px;font-size:12px}
+.colorin{width:44px;height:28px;padding:0;border:1px solid var(--line);border-radius:4px;background:none}
+.photo canvas{max-width:100%;border-radius:6px;cursor:crosshair;display:block}
+@media (max-width:900px){.lab{grid-template-columns:minmax(0,1fr)}}
+/* language, keyboard */
+[hidden]{display:none!important}
+.topr{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.langseg button{display:inline-flex;align-items:center;gap:6px}
+.langseg svg{border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex:none}
+.iconbtn{display:inline-flex;align-items:center;gap:6px}
+.iconbtn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7}
+.iconbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+:lang(my) body,html[lang="my"] body{font-family:var(--f-my)}
+html[lang="my"] .tabs button,html[lang="my"] .nav button{line-height:1.8}
+.osk{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--sunk);border-top:1px solid var(--line);box-shadow:0 -6px 24px rgba(0,0,0,.12);padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:5px;user-select:none;-webkit-user-select:none}
+.osk-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;max-width:860px;width:100%;margin:0 auto}
+.osk-row{display:flex;gap:4px;max-width:860px;width:100%;margin:0 auto}
+.key{flex:1 1 0;min-width:0;height:42px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:500 17px var(--f-my);cursor:pointer;padding:0;touch-action:manipulation}
+.key:active,.key.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.key.wide{flex:1.6 1 0;font:500 13px var(--f-body)}
+.key.space{flex:5 1 0;font:500 13px var(--f-body)}
+.key small{display:block;font-size:10px;color:var(--muted);line-height:1}
+body.kb-open main{padding-bottom:320px}
+@media (max-width:520px){.key{height:38px;font-size:15px}.iconbtn span{display:none}}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--f-body)}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100%}
+.rail{background:var(--rail);color:var(--rail-ink);padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:16px;display:flex;flex-direction:column;gap:20px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand b{font:800 22px/1 var(--f-display);color:#fff;letter-spacing:.01em}
+:root[data-theme="light"] .brand b{color:#fff}
+.brand span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--rail-ink);opacity:.8}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:6px;color:var(--rail-ink);font-weight:500}
+.nav button:hover{background:rgba(255,255,255,.06)}
+.nav button[aria-current="true"]{background:rgba(255,255,255,.08);color:#fff;box-shadow:inset 3px 0 0 var(--rail-active)}
+.nav button:focus-visible{outline:2px solid var(--rail-active)}
+.nav svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7}
+.nav .count{margin-left:auto;font:500 11px var(--f-data);background:var(--bad);color:#fff;border-radius:9px;padding:0 6px}
+.rail .foot{margin-top:auto;font-size:12px;opacity:.75;display:flex;flex-direction:column;gap:4px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--warn);margin-right:6px}
+.dot.on{background:#3FCF86}
+main{min-width:0;padding-block:20px 48px;padding-left:24px;padding-right:max(24px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px;justify-content:space-between}
+.top h1{margin:0;font:700 26px/1.15 var(--f-display);text-wrap:balance}
+.top .sub{color:var(--muted);font-size:13px}
+.month{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px}
+.month button{all:unset;cursor:pointer;padding:4px 9px;border-radius:5px;color:var(--muted)}
+.month button:hover{background:var(--sunk);color:var(--ink)}
+.month input{border:0;background:transparent;font:500 14px var(--f-data);width:132px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.tabs button{all:unset;cursor:pointer;padding:8px 12px;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.tabs button:focus-visible{outline:2px solid var(--accent)}
+.banner{border-radius:8px;padding:10px 14px;font-size:13px;display:flex;gap:10px;align-items:flex-start;background:var(--paper-soft);color:var(--paper-ink);border:1px solid color-mix(in srgb,var(--paper) 50%,transparent)}
+.banner.bad{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi .l{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font:600 22px/1.2 var(--f-data);font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;min-width:0;display:flex;flex-direction:column}
+.panel>h3{margin:0;padding:12px 14px 0;font:700 15px var(--f-display)}
+.panel>.pb{padding:12px 14px 14px;min-width:0}
+.panel .hint{color:var(--muted);font-size:12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.bar .left,.bar .right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:6px 12px;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--bad)}
+.btn.danger.arm{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.sm{padding:3px 8px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:default}
+.search{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:6px 10px;min-width:0;width:220px;max-width:100%}
+.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--sunk);position:sticky;top:0}
+td.n,th.n{text-align:right;font-family:var(--f-data);font-size:13px}
+td.my{font-family:var(--f-my)}
+tbody tr:hover{background:color-mix(in srgb,var(--accent-soft) 45%,transparent)}
+tr.click{cursor:pointer}
+tfoot td{font-weight:600;background:var(--sunk);border-bottom:0}
+.sheet td{padding:3px 6px}
+.sheet td.n,.sheet td.my,.sheet td.t{padding:7px 10px}
+.cell{width:100%;min-width:72px;border:1px solid transparent;background:var(--paper-soft);border-radius:4px;padding:5px 8px;text-align:right;font:500 13px var(--f-data);color:var(--ink)}
+.cell:hover{border-color:var(--line)}
+.cell:focus{background:var(--surface);border-color:var(--accent);outline:none}
+.cell.txt{text-align:left;font-family:var(--f-body)}
+.cell:disabled{background:transparent}
+.chip{display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:10px;letter-spacing:.02em}
+.chip.good{background:var(--good-soft);color:var(--good)} .chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.bad{background:var(--bad-soft);color:var(--bad)} .chip.mute{background:var(--sunk);color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:12px}
+.alerts{display:flex;flex-direction:column}
+.alert{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.alert:last-child{border-bottom:0}
+.alert .sev{flex:none;width:4px;align-self:stretch;border-radius:2px;background:var(--warn)}
+.alert .sev.bad{background:var(--bad)} .alert .sev.info{background:var(--accent)}
+.alert .go{margin-left:auto;flex:none}
+.empty{padding:28px 16px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:10px;align-items:center}
+.empty b{color:var(--ink);font:700 15px var(--f-display)}
+svg.chart text{fill:var(--muted);font:11px var(--f-data)}
+svg.chart .grid{stroke:var(--line)}
+svg.chart .b{fill:var(--accent)} svg.chart .b.hi{fill:var(--paper)}
+svg.chart .lbl{fill:var(--ink);font-weight:500}
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,18,22,.45);z-index:20;display:flex;justify-content:flex-end}
+.drawer{background:var(--surface);width:min(520px,100%);height:100%;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.2);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer header{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.drawer header h2{margin:0;font:700 18px var(--f-display);flex:1}
+.drawer .body{overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px;flex:1}
+.drawer footer{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--line);justify-content:space-between}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;color:var(--muted);font-weight:500}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--sunk);border-radius:6px;padding:7px 9px;width:100%}
+.field textarea{min-height:70px;resize:vertical}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.lines{display:flex;flex-direction:column;gap:6px}
+.lines .ln{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto;gap:6px;align-items:center}
+.lines select,.lines input{border:1px solid var(--line);background:var(--sunk);border-radius:6px;padding:6px 8px;width:100%;min-width:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:6px;z-index:30;font-weight:500}
+.sum{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.sum b{color:var(--ink);font-family:var(--f-data);font-weight:500}
+.paperhead{font-family:var(--f-my)}
+@media (max-width:820px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .rail{position:static;height:auto;flex-direction:column;gap:10px;padding-block:12px;padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .nav{flex-direction:row;overflow-x:auto;gap:4px}
+  .nav button{white-space:nowrap;padding:7px 9px}
+  .nav button[aria-current="true"]{box-shadow:inset 0 -3px 0 var(--rail-active)}
+  .rail .foot{display:none}
+  main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .grid2{grid-template-columns:minmax(0,1fr)}
+}
+.login{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.loginbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:28px;width:min(380px,100%);display:flex;flex-direction:column;gap:14px}
+.loginbox .brand b{color:var(--ink);font:800 26px var(--f-display)}.loginbox .brand span{color:var(--muted)}
+.field input[type=email],.field input[type=password]{border:1px solid var(--line);background:var(--sunk);border-radius:6px;padding:9px 10px;width:100%}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+
+</head>
+<body>
+<div class="app">
+  <aside class="rail">
+    <div class="brand"><b>AP Plastic</b><span>Factory ERP</span></div>
+    <nav class="nav" id="nav" aria-label="Departments"></nav>
+    <div class="foot"><div><span class="dot" id="syncDot"></span><span id="syncTxt">Connecting…</span></div><div id="whoTxt" class="notr"></div><button class="btn sm" id="signOut" hidden style="align-self:flex-start;margin-top:4px">Sign out</button></div>
+  </aside>
+  <main id="main">
+    <div class="top">
+      <div><h1 id="pageTitle">Overview</h1><div class="sub" id="pageSub"></div></div>
+      <div class="topr">
+        <div class="seg langseg" role="group" aria-label="Language" id="langSeg"></div>
+        <button class="btn iconbtn" id="cmtBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Suggest a change</span></button>
+        <button class="btn iconbtn" id="kbBtn" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h1M9 10h1M12 10h1M15 10h1M18 10h0M7 14h10"/></svg><span>Keyboard</span></button>
+        <div class="month" aria-label="Month">
+          <button id="mPrev" aria-label="Previous month">◀</button>
+          <input type="month" id="monthIn">
+          <button id="mNext" aria-label="Next month">▶</button>
+        </div>
+      </div>
+    </div>
+    <div id="bannerArea"></div>
+    <div id="tabsArea"></div>
+    <div id="view" style="display:flex;flex-direction:column;gap:16px;min-width:0"></div>
+  </main>
+</div>
+<div id="login" class="login" hidden><form id="loginForm" class="loginbox" novalidate>
+  <div class="brand"><b>AP Plastic</b><span>Factory ERP</span></div>
+  <div id="lgIntro" class="small muted" hidden></div>
+  <div class="field"><label for="lgEmail">Username</label><input id="lgEmail" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required></div>
+  <div class="field"><label for="lgPass">Password</label><input id="lgPass" type="password" autocomplete="current-password" required></div>
+  <div class="field" id="lgPass2Box" hidden><label for="lgPass2">Type the password again</label><input id="lgPass2" type="password" autocomplete="new-password"></div>
+  <div id="lgMsg" class="small" style="color:var(--bad);min-height:1.2em"></div>
+  <button class="btn primary" id="lgBtn" type="submit">Sign in</button>
+  <div class="seg langseg" role="group" aria-label="Language" id="lgLang"></div>
+</form></div>
+<div id="drawerRoot"></div>
+<div id="toastRoot"></div>
+<div id="osk" class="osk" hidden role="group" aria-label="Keyboard"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script type="application/json" id="i18nDict">{"Overview": "အကျဉ်းချုပ်", "Product": "ကုန်ပစ္စည်း", "Raw Materials": "ကုန်ကြမ်း", "HR": "ဝန်ထမ်းရေးရာ", "Mold & Maintenance": "မိုလ်နှင့် ပြုပြင်ထိန်းသိမ်း", "Electricity": "လျှပ်စစ်", "Retail": "လက်လီအရောင်း", "Colour Lab": "အရောင်ဖော်ခန်း", "Settings": "ဆက်တင်", "Departments": "ဌာနများ", "Factory ERP": "စက်ရုံ စီမံခန့်ခွဲမှု", "Today's picture of the factory": "စက်ရုံ၏ ယနေ့အခြေအနေ", "Monthly production sheet, product list and cost per dozen": "လစဉ်ထုတ်လုပ်မှုစာရင်း၊ ကုန်ပစ္စည်းစာရင်းနှင့် တစ်ဒါဇင်ကုန်ကျစရိတ်", "Resin, B grade, colour and packaging: stock, prices and mixes": "ပလတ်စတစ်စေ့၊ B grade၊ အရောင်နှင့် ထုပ်ပိုးပစ္စည်း - လက်ကျန်၊ ဈေးနှုန်းနှင့် ရောစပ်နည်း", "Staff, salary levels and the monthly pay sheet": "ဝန်ထမ်း၊ လစာအဆင့်နှင့် လစဉ်လစာစာရင်း", "Molds, cavities, cycle times, cleaning and repairs": "မိုလ်၊ အပေါက်အရေအတွက်၊ ပတ်လည်ချိန်၊ သန့်ရှင်းရေးနှင့် ပြုပြင်မှု", "Monthly electricity and water bills against output": "လစဉ် မီတာခ၊ ရေဖိုးနှင့် ထုတ်လုပ်မှု နှိုင်းယှဉ်ချက်", "Sales, customers, finished stock and selling prices": "အရောင်း၊ ဖောက်သည်၊ ကုန်ချောလက်ကျန်နှင့် ရောင်းဈေး", "Pick a colour and get the powder ratio to make it": "အရောင်ရွေးပြီး ဖော်ရမည့် အရောင်မှုန့်အချိုးကို ရယူပါ", "Units and factory rules used in the calculations": "တွက်ချက်ရာတွင် သုံးသော ယူနစ်နှင့် စက်ရုံစည်းမျဉ်းများ", "Production sheet": "ထုတ်လုပ်မှုစာရင်း", "Cost per dozen": "တစ်ဒါဇင် ကုန်ကျစရိတ်", "Product list": "ကုန်ပစ္စည်းစာရင်း", "Stock": "လက်ကျန်", "Trends": "လစဉ်အပြောင်းအလဲ", "Receive / issue": "အဝင် / အထွက်", "Expected use": "သုံးသင့်သည့်ပမာဏ", "Price list": "ဈေးနှုန်းစာရင်း", "Mixes": "ရောစပ်နည်းများ", "Pay sheet": "လစာစာရင်း", "Staff": "ဝန်ထမ်း", "Salary levels": "လစာအဆင့်များ", "Labour per dozen": "တစ်ဒါဇင် လုပ်အားခ", "Molds": "မိုလ်များ", "Machines": "စက်များ", "Maintenance log": "ပြုပြင်ထိန်းသိမ်းမှတ်တမ်း", "Monthly bills": "လစဉ်ဘေလ်", "Sales": "အရောင်း", "Finished stock": "ကုန်ချောလက်ကျန်", "Selling prices": "ရောင်းဈေး", "Customers": "ဖောက်သည်များ", "Save": "သိမ်းမည်", "Cancel": "မလုပ်တော့ပါ", "Close": "ပိတ်မည်", "Delete": "ဖျက်မည်", "Open": "ဖွင့်မည်", "Yes": "ဟုတ်", "No": "မဟုတ်", "Total": "စုစုပေါင်း", "Date": "ရက်စွဲ", "Note": "မှတ်ချက်", "Notes": "မှတ်ချက်များ", "Name": "အမည်", "Type": "အမျိုးအစား", "Status": "အခြေအနေ", "Group": "အုပ်စု", "Code": "ကုဒ်", "Phone": "ဖုန်း", "Month": "လ", "Item": "အမျိုးအမည်", "Items": "ပစ္စည်းများ", "Material": "ကုန်ကြမ်း", "Unit": "ယူနစ်", "Per": "တစ်", "Qty": "အရေအတွက်", "Quantity": "အရေအတွက်", "Amount": "ပမာဏ", "Balance": "လက်ကျန်", "Bags": "အိတ်", "Value Ks": "တန်ဖိုး (ကျပ်)", "Minimum": "အနည်းဆုံး", "Low": "နည်းနေ", "OK": "ကောင်း", "Left": "ထွက်သွား", "Working": "လုပ်နေဆဲ", "Making": "ထုတ်နေဆဲ", "Stopped": "ရပ်ထား", "Remove": "ဖယ်မည်", "Remove line": "ဖယ်မည်", "Use": "သုံး", "Updated": "ပြင်သည့်ရက်", "Price Ks": "ဈေး (ကျပ်)", "Kyat": "ကျပ်", "Cost": "ကုန်ကျစရိတ်", "Cost Ks": "ကုန်ကျ (ကျပ်)", "Cost (Ks)": "ကုန်ကျ (ကျပ်)", "Gap": "ကွာခြားချက်", "All": "အားလုံး", "Other": "အခြား", "Job": "အလုပ်", "Level": "အဆင့်", "Level 1": "အဆင့် ၁", "Level 2": "အဆင့် ၂", "Level 3": "အဆင့် ၃", "Previous month": "ယခင်လ", "Next month": "နောက်လ", "Connecting…": "ချိတ်ဆက်နေသည်…", "Loading factory records…": "စက်ရုံမှတ်တမ်းများ ဖွင့်နေသည်…", "Saved to shared records": "မှတ်တမ်းသို့ သိမ်းပြီး", "Not connected": "မချိတ်ဆက်ရသေးပါ", "Owner": "ပိုင်ရှင်", "Tap again to delete": "ဖျက်ရန် ထပ်နှိပ်ပါ", "missing": "မရှိသေး", "not set": "မသတ်မှတ်ရသေး", "no records": "မှတ်တမ်းမရှိ", "not recorded": "မမှတ်ရသေး", "no price": "ဈေးမရှိ", "price missing": "ဈေးမရှိ", "no mix": "ရောစပ်နည်းမရှိ", "check": "စစ်ရန်", "check name": "အမည်စစ်ရန်", "estimate": "ခန့်မှန်း", "set": "သတ်မှတ်ပြီး", "new": "အသစ်", "jobs": "ခု", "a price is missing": "ဈေးနှုန်း မပြည့်စုံ", "Produced": "ထုတ်လုပ်မှု", "Electricity + water": "မီတာခ + ရေဖိုး", "Needs attention": "သတိပြုရန်", "Dozens produced, last 6 months": "နောက်ဆုံး ၆ လ ထုတ်လုပ်သည့် ဒါဇင်", "Production, pay sheet and bills are in, and nothing is low.": "ထုတ်လုပ်မှု၊ လစာနှင့် ဘေလ်များ ပြည့်စုံပြီး လက်ကျန်နည်းသည့်ပစ္စည်း မရှိပါ။", "No production yet": "ထုတ်လုပ်မှု မရှိသေးပါ", "Fill in the production sheet to see which products ran most.": "မည်သည့်ကုန်ပစ္စည်း အများဆုံးထုတ်သည်ကို သိရန် ထုတ်လုပ်မှုစာရင်း ဖြည့်ပါ။", "Open production sheet": "ထုတ်လုပ်မှုစာရင်း ဖွင့်မည်", "Kyat, all staff": "ကျပ်၊ ဝန်ထမ်းအားလုံး", "Big bags": "အိတ်ပေါင်း", "Dozens": "ဒါဇင်", "Pieces": "အလုံးရေ", "Packed by female labour (dz)": "အမျိုးသမီးလုပ်သား ထုပ်ပိုး (ဒါဇင်)", "Dz per bag": "တစ်အိတ် ဒါဇင်", "Type the number of big bags for each product, the same as the paper sheet. Press Enter to move down. Dozens = bags × dozens per bag.": "စာရွက်စာရင်းအတိုင်း ကုန်ပစ္စည်းတစ်ခုချင်း၏ အိတ်အရေအတွက် ရိုက်ထည့်ပါ။ အောက်သို့ဆင်းရန် Enter နှိပ်ပါ။ ဒါဇင် = အိတ် × တစ်အိတ်ဒါဇင်။", "No products yet": "ကုန်ပစ္စည်း မရှိသေးပါ", "Add products in the Product list tab.": "ကုန်ပစ္စည်းစာရင်းတွင် ကုန်ပစ္စည်းများ ထည့်ပါ။", "Open product list": "ကုန်ပစ္စည်းစာရင်း ဖွင့်မည်", "Weight g": "အလေးချိန် (ဂရမ်)", "Male L": "အမျိုးသားလုပ်အား", "Female L": "အမျိုးသမီးလုပ်အား", "Plastic bag": "ပလတ်စတစ်အိတ်", "Big bag": "အိတ်ကြီး", "Maint.": "ပြုပြင်ခ", "Delivery": "ပို့ခ", "Deprec.": "တန်ဖိုးလျော့", "Risk": "အန္တရာယ်ခံ", "Waste": "အလေအလွင့်", "Cost / pc": "တစ်လုံး ကုန်ကျ", "Cost / dz": "တစ်ဒါဇင် ကုန်ကျ", "Target price / dz": "ရည်မှန်းရောင်းဈေး / ဒါဇင်", "Your price / dz": "လက်ရှိရောင်းဈေး / ဒါဇင်", "Margin": "အမြတ်ရာခိုင်နှုန်း", "Target profit": "ရည်မှန်းအမြတ်", "Find product": "ကုန်ပစ္စည်း ရှာရန်", "Add product": "ကုန်ပစ္စည်း ထည့်မည်", "No products match": "ကိုက်ညီသည့် ကုန်ပစ္စည်း မရှိပါ", "Try another name, or add a product.": "အခြားအမည်ဖြင့် ရှာပါ သို့မဟုတ် ကုန်ပစ္စည်းအသစ် ထည့်ပါ။", "Dz/bag": "ဒါဇင်/အိတ်", "Body g": "ကိုယ်ထည် ဂရမ်", "Lid g": "အဖုံး ဂရမ်", "Body mix": "ကိုယ်ထည် ရောစပ်နည်း", "Lid mix": "အဖုံး ရောစပ်နည်း", "Poly bag": "ပလတ်စတစ်အိတ်", "Double-click a row to edit.": "ပြင်ရန် အတန်းကို နှစ်ချက်နှိပ်ပါ။", "New product": "ကုန်ပစ္စည်းအသစ်", "Myanmar name": "မြန်မာအမည်", "English name / code": "အင်္ဂလိပ်အမည် / ကုဒ်", "Sheet number": "စာရင်းအမှတ်", "Dozens per big bag": "တစ်အိတ် ဒါဇင်", "Body weight (g)": "ကိုယ်ထည်အလေးချိန် (ဂရမ်)", "Lid weight (g)": "အဖုံးအလေးချိန် (ဂရမ်)", "Poly bag / rope": "ပလတ်စတစ်အိတ် / ကြိုး", "Pieces per poly bag": "တစ်အိတ် အလုံးရေ", "For rope: pieces per gram of rope": "ကြိုးအတွက် - ကြိုးတစ်ဂရမ်လျှင် အလုံးရေ", "Piece labour Ks/pc (sheet 'Man L')": "အလုံးလိုက် လုပ်အားခ (ကျပ်/လုံး)", "Body mold cavities": "ကိုယ်ထည် မိုလ်အပေါက်", "Lid mold cavities": "အဖုံး မိုလ်အပေါက်", "Body cycle time (sec)": "ကိုယ်ထည် ပတ်လည်ချိန် (စက္ကန့်)", "Lid cycle time (sec)": "အဖုံး ပတ်လည်ချိန် (စက္ကန့်)", "Selling price per dozen (Ks)": "တစ်ဒါဇင် ရောင်းဈေး (ကျပ်)", "Opening finished stock (dz)": "အစလက်ကျန် ကုန်ချော (ဒါဇင်)", "Still making it?": "ထုတ်နေဆဲလား?", "— none —": "— မရှိ —", "Stock value": "လက်ကျန်တန်ဖိုး", "Balances come from the Receive / issue records. A stock count replaces the balance.": "လက်ကျန်ကို အဝင်/အထွက် မှတ်တမ်းမှ တွက်သည်။ ရေတွက်စစ်ဆေးမှုက လက်ကျန်ကို အစားထိုးသည်။", "No materials yet": "ကုန်ကြမ်း မရှိသေးပါ", "Add materials in the Price list tab.": "ဈေးနှုန်းစာရင်းတွင် ကုန်ကြမ်းများ ထည့်ပါ။", "Records in": "မှတ်တမ်း -", "Stock count": "လက်ကျန် ရေတွက်", "Issue to machines": "စက်သို့ ထုတ်ပေးမည်", "Receive": "လက်ခံမည်", "Received": "လက်ခံ", "Issued": "ထုတ်ပေး", "Price / unit": "ယူနစ်ဈေး", "Receive material": "ကုန်ကြမ်း လက်ခံ", "Issued to machines": "စက်သို့ ထုတ်ပေး", "Stock count (sets the balance)": "လက်ကျန်ရေတွက် (လက်ကျန်ကို သတ်မှတ်သည်)", "Quantity (in the material's unit)": "အရေအတွက် (ကုန်ကြမ်း၏ ယူနစ်ဖြင့်)", "Price per unit (Ks, for receipts)": "ယူနစ်ဈေး (ကျပ်၊ လက်ခံရာတွင်)", "Supplier / note": "ပေးသွင်းသူ / မှတ်ချက်", "Edit record": "မှတ်တမ်း ပြင်မည်", "Should use (lb)": "သုံးသင့် (ပေါင်)", "Issued (lb)": "ထုတ်ပေး (ပေါင်)", "\"Should use\" = pieces produced × piece weight, split by each product's mix. A big gap between issued and should-use points to waste, rejects or wrong records.": "\"သုံးသင့်\" = ထုတ်သည့်အလုံးရေ × အလေးချိန်၊ ရောစပ်နည်းအလိုက် ခွဲသည်။ ထုတ်ပေးမှုနှင့် ကွာခြားလျှင် အလေအလွင့်၊ အပယ်ခံ သို့မဟုတ် မှတ်တမ်းမှားမှု ဖြစ်နိုင်သည်။", "Find material or code": "ကုန်ကြမ်း သို့မဟုတ် ကုဒ် ရှာရန်", "Add material": "ကုန်ကြမ်း ထည့်မည်", "Ks per g": "တစ်ဂရမ် ကျပ်", "Pack": "အိတ်", "Double-click a row to change a price. Receiving material at a new price also updates this list.": "ဈေးပြင်ရန် အတန်းကို နှစ်ချက်နှိပ်ပါ။ ဈေးအသစ်ဖြင့် လက်ခံလျှင်လည်း ဤစာရင်း ပြောင်းသည်။", "New material": "ကုန်ကြမ်းအသစ်", "Price (Ks)": "ဈေး (ကျပ်)", "Grams per unit (litre, bag or piece only)": "တစ်ယူနစ် ဂရမ် (လီတာ၊ အိတ် သို့မဟုတ် အလုံးအတွက်သာ)", "Pack size (units per bag)": "တစ်အိတ် ယူနစ်", "Minimum stock (units)": "အနည်းဆုံး လက်ကျန်", "Price date": "ဈေးရက်စွဲ", "Something to check": "စစ်ရန် အချက်", "Resin": "ပလတ်စတစ်စေ့", "B grade": "B grade", "Colour": "အရောင်", "Additive": "ဆေးဖြည့်", "Packaging": "ထုပ်ပိုးပစ္စည်း", "A mix is one batch: what goes into the hopper together. Cost per gram feeds the product costs.": "ရောစပ်နည်းတစ်ခု = hopper ထဲ တစ်ခါတည်းထည့်သည့် တစ်သုတ်။ တစ်ဂရမ်ကုန်ကျစရိတ်ကို ကုန်ပစ္စည်းကုန်ကျစရိတ်တွင် သုံးသည်။", "Add mix": "ရောစပ်နည်း ထည့်မည်", "Batch": "တစ်သုတ်", "Per g": "တစ်ဂရမ်", "Double-click a mix to edit it.": "ပြင်ရန် ရောစပ်နည်းကို နှစ်ချက်နှိပ်ပါ။", "No mixes yet": "ရောစပ်နည်း မရှိသေးပါ", "Add the batch recipes your team uses, such as Normal 2 : Clean 1 + OBA oil.": "သုံးနေသော ရောစပ်နည်းများ ထည့်ပါ၊ ဥပမာ ပုံမှန် ၂ : အကြည် ၁ + OBA ဆီ။", "Ingredients": "ပါဝင်ပစ္စည်းများ", "Add ingredient": "ပါဝင်ပစ္စည်း ထည့်မည်", "Mix name": "ရောစပ်နည်း အမည်", "New mix": "ရောစပ်နည်းအသစ်", "Edit mix": "ရောစပ်နည်း ပြင်မည်", "Not used by any product yet": "မည်သည့်ကုန်ပစ္စည်းမှ မသုံးသေးပါ", "Used by production": "ထုတ်လုပ်မှုတွင် သုံး", "Bought Ks": "ဝယ်ယူ (ကျပ်)", "No staff yet": "ဝန်ထမ်း မရှိသေးပါ", "Add staff in the Staff tab first.": "ဝန်ထမ်းစာရင်းတွင် ဝန်ထမ်းများ အရင်ထည့်ပါ။", "Open staff": "ဝန်ထမ်းစာရင်း ဖွင့်မည်", "Pay sheet for": "လစာစာရင်း -", "Total to pay": "ပေးရမည့် စုစုပေါင်း", "Per dozen produced": "ထုတ်လုပ်မှု တစ်ဒါဇင်လျှင်", "Salary": "လစာ", "OT hrs": "အချိန်ပို နာရီ", "OT rate": "အချိန်ပိုနှုန်း", "OT Ks": "အချိန်ပိုကြေး", "Duty extra": "တာဝန်ပို", "Days absent": "ပျက်ရက်", "Absent cut": "ပျက်ရက်နှုတ်", "+/− other": "+/− အခြား", "Net pay": "သင့်ငွေ", "Add to this month": "ဤလသို့ ထည့်မည်", "Net pay = salary + OT hours × OT rate + duty extra − days absent × day rate (from the person's level) + other. Press Enter to move down a column.": "သင့်ငွေ = လစာ + အချိန်ပိုနာရီ × အချိန်ပိုနှုန်း + တာဝန်ပို − ပျက်ရက် × တစ်ရက်နှုန်း + အခြား။ အောက်သို့ဆင်းရန် Enter နှိပ်ပါ။", "Add staff": "ဝန်ထမ်း ထည့်မည်", "Salary level": "လစာအဆင့်", "Started": "စတင်ရက်", "Own salary": "ကိုယ်ပိုင်လစာ", "Add the people on the pay sheet.": "လစာစာရင်းပါ ဝန်ထမ်းများ ထည့်ပါ။", "New staff": "ဝန်ထမ်းအသစ်", "No on pay sheet": "လစာစာရင်း အမှတ်", "Own salary (no level)": "ကိုယ်ပိုင်လစာ (အဆင့်မရှိ)", "Own salary (only if no level)": "ကိုယ်ပိုင်လစာ (အဆင့်မရှိမှသာ)", "Duty extra each month (တာဝန်ပို)": "လစဉ် တာဝန်ပို", "Start date": "စတင်ရက်", "Still working?": "လုပ်နေဆဲလား?", "Salary / month": "လစာ / လ", "Day rate": "တစ်ရက်နှုန်း", "Hour rate": "တစ်နာရီနှုန်း", "OT rate (×1.5)": "အချိန်ပိုနှုန်း (×1.5)", "Pay sheet Ks": "လစာ (ကျပ်)", "Dozens produced": "ထုတ်လုပ်သည့် ဒါဇင်", "Gap dz": "ကွာခြား (ဒါဇင်)", "Wages per dozen": "တစ်ဒါဇင် လုပ်ခ", "Wages per piece": "တစ်လုံး လုပ်ခ", "No months on record": "မှတ်တမ်းရှိသည့် လ မရှိပါ", "Cleaning interval": "သန့်ရှင်းရေး ကြားကာလ", "(change in Settings)": "(ဆက်တင်တွင် ပြင်နိုင်)", "Dozens per hour = 3600 ÷ cycle seconds × cavities ÷ 12": "တစ်နာရီ ဒါဇင် = 3600 ÷ ပတ်လည်စက္ကန့် × အပေါက် ÷ 12", "Body cav.": "ကိုယ်ထည် အပေါက်", "Body cycle s": "ကိုယ်ထည် စက္ကန့်", "Body dz/hr": "ကိုယ်ထည် ဒါဇင်/နာရီ", "Lid cav.": "အဖုံး အပေါက်", "Lid cycle s": "အဖုံး စက္ကန့်", "Lid dz/hr": "အဖုံး ဒါဇင်/နာရီ", "Last cleaned": "နောက်ဆုံး သန့်ရှင်းရက်", "Cleaning": "သန့်ရှင်းရေး", "Cleaned today": "ယနေ့ သန့်ရှင်းပြီး", "Not recorded": "မမှတ်ရသေး", "A \"?\" means the number of cavities is not recorded yet. Double-click a row to fill in cavities and cycle times.": "\"?\" ဆိုသည်မှာ အပေါက်အရေအတွက် မမှတ်ရသေးခြင်း ဖြစ်သည်။ ဖြည့်ရန် အတန်းကို နှစ်ချက်နှိပ်ပါ။", "Cleaning recorded": "သန့်ရှင်းရေး မှတ်ပြီး", "Add machine": "စက် ထည့်မည်", "Machine": "စက်", "Type / size": "အမျိုးအစား / အရွယ်", "Mold on it now": "လက်ရှိ တပ်ထားသည့် မိုလ်", "Running": "လည်နေ", "Idle": "ရပ်နား", "Repair": "ပြုပြင်", "Under repair": "ပြုပြင်ဆဲ", "No machines recorded": "စက် မမှတ်ရသေးပါ", "Add each injection machine and which mold runs on it. Repairs in the log can then be tied to a machine.": "စက်တစ်လုံးချင်းနှင့် တပ်ထားသည့် မိုလ်ကို ထည့်ပါ။ ပြုပြင်မှုများကို စက်နှင့် ချိတ်နိုင်မည်။", "Add first machine": "ပထမဆုံးစက် ထည့်မည်", "New machine": "စက်အသစ်", "Machine name / number": "စက်အမည် / နံပါတ်", "Type / size (tons)": "အမျိုးအစား / အရွယ် (တန်)", "Maintenance cost": "ပြုပြင်စရိတ်", "Add job": "အလုပ် ထည့်မည်", "Mold / machine": "မိုလ် / စက်", "Done by": "ဆောင်ရွက်သူ", "Clean": "သန့်ရှင်း", "Mold cleaning": "မိုလ် သန့်ရှင်းရေး", "Service / oiling": "ဆီထိုး / စစ်ဆေး", "Spare parts": "အပိုပစ္စည်း", "Mold or machine": "မိုလ် သို့မဟုတ် စက်", "What was done": "လုပ်ဆောင်ချက်", "New maintenance job": "ပြုပြင်မှုအသစ်", "Edit job": "ပြုပြင်မှု ပြင်မည်", "Monthly average": "လစဉ်ပျမ်းမျှ", "Months on record in the last 12": "နောက်ဆုံး ၁၂ လ မှတ်တမ်း", "Per dozen this month": "ဤလ တစ်ဒါဇင်လျှင်", "Electricity + water, Ks": "မီတာခ + ရေဖိုး၊ ကျပ်", "Electricity bill by month": "လစဉ် မီတာခ", "No bills yet": "ဘေလ် မရှိသေးပါ", "Type the bill amounts in the table below.": "အောက်ပါဇယားတွင် ဘေလ်ပမာဏ ရိုက်ထည့်ပါ။", "Electricity Ks": "မီတာခ (ကျပ်)", "Units (kWh)": "ယူနစ် (kWh)", "Water Ks": "ရေဖိုး (ကျပ်)", "Ks per dozen": "တစ်ဒါဇင် ကျပ်", "kWh per dozen": "တစ်ဒါဇင် kWh", "vs last month": "ယခင်လနှင့်", "To add an older month, move the month picker back to it. Ks per dozen includes water.": "ယခင်လများ ထည့်ရန် လရွေးချယ်မှုကို နောက်ပြန်ရွှေ့ပါ။ တစ်ဒါဇင်ကျပ်တွင် ရေဖိုး ပါဝင်သည်။", "Dozens sold": "ရောင်းသည့် ဒါဇင်", "Owed": "ကျန်ငွေ", "New sale": "အရောင်းအသစ်", "Customer": "ဖောက်သည်", "Total Ks": "စုစုပေါင်း (ကျပ်)", "Paid Ks": "ပေးပြီး (ကျပ်)", "Payment": "ငွေချေမှု", "Paid": "ပေးပြီး", "Part paid": "တစ်စိတ်ပေးပြီး", "Unpaid": "မပေးရသေး", "Delivered": "ပို့ပြီး", "Waiting": "စောင့်ဆိုင်း", "Record first sale": "ပထမအရောင်း မှတ်မည်", "Edit sale": "အရောင်း ပြင်မည်", "Walk-in / other": "လာဝယ်သူ / အခြား", "Delivery charge (Ks)": "ပို့ခ (ကျပ်)", "Amount paid (Ks)": "ပေးငွေ (ကျပ်)", "Delivered?": "ပို့ပြီးလား?", "Products (dozens × price per dozen)": "ကုန်ပစ္စည်း (ဒါဇင် × တစ်ဒါဇင်ဈေး)", "Goods total": "ကုန်ပစ္စည်း စုစုပေါင်း", "Ks / dz": "ကျပ် / ဒါဇင်", "Price per dozen": "တစ်ဒါဇင်ဈေး", "Stock at cost": "ကုန်ကျစရိတ်ဖြင့် လက်ကျန်တန်ဖိုး", "On hand = opening + all production − all sales. Set opening stock in each product.": "လက်ကျန် = အစလက်ကျန် + ထုတ်လုပ်မှု − အရောင်း။ အစလက်ကျန်ကို ကုန်ပစ္စည်းတစ်ခုချင်းတွင် သတ်မှတ်ပါ။", "Opening dz": "အစ ဒါဇင်", "Made dz": "ထုတ် ဒါဇင်", "Sold dz": "ရောင်း ဒါဇင်", "On hand dz": "လက်ကျန် ဒါဇင်", "Below zero": "သုညအောက်", "Selling price / dz": "ရောင်းဈေး / ဒါဇင်", "Profit / dz": "အမြတ် / ဒါဇင်", "Type the selling price per dozen. New sales fill it in automatically.": "တစ်ဒါဇင်ရောင်းဈေး ရိုက်ထည့်ပါ။ အရောင်းအသစ်တွင် အလိုအလျောက် ဖြည့်ပေးမည်။", "Add customer": "ဖောက်သည် ထည့်မည်", "Town / area": "မြို့ / နယ်", "Owes Ks": "ကျန်ငွေ (ကျပ်)", "No customers yet": "ဖောက်သည် မရှိသေးပါ", "Add the shops and agents you sell to.": "ရောင်းချသည့် ဆိုင်နှင့် ကိုယ်စားလှယ်များ ထည့်ပါ။", "New customer": "ဖောက်သည်အသစ်", "Usual delivery charge (Ks)": "ပုံမှန် ပို့ခ (ကျပ်)", "Sales Ks": "အရောင်း (ကျပ်)", "6 months": "၆ လ", "12 months": "၁၂ လ", "Show dozens produced": "ထုတ်လုပ်သည့် ဒါဇင် ပြမည်", "Tap names to add or remove lines (up to 6). Hover a point for its value.": "မျဉ်းထည့်/ဖယ်ရန် အမည်ကို နှိပ်ပါ (၆ ခုအထိ)။ တန်ဖိုးကြည့်ရန် အမှတ်ပေါ် တင်ပါ။", "Items shown on the chart": "ဇယားတွင် ပြသော ပစ္စည်းများ", "Nothing to show for these months": "ဤလများအတွက် ပြစရာ မရှိပါ", "Target colour": "လိုချင်သည့် အရောင်", "Lightness": "အလင်းအမှောင်", "Colour code": "အရောင်ကုဒ်", "Picker": "ရွေးရန်", "Or pick from a photo of a sample": "သို့မဟုတ် နမူနာဓာတ်ပုံမှ ရွေးပါ", "Tap the photo to take its colour.": "အရောင်ယူရန် ဓာတ်ပုံကို နှိပ်ပါ။", "Base resin": "အခြေခံ ပလတ်စတစ်စေ့", "Normal + Regrind": "ပုံမှန် + ကြိတ်ပြန်", "Batch size (lb resin)": "တစ်သုတ် ပမာဏ (ပေါင်)", "Most powders in a mix": "အများဆုံး အရောင်မှုန့် အမျိုးအရေ", "Your current mixes (predicted)": "လက်ရှိ ရောစပ်နည်းများ (ခန့်မှန်း)", "Suggested mixes": "အကြံပြု ရောစပ်နည်းများ", "Working out…": "တွက်နေသည်…", "Test a mix by hand": "ကိုယ်တိုင် ရောစပ်စမ်းရန်", "Powders": "အရောင်မှုန့်များ", "Powder": "အရောင်မှုန့်", "Swatch": "နမူနာအရောင်", "Grams per 85 lb for swatch": "နမူနာအတွက် ၈၅ ပေါင်လျှင် ဂရမ်", "Clean resin with no colour": "အရောင်မပါသော အကြည်", "Normal + Regrind with no colour": "အရောင်မပါသော ပုံမှန် + ကြိတ်ပြန်", "Target": "လိုချင်", "Predicted": "ခန့်မှန်း", "This mix": "ဤရောစပ်မှု", "Very close": "အလွန်နီးစပ်", "Rough match": "အကြမ်းဖျင်း ကိုက်", "Not reachable with these powders": "ဤအရောင်မှုန့်များဖြင့် မရနိုင်ပါ", "Adjust by hand": "ကိုယ်တိုင် ချိန်မည်", "Save as mix": "ရောစပ်နည်းအဖြစ် သိမ်းမည်", "Add powder": "အရောင်မှုန့် ထည့်မည်", "Add a powder to start": "စရန် အရောင်မှုန့် ထည့်ပါ", "No colour powder needed": "အရောင်မှုန့် မလိုပါ", "No powders switched on": "အရောင်မှုန့် မဖွင့်ထားပါ", "Turn on at least one powder in the Powders table below.": "အောက်ပါ အရောင်မှုန့်ဇယားတွင် အနည်းဆုံး တစ်မျိုး ဖွင့်ပါ။", "Save colour as a mix": "အရောင်ကို ရောစပ်နည်းအဖြစ် သိမ်းမည်", "Give it the colour name your team uses": "အဖွဲ့သုံး အရောင်အမည် ပေးပါ", "Colour wheel": "အရောင်စက်ဝိုင်း", "Grams": "ဂရမ်", "Predictions come from the swatch colour set for each powder. They are a starting point for a test batch, not a guarantee. Make a small plate, compare, and correct the swatch in the Powders table so the next prediction is better.": "ခန့်မှန်းချက်များသည် အရောင်မှုန့်တစ်ခုချင်း၏ နမူနာအရောင်ပေါ် အခြေခံသည်။ စမ်းသပ်ရန် အစသာဖြစ်ပြီး အာမခံချက် မဟုတ်ပါ။ နမူနာပြားလေး ထုတ်ပြီး နှိုင်းယှဉ်ကာ အရောင်မှုန့်ဇယားတွင် နမူနာအရောင်ကို ပြင်ပါ။", "Swatch = the colour a batch turns out with the stated grams in 85 lb of Clean resin. Swatches marked \"estimate\" are guesses from the powder name; set them from a real plate.": "နမူနာအရောင် = အကြည် ၈၅ ပေါင်တွင် ဖော်ပြထားသည့်ဂရမ် ထည့်လျှင် ထွက်လာသည့်အရောင်။ \"ခန့်မှန်း\" ဟု ပြထားသည်များကို တကယ့်နမူနာပြားဖြင့် ပြင်ပါ။", "Units and rules": "ယူနစ်နှင့် စည်းမျဉ်း", "Product costing": "ကုန်ကျစရိတ် တွက်နည်း", "Grams in 1 lb": "၁ ပေါင်ရှိ ဂရမ်", "Grams in 1 viss (ပိဿာ)": "၁ ပိဿာရှိ ဂရမ်", "Extra cost per big bag (Ks)": "အိတ်ကြီးတစ်အိတ် အပိုစရိတ် (ကျပ်)", "Clean each mold every (days)": "မိုလ်သန့်ရှင်းရန် ကြားကာလ (ရက်)", "Paid working days per month": "လစဉ် လစာရ အလုပ်ရက်", "Add piece labour ('Male L') to product cost?": "အမျိုးသားလုပ်အားခကို ကုန်ကျစရိတ်တွင် ထည့်မလား?", "Female L (staff wages) per piece": "တစ်လုံးလျှင် အမျိုးသမီးလုပ်အား (ဝန်ထမ်းလုပ်ခ)", "Fixed rate below": "အောက်ပါ ပုံသေနှုန်း", "Work out from each month's pay sheet": "လစဉ် လစာစာရင်းမှ တွက်မည်", "Fixed Female L (Ks per piece)": "ပုံသေ အမျိုးသမီးလုပ်အား (ကျပ်/လုံး)", "Electricity per piece": "တစ်လုံး လျှပ်စစ်", "Work out from each month's bills": "လစဉ် ဘေလ်မှ တွက်မည်", "Fixed electricity (Ks per piece)": "ပုံသေ လျှပ်စစ် (ကျပ်/လုံး)", "Maintenance (Ks per piece)": "ပြုပြင်စရိတ် (ကျပ်/လုံး)", "Delivery (Ks per piece)": "ပို့ခ (ကျပ်/လုံး)", "Depreciation of molds and machines (Ks per piece)": "မိုလ်နှင့်စက် တန်ဖိုးလျော့ (ကျပ်/လုံး)", "Waste (% of material)": "အလေအလွင့် (ကုန်ကြမ်း၏ %)", "Risk allowance (%)": "အန္တရာယ်ခံ (%)", "Target profit (%)": "ရည်မှန်းအမြတ် (%)", "Not set on your sheet yet": "စာရင်းတွင် မသတ်မှတ်ရသေး", "Your costing sheet uses 16.933": "စာရင်းတွင် 16.933 သုံးသည်", "Your costing sheet uses 21": "စာရင်းတွင် 21 သုံးသည်", "Your rope note uses 1,600 g": "ကြိုးမှတ်စုတွင် 1,600 ဂရမ် သုံးသည်", "453.59 g, as on the price sheet": "ဈေးစာရင်းအတိုင်း 453.59 ဂရမ်", "You can view these records but not change them. Ask the owner to give you edit access.": "ဤမှတ်တမ်းများကို ကြည့်ရှုနိုင်သော်လည်း ပြင်ဆင်၍ မရပါ။", "Not connected to the database. Check the internet connection, then reload the app.": "ဒေတာဘေ့စ်နှင့် မချိတ်ဆက်ရပါ။ အင်တာနက် စစ်ပြီး app ကို ပြန်ဖွင့်ပါ။", "Suggest a change": "အကြံပြုမည်", "Keyboard": "ကီးဘုတ်", "Space": "Space", "Type Myanmar with my own keyboard": "ကိုယ့်ကီးဘုတ်ဖြင့် မြန်မာစာ ရိုက်မည်", "Close keyboard": "ကီးဘုတ် ပိတ်မည်", "Saved": "သိမ်းပြီး", "Product saved": "ကုန်ပစ္စည်း သိမ်းပြီး", "Material saved": "ကုန်ကြမ်း သိမ်းပြီး", "Mix saved": "ရောစပ်နည်း သိမ်းပြီး", "Staff saved": "ဝန်ထမ်း သိမ်းပြီး", "Sale saved": "အရောင်း သိမ်းပြီး", "Customer saved": "ဖောက်သည် သိမ်းပြီး", "Machine saved": "စက် သိမ်းပြီး", "Pay sheet started": "လစာစာရင်း စပြီး", "Powder saved": "အရောင်မှုန့် သိမ်းပြီး", "Deleted": "ဖျက်ပြီး", "You can view only": "ကြည့်ရှုရန်သာ", "Close match": "နီးစပ်", "Only the owner can change settings": "ဆက်တင်ကို ပိုင်ရှင်သာ ပြင်နိုင်သည်", "Only the owner can change settings. You can still enter and edit the factory records.": "ဆက်တင်ကို ပိုင်ရှင်သာ ပြင်နိုင်သည်။ စက်ရုံမှတ်တမ်းများကို ထည့်သွင်း ပြင်ဆင်နိုင်ပါသည်။", "Only the owner can change salary levels.": "လစာအဆင့်ကို ပိုင်ရှင်သာ ပြင်နိုင်သည်။", "Sign in": "ဝင်မည်", "Sign out": "ထွက်မည်", "Email": "အီးမေးလ်", "Password": "စကားဝှက်", "What should change?": "ဘာပြင်စေချင်ပါသလဲ?", "The owner will see this in Settings.": "ပိုင်ရှင်က ဆက်တင်တွင် မြင်ရမည်။", "Suggestion sent": "အကြံပြုချက် ပို့ပြီး", "Suggestions": "အကြံပြုချက်များ", "No suggestions yet.": "အကြံပြုချက် မရှိသေးပါ။", "Done": "ပြီးပြီ", "Removed": "ဖယ်ပြီး", "Write your suggestion first": "အကြံပြုချက် အရင်ရေးပါ", "Not set up": "မပြင်ဆင်ရသေး", "You are not allowed to change this": "ဤအရာကို ပြင်ခွင့် မရှိပါ", "Not saved: not connected to the database": "မသိမ်းရပါ - ဒေတာဘေ့စ်နှင့် မချိတ်ဆက်ရပါ", "Editor": "ပြင်ဆင်သူ", "Viewer": "ကြည့်ရှုသူ", "Username": "အသုံးပြုသူအမည်", "Type the password again": "စကားဝှက် ထပ်ရိုက်ပါ", "Users": "အသုံးပြုသူများ", "Access": "ခွင့်ပြုချက်", "New username": "အသုံးပြုသူအမည်အသစ်", "Add user": "အသုံးပြုသူ ထည့်မည်", "Viewer (look only)": "ကြည့်ရှုသူ (ကြည့်ရုံသာ)", "Editor (can enter records)": "ပြင်ဆင်သူ (မှတ်တမ်း ထည့်နိုင်)", "Remove access": "ခွင့်ပြုချက် ဖယ်မည်", "Loading…": "ဖွင့်နေသည်…", "Viewers can see everything but change nothing. Editors can enter and change records but not Settings. Give the person their username and password yourself.": "ကြည့်ရှုသူများ အားလုံးကြည့်နိုင်သော်လည်း ပြင်၍မရပါ။ ပြင်ဆင်သူများ မှတ်တမ်း ထည့်/ပြင်နိုင်သော်လည်း ဆက်တင် မပြင်နိုင်ပါ။ အသုံးပြုသူအမည်နှင့် စကားဝှက်ကို ကိုယ်တိုင် ပေးပါ။", "Create owner account": "ပိုင်ရှင်အကောင့် ဖန်တီးမည်"}</script>
+
+<script>
+"use strict";
+/* ---------------- state ---------------- */
+const COLS=["suggestions","settings","products","materials","recipes","stock","staff","payroll","production","power","machines","maint","customers","sales"];
+const S={}; COLS.forEach(c=>S[c]={});
+const loaded=new Set();
+let db=null, dbState="connecting", canWrite=true, canSystem=true;
+const sysDis=()=>canWrite&&canSystem?"":"disabled";
+const DEFAULT_SETTINGS={gPerLb:453.59,gPerViss:1600,bigBagExtra:800,cleanDays:30,workDays:26,includePieceLabour:true,
+  staffMode:"fixed",staffPc:16.933,elecMode:"fixed",elecPc:21,maintPc:20,deliveryPc:10,deprPc:0,wastePct:0,riskPct:3,profitPct:10,
+  levels:[{id:"L1",name:"Level 1",salary:260000,dayRate:10000,hourRate:1250,otRate:1875},{id:"L2",name:"Level 2",salary:286000,dayRate:11000,hourRate:1375,otRate:2063},{id:"L3",name:"Level 3",salary:312000,dayRate:12000,hourRate:1500,otRate:2250}]};
+const set_=()=>Object.assign({},DEFAULT_SETTINGS,S.settings.main||{});
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+const UI={page:ls("ap.page")||"overview",tab:{},month:null,q:""};
+try{UI.tab=JSON.parse(ls("ap.tabs")||"{}")}catch(e){}
+
+/* ---------------- helpers ---------------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=v=>{const n=parseFloat(String(v??"").replace(/[၀-၉]/g,d=>d.charCodeAt(0)-0x1040).replace(/,/g,""));return isFinite(n)?n:0};
+function fmt(n,d=0){if(n===null||n===undefined||!isFinite(n))return "—";return Number(n).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d})}
+const ks=n=>fmt(n)+" Ks";
+const today=()=>new Date().toISOString().slice(0,10);
+const ym=d=>String(d||"").slice(0,7);
+function addMonth(m,k){let [y,mo]=m.split("-").map(Number);mo+=k;while(mo<1){mo+=12;y--}while(mo>12){mo-=12;y++}return y+"-"+String(mo).padStart(2,"0")}
+const MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const mlabel=m=>{if(!m)return"";const [y,mo]=m.split("-");return MN[+mo-1]+" "+y};
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const list=c=>Object.entries(S[c]).map(([id,v])=>Object.assign({id},v));
+const products=()=>list("products").sort((a,b)=>(a.no||999)-(b.no||999));
+const pname=p=>p?(p.my?p.my+" · ":"")+(p.en||p.id):"—";
+function toast(t){const r=$("#toastRoot");r.innerHTML=`<div class="toast">${esc(t)}</div>`;clearTimeout(toast.t);toast.t=setTimeout(()=>r.innerHTML="",2200)}
+
+/* ---------------- persistence ---------------- */
+const queues={};
+function save(col,id,data,msg){
+  S[col][id]=data; scheduleRender();
+  if(!db){toast("Not saved: not connected to the database");return Promise.resolve()}
+  if(!canWrite){toast("You can view only");return Promise.resolve()}
+  if(col==="settings"&&!canSystem){toast("Only the owner can change settings");return Promise.resolve()}
+  const key=col+"/"+id;
+  queues[key]=(queues[key]||Promise.resolve()).then(()=>db.collection(col).doc(id).set(JSON.parse(JSON.stringify(data)))).then(()=>{if(msg)toast(msg)}).catch(e=>{
+    if(/row-level security|permission|policy/i.test((e&&e.message)||"")){toast("You are not allowed to change this");return}
+    toast(e&&e.code==="quota_exceeded"?"Storage is full. Delete old records to save new ones.":"Could not save. "+((e&&e.message)||""));
+  });
+  return queues[key];
+}
+function remove(col,id,msg){
+  delete S[col][id]; scheduleRender();
+  if(!db||!canWrite)return;
+  db.collection(col).doc(id).delete().then(()=>msg&&toast(msg)).catch(()=>toast("Could not delete"));
+}
+const debouncers={};
+function saveSoon(col,id,data){S[col][id]=data;clearTimeout(debouncers[col+id]);debouncers[col+id]=setTimeout(()=>save(col,id,S[col][id]),500)}
+
+/* ---------------- calculations ---------------- */
+function gPerUnit(m){const st=set_();if(!m)return 0;if(m.unit==="lb")return st.gPerLb;if(m.unit==="g")return 1;if(m.unit==="viss")return st.gPerViss;if(m.unit==="kg")return 1000;return num(m.gPerUnit)}
+function lineGrams(l){const st=set_();const q=num(l.qty);if(l.unit==="lb")return q*st.gPerLb;if(l.unit==="g")return q;if(l.unit==="viss")return q*st.gPerViss;if(l.unit==="kg")return q*1000;
+  if(String(l.mat).startsWith("r:"))return q; const m=S.materials[l.mat];return q*gPerUnit(m)}
+function recipeCost(rid,depth=0){
+  const r=S.recipes[rid]; if(!r||depth>4)return null;
+  let g=0,c=0,ok=true;
+  for(const l of (r.lines||[])){
+    const grams=lineGrams(l); g+=grams;
+    if(String(l.mat).startsWith("r:")){const sub=recipeCost(l.mat.slice(2),depth+1);if(!sub){ok=false;continue}c+=grams*sub.perG}
+    else{const m=S.materials[l.mat];if(!m){ok=false;continue}const gpu=gPerUnit(m);if(!gpu||!num(m.price)){ok=false;continue}c+=grams/gpu*num(m.price)}
+  }
+  return {grams:g,cost:c,perG:g?c/g:0,ok};
+}
+function matPerG(m){const g=gPerUnit(m);return g?num(m.price)/g:null}
+function prodDoc(m){return S.production[m]||{bags:{}}}
+function monthDozens(m){const d=prodDoc(m);let t=0;for(const p of products()){t+=num(d.bags?.[p.id])*num(p.dzPerBag)}return t}
+function monthBags(m){const d=prodDoc(m);return Object.values(d.bags||{}).reduce((a,b)=>a+num(b),0)}
+function payRow(r){const fixed=num(r.fixed);const ot=num(r.otH)*num(r.otRate);const ded=num(r.absent)*num(r.dayRate);return {ot,ded,net:num(r.salary)+fixed+ot+num(r.duty)+num(r.other)-ded}}
+function payrollTotal(m){const d=S.payroll[m];if(!d)return null;return Object.values(d.rows||{}).reduce((a,r)=>a+payRow(r).net,0)}
+function powerTotal(m){const d=S.power[m];if(!d)return null;return num(d.elec)+num(d.water)}
+function monthsWithData(){const s=new Set([...Object.keys(S.production),...Object.keys(S.payroll),...Object.keys(S.power)]);return [...s].filter(x=>/^\d{4}-\d{2}$/.test(x)).sort()}
+function overhead(m){
+  // per-piece staff wages and power for month m; falls back to average of months that have both values
+  const calc=x=>{const pcs=monthDozens(x)*12;if(!pcs)return null;const pay=payrollTotal(x),pw=powerTotal(x);return {pay:pay==null?null:pay/pcs,pw:pw==null?null:pw/pcs}};
+  const here=calc(m)||{};
+  const months=monthsWithData().map(calc).filter(Boolean);
+  const avg=k=>{const v=months.map(o=>o[k]).filter(v=>v!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+  return {pay:here.pay??avg("pay"),pw:here.pw??avg("pw"),payAvg:here.pay==null,pwAvg:here.pw==null};
+}
+function productCost(p,m){
+  const st=set_();
+  const rb=p.bodyRecipe?recipeCost(p.bodyRecipe):null, rl=p.lidRecipe?recipeCost(p.lidRecipe):null;
+  const matB=num(p.bodyG)&&rb&&rb.ok?num(p.bodyG)*rb.perG:(num(p.bodyG)?null:0);
+  const matL=num(p.lidG)&&rl&&rl.ok?num(p.lidG)*rl.perG:(num(p.lidG)?null:0);
+  const poly=S.materials[p.polyMat]; const big=S.materials[p.bigBagMat];
+  const polyPc=poly&&num(p.pcsPerPoly)?num(poly.price)/num(p.pcsPerPoly):0;
+  const bigPc=big&&num(p.dzPerBag)?(num(big.price)+num(st.bigBagExtra))/(num(p.dzPerBag)*12):0;
+  const oh=overhead(m);
+  const pieceLab=st.includePieceLabour?num(p.pieceLabour):0;
+  const staff=st.staffMode==="auto"?(oh.pay??0):num(st.staffPc);
+  const power=st.elecMode==="auto"?(oh.pw??0):num(st.elecPc);
+  const missing=matB===null||matL===null;
+  const mat=missing?null:matB+matL;
+  const waste=mat==null?0:mat*num(st.wastePct)/100;
+  const parts={matB,matL,mat,waste,pieceLab,staff,poly:polyPc,big:bigPc,pack:polyPc+bigPc,power,maint:num(st.maintPc),deliv:num(st.deliveryPc),depr:num(st.deprPc)};
+  const base=missing?null:mat+waste+pieceLab+staff+polyPc+bigPc+power+parts.maint+parts.deliv+parts.depr;
+  const risk=base==null?null:base*num(st.riskPct)/100;
+  const pc=base==null?null:base+risk;
+  const dz=pc==null?null:pc*12;
+  return Object.assign(parts,{base,risk,pc,dz,target:dz==null?null:dz*(1+num(st.profitPct)/100),missing,oh});
+}
+function stockBalances(){
+  const bal={};const moves=list("stock").sort((a,b)=>(a.date||"").localeCompare(b.date||"")||(a.t||0)-(b.t||0));
+  for(const mv of moves){const k=mv.mat;if(!(k in bal))bal[k]=0;const q=num(mv.qty);if(mv.kind==="in")bal[k]+=q;else if(mv.kind==="out")bal[k]-=q;else if(mv.kind==="count")bal[k]=q}
+  return bal;
+}
+function expectedUse(m){
+  // grams of each raw material implied by the month's production sheet and each product's mix
+  const use={};const d=prodDoc(m);
+  const add=(rid,grams,depth=0)=>{const r=S.recipes[rid];if(!r||depth>4)return;const tot=(r.lines||[]).reduce((a,l)=>a+lineGrams(l),0);if(!tot)return;
+    for(const l of r.lines||[]){const share=grams*lineGrams(l)/tot;if(String(l.mat).startsWith("r:"))add(l.mat.slice(2),share,depth+1);else use[l.mat]=(use[l.mat]||0)+share}};
+  for(const p of products()){const pcs=num(d.bags?.[p.id])*num(p.dzPerBag)*12;if(!pcs)continue;
+    if(p.bodyRecipe)add(p.bodyRecipe,pcs*num(p.bodyG));if(p.lidRecipe)add(p.lidRecipe,pcs*num(p.lidG))}
+  return use;
+}
+function lastClean(pid){const e=list("maint").filter(x=>x.target==="p:"+pid&&x.type==="Clean").sort((a,b)=>(b.date||"").localeCompare(a.date||""));return e[0]?.date||null}
+function daysSince(d){return d?Math.floor((Date.now()-new Date(d+"T00:00:00").getTime())/864e5):null}
+function finishedStock(){
+  const st={};for(const p of products())st[p.id]=num(p.openingDz);
+  for(const [m,d] of Object.entries(S.production)){for(const [pid,b] of Object.entries(d.bags||{})){const p=S.products[pid];if(p)st[pid]=(st[pid]||0)+num(b)*num(p.dzPerBag)}}
+  for(const s of list("sales")){for(const l of s.lines||[]){st[l.p]=(st[l.p]||0)-num(l.dz)}}
+  return st;
+}
+const saleTotal=s=>(s.lines||[]).reduce((a,l)=>a+num(l.dz)*num(l.price),0)+num(s.delivery);
+
+/* ---------------- alerts ---------------- */
+function alerts(){
+  const m=UI.month,out=[];
+  const ready=loaded.has("products");
+  if(!ready)return out;
+  if(!S.production[m]||!monthBags(m))out.push({sev:"warn",dept:"product",t:`No production entered for ${mlabel(m)}.`,go:["product","sheet"]});
+  if(!S.payroll[m])out.push({sev:"warn",dept:"hr",t:`Payroll sheet for ${mlabel(m)} not started.`,go:["hr","payroll"]});
+  if(!S.power[m]||!num(S.power[m].elec))out.push({sev:"warn",dept:"power",t:`Electricity bill for ${mlabel(m)} not entered.`,go:["power","bills"]});
+  const pk=num(prodDoc(m).packedDz),dz=monthDozens(m);
+  if(pk&&dz&&Math.abs(pk-dz)/dz>0.05)out.push({sev:"bad",dept:"product",t:`${mlabel(m)}: packed by female labour ${fmt(pk,1)} dz but production sheet says ${fmt(dz,1)} dz (gap ${fmt(Math.abs(pk-dz),1)} dz).`,go:["hr","labour"]});
+  const prev=addMonth(m,-1),pw=powerTotal(m),pwp=powerTotal(prev),dzp=monthDozens(prev);
+  if(pw&&pwp&&dz&&dzp){const a=pw/dz,b=pwp/dzp;if(a>b*1.2)out.push({sev:"warn",dept:"power",t:`Electricity per dozen rose ${fmt((a/b-1)*100)}% from ${mlabel(prev)} (${fmt(b,1)} → ${fmt(a,1)} Ks/dz).`,go:["power","bills"]})}
+  const bal=stockBalances();
+  for(const mt of list("materials")){if(num(mt.minStock)&&(bal[mt.id]??0)<num(mt.minStock))out.push({sev:"bad",dept:"raw",t:`${mt.name} is low: ${fmt(bal[mt.id]??0,1)} ${mt.unit} left (minimum ${fmt(mt.minStock)}).`,go:["raw","stock"]})}
+  const cd=num(set_().cleanDays)||30;let due=0;
+  for(const p of products()){if(p.active===false)continue;if(!num(p.cavB)&&!num(p.cycB))continue;const ds=daysSince(lastClean(p.id));if(ds!=null&&ds>cd)due++}
+  if(due)out.push({sev:"warn",dept:"mold",t:`${due} mold${due>1?"s are":" is"} past the ${cd}-day cleaning interval.`,go:["mold","molds"]});
+  const noRec=products().filter(p=>p.active!==false&&num(p.bodyG)&&!p.bodyRecipe);
+  if(noRec.length)out.push({sev:"info",dept:"product",t:`${noRec.length} product${noRec.length>1?"s have":" has"} no body mix set, so cost cannot be worked out: ${noRec.map(p=>p.en).join(", ")}.`,go:["product","list"]});
+  const noW=products().filter(p=>p.active!==false&&!num(p.bodyG));
+  if(noW.length)out.push({sev:"info",dept:"product",t:`Piece weight missing for ${noW.map(p=>p.en).join(", ")}.`,go:["product","list"]});
+  const unpaid=list("sales").filter(s=>saleTotal(s)-num(s.paid)>0.5);
+  if(unpaid.length)out.push({sev:"warn",dept:"retail",t:`${unpaid.length} sale${unpaid.length>1?"s":""} not fully paid (${ks(unpaid.reduce((a,s)=>a+saleTotal(s)-num(s.paid),0))} owed).`,go:["retail","sales"]});
+  return out;
+}
+
+/* ---------------- drawer form ---------------- */
+let drawerState=null;
+function openForm(o){drawerState=o;renderDrawer()}
+function closeForm(){drawerState=null;$("#drawerRoot").innerHTML=""}
+function fieldHTML(f,v){
+  const id="f_"+f.k;const val=v??f.def??"";
+  let inp;
+  if(f.type==="select")inp=`<select id="${id}">${(f.opts||[]).map(o=>`<option value="${esc(o[0])}" ${String(o[0])===String(val)?"selected":""}>${esc(o[1])}</option>`).join("")}</select>`;
+  else if(f.type==="textarea")inp=`<textarea id="${id}">${esc(val)}</textarea>`;
+  else if(f.type==="check")inp=`<select id="${id}"><option value="1" ${val?"selected":""}>Yes</option><option value="" ${!val?"selected":""}>No</option></select>`;
+  else inp=`<input id="${id}" type="${f.type==="num"?"text":(f.type||"text")}" ${f.type==="num"?'inputmode="decimal"':""} value="${esc(val)}">`;
+  return `<div class="field"><label for="${id}">${esc(f.label)}</label>${inp}${f.help?`<span class="small muted">${esc(f.help)}</span>`:""}</div>`;
+}
+function renderDrawer(){
+  const o=drawerState;if(!o)return;
+  const rows=[];let buf=[];
+  for(const f of o.fields){if(f.half){buf.push(f);if(buf.length===2){rows.push(`<div class="frow">${buf.map(x=>fieldHTML(x,o.data[x.k])).join("")}</div>`);buf=[]}}else{if(buf.length){rows.push(`<div class="frow">${buf.map(x=>fieldHTML(x,o.data[x.k])).join("")}</div>`);buf=[]}rows.push(fieldHTML(f,o.data[f.k]))}}
+  if(buf.length)rows.push(`<div class="frow">${buf.map(x=>fieldHTML(x,o.data[x.k])).join("")}</div>`);
+  $("#drawerRoot").innerHTML=`<div class="scrim" id="scrim"><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <header><h2 id="dTitle">${esc(o.title)}</h2><button class="btn sm" id="dClose">Close</button></header>
+    <div class="body">${rows.join("")}${o.extra?`<div id="dExtra">${o.extra()}</div>`:""}</div>
+    <footer><div>${o.onDelete?`<button class="btn danger" id="dDel">Delete</button>`:""}</div><div style="display:flex;gap:8px"><button class="btn" id="dCancel">Cancel</button><button class="btn primary" id="dSave">Save</button></div></footer>
+  </div></div>`;
+  $("#scrim").addEventListener("click",e=>{if(e.target.id==="scrim")closeForm()});
+  $("#dClose").onclick=closeForm;$("#dCancel").onclick=closeForm;
+  if(o.bindExtra)o.bindExtra();
+  $("#dSave").onclick=()=>{const d=Object.assign({},o.data);for(const f of o.fields){const el=document.getElementById("f_"+f.k);let v=el.value;if(f.type==="num")v=v===""?"":num(v);if(f.type==="check")v=!!v;d[f.k]=v}
+    if(o.collect)o.collect(d);
+    const err=o.validate&&o.validate(d);if(err){toast(err);return}
+    o.onSave(d);closeForm()};
+  const del=$("#dDel");if(del)del.onclick=()=>{if(!del.classList.contains("arm")){del.classList.add("arm");del.textContent="Tap again to delete";return}o.onDelete();closeForm()};
+  const first=$("#drawerRoot input,#drawerRoot select");if(first)first.focus();
+}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&drawerState)closeForm()});
+
+/* ---------------- shared UI bits ---------------- */
+const ICONS={
+ overview:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',
+ product:'<path d="M6 4h12l-1.5 16h-9z"/><path d="M5 4h14"/>',
+ raw:'<circle cx="7" cy="8" r="3"/><circle cx="16" cy="7" r="2.5"/><circle cx="12" cy="16" r="3.5"/>',
+ hr:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.5-3.5 3-5.5 6-5.5s5.5 2 6 5.5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.5c2.6.2 4.4 2 5 5"/>',
+ mold:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 12h18M8 5v14M16 5v14"/>',
+ power:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+ retail:'<path d="M4 7h16l-1.5 12h-13z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
+ lab:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/><path d="M7.5 15h9"/>',
+ settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'};
+const PAGES=[
+ {id:"overview",name:"Overview",sub:"Today's picture of the factory"},
+ {id:"product",name:"Product",sub:"Monthly production sheet, product list and cost per dozen",tabs:[["sheet","Production sheet"],["cost","Cost per dozen"],["list","Product list"]]},
+ {id:"raw",name:"Raw Materials",sub:"Resin, B grade, colour and packaging: stock, prices and mixes",tabs:[["stock","Stock"],["trends","Trends"],["moves","Receive / issue"],["use","Expected use"],["prices","Price list"],["recipes","Mixes"]]},
+ {id:"hr",name:"HR",sub:"Staff, salary levels and the monthly pay sheet",tabs:[["payroll","Pay sheet"],["staff","Staff"],["levels","Salary levels"],["labour","Labour per dozen"]]},
+ {id:"mold",name:"Mold & Maintenance",sub:"Molds, cavities, cycle times, cleaning and repairs",tabs:[["molds","Molds"],["machines","Machines"],["log","Maintenance log"]]},
+ {id:"power",name:"Electricity",sub:"Monthly electricity and water bills against output",tabs:[["bills","Monthly bills"]]},
+ {id:"retail",name:"Retail",sub:"Sales, customers, finished stock and selling prices",tabs:[["sales","Sales"],["trends","Trends"],["fstock","Finished stock"],["prices","Selling prices"],["customers","Customers"]]},
+ {id:"lab",name:"Colour Lab",sub:"Pick a colour and get the powder ratio to make it"},
+ {id:"settings",name:"Settings",sub:"Units and factory rules used in the calculations"}];
+const curPage=()=>PAGES.find(p=>p.id===UI.page)||PAGES[0];
+function curTab(){const p=curPage();if(!p.tabs)return null;const t=UI.tab[p.id];return p.tabs.some(x=>x[0]===t)?t:p.tabs[0][0]}
+function go(page,tab){UI.page=page;if(tab)UI.tab[page]=tab;ls("ap.page",page);ls("ap.tabs",JSON.stringify(UI.tab));UI.q="";render();window.scrollTo(0,0)}
+function emptyState(title,body,btn){return `<div class="empty"><b>${esc(title)}</b><div>${esc(body)}</div>${btn||""}</div>`}
+function loadingOr(cols,fn){if(dbState==="connecting"&&!cols.every(c=>loaded.has(c)))return `<div class="empty"><b>Loading factory records…</b></div>`;return fn()}
+function sel(opts,val,attrs=""){return `<select ${attrs}>${opts.map(o=>`<option value="${esc(o[0])}" ${String(o[0])===String(val??"")?"selected":""}>${esc(o[1])}</option>`).join("")}</select>`}
+const prodOpts=(blank=true)=>(blank?[["","—"]]:[]).concat(products().map(p=>[p.id,pname(p)]));
+const matOpts=(blank=true)=>(blank?[["","—"]]:[]).concat(list("materials").sort((a,b)=>(a.group||"").localeCompare(b.group||"")||a.name.localeCompare(b.name)).map(m=>[m.id,m.name+(m.code?" ("+m.code+")":"")]));
+const recOpts=()=>[["","— none —"]].concat(list("recipes").sort((a,b)=>a.name.localeCompare(b.name)).map(r=>[r.id,r.name]));
+function svgBars(data,{h=180,fmtV=v=>fmt(v),hiLast=true,unit=""}={}){
+  if(!data.length)return "";
+  const W=Math.max(320,data.length*64),pl=46,pr=8,pt=18,pb=26,iw=W-pl-pr,ih=h-pt-pb;
+  const max=Math.max(...data.map(d=>d.v||0))||1;const step=niceStep(max/4);const top=Math.ceil(max/step)*step;
+  const bw=Math.min(40,iw/data.length*0.6);let g="";
+  for(let v=0;v<=top+1e-9;v+=step){const y=pt+ih-ih*v/top;g+=`<line class="grid" x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}"/><text x="${pl-6}" y="${y+4}" text-anchor="end">${fmtShort(v)}</text>`}
+  data.forEach((d,i)=>{const cx=pl+iw*(i+.5)/data.length;const bh=ih*(d.v||0)/top;const y=pt+ih-bh;
+    g+=`<rect class="b ${hiLast&&i===data.length-1?"hi":""}" x="${cx-bw/2}" y="${y}" width="${bw}" height="${Math.max(bh,0)}" rx="2"><title>${esc(d.l)}: ${fmtV(d.v)}${unit}</title></rect>`;
+    g+=`<text x="${cx}" y="${h-8}" text-anchor="middle">${esc(d.l)}</text>`;
+    if(d.v)g+=`<text class="lbl" x="${cx}" y="${y-5}" text-anchor="middle">${fmtShort(d.v)}</text>`});
+  return `<div style="overflow-x:auto"><svg class="chart" viewBox="0 0 ${W} ${h}" width="100%" style="min-width:${Math.min(W,520)}px" role="img">${g}</svg></div>`;
+}
+function niceStep(x){const p=Math.pow(10,Math.floor(Math.log10(x||1)));const f=x/p;return (f<=1?1:f<=2?2:f<=5?5:10)*p}
+function fmtShort(v){if(v>=1e6)return fmt(v/1e6,v%1e6?1:0)+"M";if(v>=1e4)return fmt(v/1e3,0)+"k";return fmt(v,v<10&&v%1?1:0)}
+function bindCells(handler){
+  document.querySelectorAll("#view .cell").forEach(el=>{
+    el.addEventListener("change",()=>handler(el));
+    el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();const all=[...document.querySelectorAll(`#view .cell[data-col="${el.dataset.col}"]`)];const i=all.indexOf(el);(all[i+1]||el).focus();(all[i+1]||el).select?.()}});
+    el.addEventListener("focus",()=>el.select?.());
+  });
+}
+
+/* ---------------- pages ---------------- */
+const V={};
+V.overview=()=>{
+  const m=UI.month,dz=monthDozens(m),bags=monthBags(m),pay=payrollTotal(m),pw=powerTotal(m);
+  const sales=list("sales").filter(s=>ym(s.date)===m);const sv=sales.reduce((a,s)=>a+saleTotal(s),0);
+  const months=[];for(let i=5;i>=0;i--)months.push(addMonth(m,-i));
+  const prev=addMonth(m,-1),dzp=monthDozens(prev);
+  const al=alerts();
+  const mix=products().map(p=>({l:p.en,v:num(prodDoc(m).bags?.[p.id])*num(p.dzPerBag)})).filter(x=>x.v).sort((a,b)=>b.v-a.v).slice(0,8);
+  return `
+  <div class="kpis">
+    <div class="kpi"><span class="l">Produced</span><span class="v">${fmt(dz,1)} dz</span><span class="d">${fmt(bags)} big bags${dzp?` · ${dz>=dzp?"+":""}${fmt((dz/dzp-1)*100)}% vs ${MN[+prev.slice(5)-1]}`:""}</span></div>
+    <div class="kpi"><span class="l">Pay sheet</span><span class="v">${pay==null?"—":fmt(pay)}</span><span class="d">${pay&&dz?fmt(pay/dz,1)+" Ks per dozen":"Kyat, all staff"}</span></div>
+    <div class="kpi"><span class="l">Electricity + water</span><span class="v">${pw==null?"—":fmt(pw)}</span><span class="d">${pw&&dz?fmt(pw/dz,1)+" Ks per dozen":"Kyat"}</span></div>
+    <div class="kpi"><span class="l">Sales</span><span class="v">${fmt(sv)}</span><span class="d">${sales.length} sale${sales.length===1?"":"s"} this month</span></div>
+  </div>
+  <div class="grid2">
+    <section class="panel"><h3>Dozens produced, last 6 months</h3><div class="pb">${svgBars(months.map(x=>({l:MN[+x.slice(5)-1],v:monthDozens(x)})),{unit:" dz"})}</div></section>
+    <section class="panel"><h3>Needs attention</h3><div class="pb">${al.length?`<div class="alerts">${al.map((a,i)=>`<div class="alert"><span class="sev ${a.sev}"></span><span>${esc(a.t)}</span><button class="btn sm go" data-ai="${i}">Open</button></div>`).join("")}</div>`:`<div class="empty"><b>All clear for ${mlabel(m)}</b><div>Production, pay sheet and bills are in, and nothing is low.</div></div>`}</div></section>
+  </div>
+  <section class="panel"><h3>Top products in ${mlabel(m)}</h3><div class="pb">${mix.length?svgBars(mix,{hiLast:false,unit:" dz"}):emptyState("No production yet","Fill in the production sheet to see which products ran most.",`<button class="btn primary" data-go="product:sheet">Open production sheet</button>`)}</div></section>`;
+};
+V.overview.bind=()=>{const al=alerts();document.querySelectorAll("[data-ai]").forEach(b=>b.onclick=()=>{const a=al[+b.dataset.ai];go(a.go[0],a.go[1])})};
+
+/* ---- Product ---- */
+V.product={};
+V.product.sheet=()=>loadingOr(["products","production"],()=>{
+  const m=UI.month,d=prodDoc(m),ps=products().filter(p=>p.active!==false||num(d.bags?.[p.id]));
+  if(!ps.length)return emptyState("No products yet","Add products in the Product list tab.",`<button class="btn primary" data-go="product:list">Open product list</button>`);
+  let tb=0,td=0;
+  const rows=ps.map((p,i)=>{const b=d.bags?.[p.id];const dz=num(b)*num(p.dzPerBag);tb+=num(b);td+=dz;
+    return `<tr><td class="n">${p.no||i+1}</td><td class="my">${esc(p.my||"")}</td><td class="t">${esc(p.en)}</td><td class="n">${fmt(p.dzPerBag,1).replace(/\.0$/,"")}</td><td><input class="cell" data-col="bags" data-p="${p.id}" inputmode="decimal" value="${b===undefined||b===""?"":esc(b)}" placeholder="–" aria-label="Bags of ${esc(p.en)}" ${canWrite?"":"disabled"}></td><td class="n">${dz?fmt(dz,1).replace(/\.0$/,""):"–"}</td></tr>`}).join("");
+  return `<div class="bar"><div class="left sum"><span>Sheet for <b>${mlabel(m)}</b></span><span>Big bags <b>${fmt(tb,1).replace(/\.0$/,"")}</b></span><span>Dozens <b>${fmt(td,1).replace(/\.0$/,"")}</b></span><span>Pieces <b>${fmt(td*12)}</b></span></div>
+  <div class="right"><label class="small muted" for="packed">Packed by female labour (dz)</label><input id="packed" class="cell" style="width:110px" data-col="packed" inputmode="decimal" value="${esc(d.packedDz??"")}" placeholder="–" ${canWrite?"":"disabled"}></div></div>
+  <div class="tw"><table class="sheet"><thead><tr><th class="n">No</th><th class="paperhead">အမျိုးအမည်</th><th>Product</th><th class="n">Dz per bag<br><span class="paperhead">ဒါဇင်</span></th><th class="n" style="width:120px">Big bags<br><span class="paperhead">အိတ်ပေါင်း</span></th><th class="n">Dozens<br><span class="paperhead">ဒါဇင်ပေါင်း</span></th></tr></thead>
+  <tbody>${rows}</tbody><tfoot><tr><td></td><td colspan="3">Total</td><td class="n">${fmt(tb,1).replace(/\.0$/,"")}</td><td class="n">${fmt(td,1).replace(/\.0$/,"")}</td></tr></tfoot></table></div>
+  <p class="small muted" style="margin:0">Type the number of big bags for each product, the same as the paper sheet. Press Enter to move down. Dozens = bags × dozens per bag.</p>`;
+});
+V.product.sheet.bind=()=>bindCells(el=>{
+  const m=UI.month;const d=JSON.parse(JSON.stringify(S.production[m]||{bags:{}}));d.bags=d.bags||{};
+  if(el.dataset.col==="packed")d.packedDz=el.value===""?"":num(el.value);else{if(el.value==="")delete d.bags[el.dataset.p];else d.bags[el.dataset.p]=num(el.value)}
+  saveSoon("production",m,d);
+});
+V.product.cost=()=>loadingOr(["products","recipes","materials"],()=>{
+  const m=UI.month,ps=products().filter(p=>p.active!==false);const oh=overhead(m);const st=set_();
+  const f1=v=>v?fmt(v,1):"–";
+  const rows=ps.map(p=>{const c=productCost(p,m);const margin=c.dz&&num(p.sellDz)?(num(p.sellDz)-c.dz)/num(p.sellDz)*100:null;
+    return `<tr class="click" data-edit="${p.id}"><td><span class="my">${esc(p.my||"")}</span><br><span class="small muted">${esc(p.en)}</span></td><td class="n">${fmt(num(p.bodyG)+num(p.lidG),1)}</td><td class="n">${c.mat==null?`<span class="chip warn">${p.bodyRecipe?"price missing":"no mix"}</span>`:fmt(c.mat,1)}</td>${num(st.wastePct)?`<td class="n">${f1(c.waste)}</td>`:""}<td class="n">${f1(c.pieceLab)}</td><td class="n">${f1(c.staff)}</td><td class="n">${f1(c.poly)}</td><td class="n">${f1(c.big)}</td><td class="n">${f1(c.power)}</td><td class="n">${f1(c.maint)}</td><td class="n">${f1(c.deliv)}</td>${num(st.deprPc)?`<td class="n">${f1(c.depr)}</td>`:""}<td class="n">${f1(c.risk)}</td><td class="n"><b>${fmt(c.pc,1)}</b></td><td class="n"><b>${fmt(c.dz)}</b></td><td class="n">${fmt(c.target)}</td><td class="n">${num(p.sellDz)?fmt(p.sellDz):"–"}</td><td class="n">${margin==null?"–":`<span class="chip ${margin<0?"bad":margin<num(st.profitPct)?"warn":"good"}">${fmt(margin)}%</span>`}</td></tr>`}).join("");
+  return `<div class="sum"><span>Female L (staff) <b>${st.staffMode==="auto"?"from pay sheets":fmt(st.staffPc,2)+" Ks fixed"}</b> · pay sheets give ${fmt(oh.pay,2)}</span><span>Electricity <b>${st.elecMode==="auto"?"from bills":fmt(st.elecPc,2)+" Ks fixed"}</b> · bills give ${fmt(oh.pw,2)}</span><span>Risk <b>${fmt(st.riskPct,1)}%</b></span><span>Target profit <b>${fmt(st.profitPct,1)}%</b></span></div>
+  <div class="tw"><table><thead><tr><th>Product</th><th class="n">Weight g</th><th class="n">Material</th>${num(st.wastePct)?'<th class="n">Waste</th>':""}<th class="n">Male L</th><th class="n">Female L</th><th class="n">Plastic bag</th><th class="n">Big bag</th><th class="n">Electricity</th><th class="n">Maint.</th><th class="n">Delivery</th>${num(st.deprPc)?'<th class="n">Deprec.</th>':""}<th class="n">Risk</th><th class="n">Cost / pc</th><th class="n">Cost / dz</th><th class="n">Target price / dz</th><th class="n">Your price / dz</th><th class="n">Margin</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="small muted" style="margin:0">Kyat per piece, laid out like the Sheet1 costing. Material = body and lid weight × each mix's cost per gram (lids use the colour assortment per dozen). Cost / pc adds the risk allowance; target price = cost / dz + target profit. Change the fixed rates in Settings. Double-click a row to edit the product.</p>`;
+});
+V.product.cost.bind=()=>document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editProduct(r.dataset.edit));
+V.product.list=()=>loadingOr(["products"],()=>{
+  const q=UI.q.toLowerCase();const ps=products().filter(p=>!q||(p.en+" "+(p.my||"")).toLowerCase().includes(q));
+  const rn=id=>S.recipes[id]?.name||'<span class="chip warn">not set</span>';
+  return `<div class="bar"><div class="left"><input class="search" id="q" placeholder="Find product" value="${esc(UI.q)}"></div><div class="right"><button class="btn primary" id="addP" ${canWrite?"":"disabled"}>Add product</button></div></div>
+  ${ps.length?`<div class="tw"><table><thead><tr><th class="n">No</th><th class="paperhead">အမျိုးအမည်</th><th>Product</th><th class="n">Dz/bag</th><th class="n">Body g</th><th class="n">Lid g</th><th>Body mix</th><th>Lid mix</th><th>Poly bag</th><th>Big bag</th><th>Status</th></tr></thead><tbody>
+  ${ps.map(p=>`<tr class="click" data-edit="${p.id}"><td class="n">${p.no||""}</td><td class="my">${esc(p.my||"")}</td><td>${esc(p.en)}</td><td class="n">${fmt(p.dzPerBag,1).replace(/\.0$/,"")}</td><td class="n">${num(p.bodyG)?fmt(p.bodyG,1):'<span class="chip warn">missing</span>'}</td><td class="n">${num(p.lidG)?fmt(p.lidG,1):"–"}</td><td>${num(p.bodyG)?rn(p.bodyRecipe):"–"}</td><td>${num(p.lidG)?rn(p.lidRecipe):"–"}</td><td>${esc(S.materials[p.polyMat]?.name||"–")}</td><td>${esc(S.materials[p.bigBagMat]?.name||"–")}</td><td>${p.active===false?'<span class="chip mute">Stopped</span>':'<span class="chip good">Making</span>'}</td></tr>`).join("")}</tbody></table></div><p class="small muted" style="margin:0">Double-click a row to edit.</p>`:emptyState("No products match","Try another name, or add a product.")}`;
+});
+V.product.list.bind=()=>{const q=$("#q");if(q)q.oninput=()=>{UI.q=q.value;const pos=q.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)};
+  const a=$("#addP");if(a)a.onclick=()=>editProduct(null);document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editProduct(r.dataset.edit))};
+function editProduct(id){
+  const p=id?S.products[id]:{no:products().length+1,dzPerBag:60,pcsPerPoly:12,active:true};
+  const packOpts=[["","—"]].concat(list("materials").filter(m=>m.group==="Packaging").map(m=>[m.id,m.name]));
+  openForm({title:id?"Edit "+p.en:"New product",data:p,fields:[
+    {k:"my",label:"Myanmar name",half:1},{k:"en",label:"English name / code",half:1},
+    {k:"no",label:"Sheet number",type:"num",half:1},{k:"dzPerBag",label:"Dozens per big bag",type:"num",half:1},
+    {k:"bodyG",label:"Body weight (g)",type:"num",half:1},{k:"lidG",label:"Lid weight (g)",type:"num",half:1},
+    {k:"bodyRecipe",label:"Body mix",type:"select",opts:recOpts(),half:1},{k:"lidRecipe",label:"Lid mix",type:"select",opts:recOpts(),half:1},
+    {k:"polyMat",label:"Poly bag / rope",type:"select",opts:packOpts,half:1},{k:"pcsPerPoly",label:"Pieces per poly bag",type:"num",half:1,help:"For rope: pieces per gram of rope"},
+    {k:"bigBagMat",label:"Big bag",type:"select",opts:packOpts,half:1},{k:"pieceLabour",label:"Piece labour Ks/pc (sheet 'Man L')",type:"num",half:1},
+    {k:"cavB",label:"Body mold cavities",type:"num",half:1},{k:"cavL",label:"Lid mold cavities",type:"num",half:1},
+    {k:"cycB",label:"Body cycle time (sec)",type:"num",half:1},{k:"cycL",label:"Lid cycle time (sec)",type:"num",half:1},
+    {k:"sellDz",label:"Selling price per dozen (Ks)",type:"num",half:1},{k:"openingDz",label:"Opening finished stock (dz)",type:"num",half:1},
+    {k:"active",label:"Still making it?",type:"check"},{k:"note",label:"Notes",type:"textarea"}],
+    validate:d=>!d.en?"Give the product a name":null,
+    onSave:d=>save("products",id||uid("p"),d,"Product saved"),
+    onDelete:id?()=>remove("products",id,"Product deleted"):null});
+}
+
+/* ---- Raw materials ---- */
+V.raw={};
+V.raw.stock=()=>loadingOr(["materials","stock"],()=>{
+  const bal=stockBalances();const ms=list("materials").sort((a,b)=>(a.group||"").localeCompare(b.group||"")||a.name.localeCompare(b.name));
+  if(!ms.length)return emptyState("No materials yet","Add materials in the Price list tab.");
+  let val=0;const rows=ms.map(m=>{const b=bal[m.id];const v=b!=null?b*num(m.price):null;if(v)val+=v;const low=num(m.minStock)&&(b??0)<num(m.minStock);
+    return `<tr><td>${esc(m.group||"")}</td><td>${esc(m.name)}${m.my?` <span class="muted my">${esc(m.my)}</span>`:""}</td><td class="n">${b==null?'<span class="muted">no records</span>':fmt(b,2).replace(/\.00$/,"")}</td><td>${esc(m.unit)}</td><td class="n">${num(m.packSize)&&b!=null?fmt(b/num(m.packSize),1):"–"}</td><td class="n">${v==null?"–":fmt(v)}</td><td class="n">${num(m.minStock)?fmt(m.minStock):"–"}</td><td>${b==null?"":low?'<span class="chip bad">Low</span>':'<span class="chip good">OK</span>'}</td></tr>`}).join("");
+  return `<div class="sum"><span>Stock value <b>${ks(val)}</b></span><span>Balances come from the Receive / issue records. A stock count replaces the balance.</span></div>
+  <div class="tw"><table><thead><tr><th>Group</th><th>Material</th><th class="n">Balance</th><th>Unit</th><th class="n">Bags</th><th class="n">Value Ks</th><th class="n">Minimum</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+});
+V.raw.moves=()=>loadingOr(["stock","materials"],()=>{
+  const m=UI.month;const mv=list("stock").filter(x=>ym(x.date)===m).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  const K={in:["good","Received"],out:["warn","Issued"],count:["mute","Stock count"]};
+  return `<div class="bar"><div class="left sum"><span>Records in <b>${mlabel(m)}</b>: <b>${mv.length}</b></span></div><div class="right"><button class="btn" id="cntBtn" ${canWrite?"":"disabled"}>Stock count</button><button class="btn" id="outBtn" ${canWrite?"":"disabled"}>Issue to machines</button><button class="btn primary" id="inBtn" ${canWrite?"":"disabled"}>Receive</button></div></div>
+  ${mv.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Type</th><th>Material</th><th class="n">Qty</th><th>Unit</th><th class="n">Price / unit</th><th class="n">Amount</th><th>Note</th></tr></thead><tbody>${mv.map(x=>{const mt=S.materials[x.mat];return `<tr class="click" data-edit="${x.id}"><td>${esc(x.date)}</td><td><span class="chip ${K[x.kind]?.[0]}">${K[x.kind]?.[1]}</span></td><td>${esc(mt?.name||"?")}</td><td class="n">${fmt(x.qty,2).replace(/\.00$/,"")}</td><td>${esc(mt?.unit||"")}</td><td class="n">${x.kind==="in"&&num(x.price)?fmt(x.price):"–"}</td><td class="n">${x.kind==="in"&&num(x.price)?fmt(num(x.price)*num(x.qty)):"–"}</td><td>${esc(x.note||"")}</td></tr>`}).join("")}</tbody></table></div>`:emptyState(`Nothing received or issued in ${mlabel(m)}`,"Record each delivery of resin, colour or bags, and what goes to the machines. Stock balances build from these.")}`;
+});
+function editMove(id,kind){
+  const x=id?S.stock[id]:{date:UI.month===ym(today())?today():UI.month+"-01",kind};
+  openForm({title:id?"Edit record":({in:"Receive material",out:"Issue to machines",count:"Stock count"})[kind],data:x,fields:[
+    {k:"kind",label:"Type",type:"select",opts:[["in","Received"],["out","Issued to machines"],["count","Stock count (sets the balance)"]],half:1},{k:"date",label:"Date",type:"date",half:1},
+    {k:"mat",label:"Material",type:"select",opts:matOpts()},
+    {k:"qty",label:"Quantity (in the material's unit)",type:"num",half:1},{k:"price",label:"Price per unit (Ks, for receipts)",type:"num",half:1},
+    {k:"note",label:"Supplier / note"}],
+    validate:d=>!d.mat?"Choose a material":!num(d.qty)&&d.kind!=="count"?"Enter a quantity":null,
+    collect:d=>{d.t=Date.now()},
+    onSave:d=>{save("stock",id||uid("s"),d,"Saved");if(d.kind==="in"&&num(d.price)&&S.materials[d.mat]&&num(S.materials[d.mat].price)!==num(d.price)){const mm=Object.assign({},S.materials[d.mat],{price:num(d.price),priceDate:d.date});save("materials",d.mat,mm,"Saved. Price list updated to the new price")}},
+    onDelete:id?()=>remove("stock",id,"Deleted"):null});
+}
+V.raw.moves.bind=()=>{$("#inBtn")&&($("#inBtn").onclick=()=>editMove(null,"in"));$("#outBtn")&&($("#outBtn").onclick=()=>editMove(null,"out"));$("#cntBtn")&&($("#cntBtn").onclick=()=>editMove(null,"count"));document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editMove(r.dataset.edit))};
+V.raw.use=()=>loadingOr(["products","recipes","materials","production","stock"],()=>{
+  const m=UI.month;const use=expectedUse(m);const st=set_();
+  const issued={};list("stock").filter(x=>x.kind==="out"&&ym(x.date)===m).forEach(x=>{const mt=S.materials[x.mat];issued[x.mat]=(issued[x.mat]||0)+num(x.qty)*gPerUnit(mt)});
+  const ids=[...new Set([...Object.keys(use),...Object.keys(issued)])];
+  if(!ids.length)return emptyState(`No production in ${mlabel(m)}`,"When the production sheet is filled in, this shows how much of each material the mixes should have used, next to what was issued.");
+  let tot=0;const rows=ids.map(id=>{const mt=S.materials[id];const g=use[id]||0,gi=issued[id]||0;const cost=mt?g*matPerG(mt):0;tot+=cost||0;const diff=gi&&g?(gi-g)/g*100:null;
+    return `<tr><td>${esc(mt?.name||id)}</td><td class="n">${fmt(g/st.gPerLb,1)}</td><td class="n">${num(mt?.packSize)?fmt(g/gPerUnit(mt)/num(mt.packSize),1):"–"}</td><td class="n">${gi?fmt(gi/st.gPerLb,1):'<span class="muted">not recorded</span>'}</td><td class="n">${diff==null?"–":`<span class="chip ${Math.abs(diff)>10?"bad":Math.abs(diff)>5?"warn":"good"}">${diff>0?"+":""}${fmt(diff)}%</span>`}</td><td class="n">${fmt(cost)}</td></tr>`}).join("");
+  return `<div class="sum"><span>Material cost of ${mlabel(m)} production <b>${ks(tot)}</b></span></div>
+  <div class="tw"><table><thead><tr><th>Material</th><th class="n">Should use (lb)</th><th class="n">Bags</th><th class="n">Issued (lb)</th><th class="n">Gap</th><th class="n">Cost Ks</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="small muted" style="margin:0">"Should use" = pieces produced × piece weight, split by each product's mix. A big gap between issued and should-use points to waste, rejects or wrong records.</p>`;
+});
+V.raw.prices=()=>loadingOr(["materials"],()=>{
+  const q=UI.q.toLowerCase();const ms=list("materials").filter(m=>!q||(m.name+" "+(m.code||"")+" "+(m.my||"")).toLowerCase().includes(q)).sort((a,b)=>(a.group||"").localeCompare(b.group||"")||a.name.localeCompare(b.name));
+  return `<div class="bar"><div class="left"><input class="search" id="q" placeholder="Find material or code" value="${esc(UI.q)}"></div><div class="right"><button class="btn primary" id="addM" ${canWrite?"":"disabled"}>Add material</button></div></div>
+  <div class="tw"><table><thead><tr><th>Group</th><th>Code</th><th>Material</th><th class="n">Price Ks</th><th>Per</th><th class="n">Ks per g</th><th class="n">Pack</th><th>Updated</th></tr></thead><tbody>
+  ${ms.map(m=>{const pg=matPerG(m);return `<tr class="click" data-edit="${m.id}"><td>${esc(m.group||"")}</td><td class="n">${esc(m.code||"")}</td><td>${esc(m.name)}${m.my?` <span class="muted my">${esc(m.my)}</span>`:""}${m.check?` <span class="chip warn" title="${esc(m.check)}">check</span>`:""}</td><td class="n">${num(m.price)?fmt(m.price,num(m.price)%1?2:0):'<span class="chip warn">no price</span>'}</td><td>${esc(m.unit)}</td><td class="n">${pg?fmt(pg,pg<1?3:2):"–"}</td><td class="n">${num(m.packSize)?fmt(m.packSize)+" "+esc(m.unit):"–"}</td><td class="muted">${esc(m.priceDate||"")}</td></tr>`}).join("")}</tbody></table></div><p class="small muted" style="margin:0">Double-click a row to change a price. Receiving material at a new price also updates this list.</p>`;
+});
+V.raw.prices.bind=()=>{const q=$("#q");if(q)q.oninput=()=>{UI.q=q.value;const pos=q.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)};$("#addM")&&($("#addM").onclick=()=>editMaterial(null));document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editMaterial(r.dataset.edit))};
+function editMaterial(id){
+  const m=id?S.materials[id]:{group:"Resin",unit:"lb"};
+  openForm({title:id?"Edit "+m.name:"New material",data:m,fields:[
+    {k:"name",label:"Name",half:1},{k:"my",label:"Myanmar name",half:1},
+    {k:"group",label:"Group",type:"select",opts:["Resin","B grade","Colour","Additive","Packaging","Other"].map(x=>[x,x]),half:1},{k:"code",label:"Code",half:1},
+    {k:"price",label:"Price (Ks)",type:"num",half:1},{k:"unit",label:"Per",type:"select",opts:[["lb","lb"],["g","g"],["kg","kg"],["viss","viss (ပိဿာ)"],["L","litre"],["bag","bag"],["pc","piece"]],half:1},
+    {k:"gPerUnit",label:"Grams per unit (litre, bag or piece only)",type:"num",half:1},{k:"packSize",label:"Pack size (units per bag)",type:"num",half:1},
+    {k:"minStock",label:"Minimum stock (units)",type:"num",half:1},{k:"priceDate",label:"Price date",type:"date",half:1},
+    {k:"check",label:"Something to check",type:"textarea"}],
+    validate:d=>!d.name?"Give the material a name":null,
+    onSave:d=>{if(!id||num(m.price)!==num(d.price))d.priceDate=d.priceDate||today();save("materials",id||uid("m"),d,"Material saved")},
+    onDelete:id?()=>remove("materials",id,"Material deleted"):null});
+}
+V.raw.recipes=()=>loadingOr(["recipes","materials"],()=>{
+  const rs=list("recipes").sort((a,b)=>a.name.localeCompare(b.name));
+  const used=r=>products().filter(p=>p.bodyRecipe===r.id||p.lidRecipe===r.id).map(p=>p.en);
+  return `<div class="bar"><div class="left sum"><span>A mix is one batch: what goes into the hopper together. Cost per gram feeds the product costs.</span></div><div class="right"><button class="btn primary" id="addR" ${canWrite?"":"disabled"}>Add mix</button></div></div>
+  ${rs.length?`<div class="grid2">${rs.map(r=>{const c=recipeCost(r.id);const u=used(r);return `<section class="panel" data-edit="${r.id}" style="cursor:pointer" tabindex="0"><h3>${esc(r.name)}</h3><div class="pb" style="display:flex;flex-direction:column;gap:8px">
+    <table><tbody>${(r.lines||[]).map(l=>`<tr><td>${esc(String(l.mat).startsWith("r:")?(S.recipes[l.mat.slice(2)]?.name||"?"):(S.materials[l.mat]?.name||"?"))}</td><td class="n">${fmt(l.qty,2).replace(/\.00$/,"")} ${esc(l.unit==="unit"?(S.materials[l.mat]?.unit||""):l.unit)}</td></tr>`).join("")}</tbody></table>
+    <div class="sum"><span>Batch <b>${fmt(c?.grams/1000,2)} kg</b></span><span>Cost <b>${ks(c?.cost)}</b></span><span>Per g <b>${c&&c.ok?fmt(c.perG,3)+" Ks":'<span class="chip warn">a price is missing</span>'}</b></span></div>
+    <div class="small muted">${u.length?"Used for: "+esc(u.join(", ")):"Not used by any product yet"}${r.note?" · "+esc(r.note):""}</div></div></section>`}).join("")}</div><p class="small muted" style="margin:0">Double-click a mix to edit it.</p>`:emptyState("No mixes yet","Add the batch recipes your team uses, such as Normal 2 : Clean 1 + OBA oil.")}`;
+});
+V.raw.recipes.bind=()=>{$("#addR")&&($("#addR").onclick=()=>editRecipe(null));document.querySelectorAll("[data-edit]").forEach(r=>{r.ondblclick=()=>editRecipe(r.dataset.edit);r.onkeydown=e=>{if(e.key==="Enter")editRecipe(r.dataset.edit)}})};
+function editRecipe(id){
+  const r=id?JSON.parse(JSON.stringify(S.recipes[id])):{lines:[{mat:"",qty:"",unit:"lb"}]};
+  let lines=r.lines||[];
+  const opts=()=>[["","— choose —"]].concat(matOpts(false)).concat(list("recipes").filter(x=>x.id!==id).map(x=>["r:"+x.id,"Mix: "+x.name]));
+  const linesHTML=()=>`<div class="field"><label>Ingredients</label><div class="lines" id="lns">${lines.map((l,i)=>`<div class="ln"><div>${sel(opts(),l.mat,`data-i="${i}" data-k="mat" aria-label="Ingredient ${i+1}"`)}</div><input data-i="${i}" data-k="qty" inputmode="decimal" value="${esc(l.qty)}" placeholder="Qty" aria-label="Quantity"><div>${sel([["lb","lb"],["g","g"],["viss","viss"],["kg","kg"],["unit","its unit"]],l.unit,`data-i="${i}" data-k="unit" aria-label="Unit"`)}</div><button class="btn sm" data-rm="${i}" aria-label="Remove line">✕</button></div>`).join("")}</div><button class="btn sm" id="addLn" style="margin-top:6px;align-self:flex-start">Add ingredient</button></div>`;
+  openForm({title:id?"Edit mix":"New mix",data:r,fields:[{k:"name",label:"Mix name"},{k:"note",label:"Note",type:"textarea"}],extra:linesHTML,
+    bindExtra:()=>{const box=$("#dExtra");const rebind=()=>{box.innerHTML=linesHTML();hook()};const hook=()=>{
+      box.querySelectorAll("[data-k]").forEach(el=>el.onchange=el.oninput=()=>{lines[+el.dataset.i][el.dataset.k]=el.value});
+      box.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{lines.splice(+b.dataset.rm,1);rebind()});
+      $("#addLn").onclick=()=>{lines.push({mat:"",qty:"",unit:"g"});rebind()}};hook()},
+    collect:d=>{d.lines=lines.filter(l=>l.mat&&num(l.qty)).map(l=>({mat:l.mat,qty:num(l.qty),unit:l.unit}))},
+    validate:d=>!d.name?"Give the mix a name":!d.lines.length?"Add at least one ingredient":null,
+    onSave:d=>save("recipes",id||uid("r"),d,"Mix saved"),onDelete:id?()=>remove("recipes",id,"Mix deleted"):null});
+}
+
+/* ---- HR ---- */
+V.hr={};
+function staffList(){return list("staff").sort((a,b)=>(a.no||999)-(b.no||999))}
+function levelOf(id){return set_().levels.find(l=>l.id===id)}
+function defaultRow(s){const L=levelOf(s.level);return {salary:num(s.salary)||num(L?.salary),fixed:0,otH:0,otRate:num(L?.otRate)||0,duty:num(s.duty),absent:0,dayRate:num(L?.dayRate)||0,other:0}}
+V.hr.payroll=()=>loadingOr(["staff","payroll","settings"],()=>{
+  const m=UI.month,d=S.payroll[m];const ss=staffList();
+  if(!ss.length)return emptyState("No staff yet","Add staff in the Staff tab first.",`<button class="btn primary" data-go="hr:staff">Open staff</button>`);
+  if(!d)return emptyState(`No pay sheet for ${mlabel(m)} yet`,"Start the sheet to fill each person's salary from their level. Then type overtime hours and days absent.",`<button class="btn primary" id="startPay" ${canWrite?"":"disabled"}>Start ${mlabel(m)} pay sheet</button>`);
+  const ids=[...new Set([...ss.filter(s=>s.active!==false).map(s=>s.id),...Object.keys(d.rows||{})])];
+  let T={salary:0,ot:0,duty:0,ded:0,net:0};
+  const rows=ids.map((sid,i)=>{const s=S.staff[sid]||{name:"(removed)"};const r=d.rows?.[sid];
+    if(!r)return `<tr><td class="n">${i+1}</td><td class="my">${esc(s.name)}</td><td colspan="9"><button class="btn sm" data-addrow="${sid}">Add to this month</button></td></tr>`;
+    const c=payRow(r);T.salary+=num(r.salary)+num(r.fixed);T.ot+=c.ot;T.duty+=num(r.duty);T.ded+=c.ded;T.net+=c.net;
+    const cell=(k,w)=>`<td><input class="cell" style="width:${w}px" data-col="${k}" data-s="${sid}" inputmode="decimal" value="${num(r[k])?esc(r[k]):""}" placeholder="–" ${canWrite?"":"disabled"}></td>`;
+    return `<tr><td class="n">${i+1}</td><td class="my">${esc(s.name)}</td>${cell("salary",100)}${cell("otH",64)}${cell("otRate",76)}<td class="n">${c.ot?fmt(c.ot):"–"}</td>${cell("duty",90)}${cell("absent",60)}<td class="n" style="color:var(--bad)">${c.ded?fmt(c.ded):"–"}</td>${cell("other",84)}<td class="n"><b>${fmt(c.net)}</b></td></tr>`}).join("");
+  return `<div class="sum"><span>Pay sheet for <b>${mlabel(m)}</b></span><span>Staff <b>${Object.keys(d.rows||{}).length}</b></span><span>Total to pay <b>${ks(T.net)}</b></span>${monthDozens(m)?`<span>Per dozen produced <b>${fmt(T.net/monthDozens(m),1)} Ks</b></span>`:""}</div>
+  <div class="tw"><table class="sheet"><thead><tr><th class="n">No</th><th class="paperhead">အမည်</th><th class="n">Salary<br><span class="paperhead">လစာ</span></th><th class="n">OT hrs</th><th class="n">OT rate</th><th class="n">OT Ks</th><th class="n">Duty extra<br><span class="paperhead">တာဝန်ပို</span></th><th class="n">Days absent<br><span class="paperhead">ပျက်ရက်</span></th><th class="n">Absent cut<br><span class="paperhead">ပျက်ရက်နှုတ်</span></th><th class="n">+/− other</th><th class="n">Net pay<br><span class="paperhead">သင့်ငွေ</span></th></tr></thead>
+  <tbody>${rows}</tbody><tfoot><tr><td></td><td>Total</td><td class="n">${fmt(T.salary)}</td><td></td><td></td><td class="n">${fmt(T.ot)}</td><td class="n">${fmt(T.duty)}</td><td></td><td class="n">${fmt(T.ded)}</td><td></td><td class="n">${fmt(T.net)}</td></tr></tfoot></table></div>
+  <p class="small muted" style="margin:0">Net pay = salary + OT hours × OT rate + duty extra − days absent × day rate (from the person's level) + other. Press Enter to move down a column.</p>`;
+});
+V.hr.payroll.bind=()=>{
+  const m=UI.month;
+  const st=$("#startPay");if(st)st.onclick=()=>{const rows={};staffList().filter(s=>s.active!==false).forEach(s=>rows[s.id]=defaultRow(s));save("payroll",m,{rows},"Pay sheet started")};
+  document.querySelectorAll("[data-addrow]").forEach(b=>b.onclick=()=>{const d=JSON.parse(JSON.stringify(S.payroll[m]));d.rows[b.dataset.addrow]=defaultRow(S.staff[b.dataset.addrow]);save("payroll",m,d)});
+  bindCells(el=>{const d=JSON.parse(JSON.stringify(S.payroll[m]));d.rows[el.dataset.s][el.dataset.col]=el.value===""?0:num(el.value);saveSoon("payroll",m,d)});
+};
+V.hr.staff=()=>loadingOr(["staff"],()=>{
+  const ss=staffList();
+  return `<div class="bar"><div class="left sum"><span>Working <b>${ss.filter(s=>s.active!==false).length}</b></span><span>Left <b>${ss.filter(s=>s.active===false).length}</b></span></div><div class="right"><button class="btn primary" id="addS" ${canWrite?"":"disabled"}>Add staff</button></div></div>
+  ${ss.length?`<div class="tw"><table><thead><tr><th class="n">No</th><th class="paperhead">အမည်</th><th>Job</th><th>Level</th><th class="n">Salary</th><th class="n">Duty extra</th><th>Started</th><th>Status</th></tr></thead><tbody>
+  ${ss.map(s=>{const L=levelOf(s.level);return `<tr class="click" data-edit="${s.id}"><td class="n">${s.no||""}</td><td class="my">${esc(s.name)}${s.check?' <span class="chip warn">check name</span>':""}</td><td>${esc(s.role||"")}</td><td>${esc(L?.name||"Own salary")}</td><td class="n">${fmt(num(s.salary)||num(L?.salary))}</td><td class="n">${num(s.duty)?fmt(s.duty):"–"}</td><td>${esc(s.start||"")}</td><td>${s.active===false?'<span class="chip mute">Left</span>':'<span class="chip good">Working</span>'}</td></tr>`}).join("")}</tbody></table></div><p class="small muted" style="margin:0">Double-click a row to edit.</p>`:emptyState("No staff yet","Add the people on the pay sheet.")}`;
+});
+V.hr.staff.bind=()=>{$("#addS")&&($("#addS").onclick=()=>editStaff(null));document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editStaff(r.dataset.edit))};
+function editStaff(id){
+  const s=id?S.staff[id]:{no:staffList().length+1,level:"L1",active:true};
+  openForm({title:id?"Edit "+s.name:"New staff",data:s,fields:[
+    {k:"name",label:"Name"},{k:"no",label:"No on pay sheet",type:"num",half:1},{k:"role",label:"Job",half:1},
+    {k:"level",label:"Salary level",type:"select",opts:[["","Own salary (no level)"]].concat(set_().levels.map(l=>[l.id,l.name+" · "+fmt(l.salary)])),half:1},{k:"salary",label:"Own salary (only if no level)",type:"num",half:1},
+    {k:"duty",label:"Duty extra each month (တာဝန်ပို)",type:"num",half:1},{k:"start",label:"Start date",type:"date",half:1},
+    {k:"phone",label:"Phone",half:1},{k:"active",label:"Still working?",type:"check",half:1},{k:"note",label:"Notes",type:"textarea"}],
+    validate:d=>!d.name?"Enter a name":null,collect:d=>{d.check=false},
+    onSave:d=>save("staff",id||uid("e"),d,"Staff saved"),onDelete:id?()=>remove("staff",id,"Staff removed"):null});
+}
+V.hr.levels=()=>{
+  const st=set_();
+  return (canWrite&&!canSystem?`<div class="banner">Only the owner can change salary levels.</div>`:"")+`<div class="tw"><table class="sheet"><thead><tr><th>Level</th><th class="n">Salary / month<br><span class="paperhead">လစာ</span></th><th class="n">Day rate<br><span class="paperhead">တစ်ရက်နှုန်း</span></th><th class="n">Hour rate</th><th class="n">OT rate (×1.5)<br><span class="paperhead">အချိန်ပိုကြေး</span></th><th class="n">Staff</th></tr></thead><tbody>
+  ${st.levels.map((l,i)=>`<tr><td class="t">${esc(l.name)}</td>${["salary","dayRate","hourRate","otRate"].map(k=>`<td><input class="cell" data-col="${k}" data-i="${i}" inputmode="decimal" value="${esc(l[k])}" ${sysDis()}></td>`).join("")}<td class="n">${staffList().filter(s=>s.level===l.id&&s.active!==false).length}</td></tr>`).join("")}</tbody></table></div>
+  <p class="small muted" style="margin:0">Paid for ${st.workDays} working days a month, 8 hours a day. Changing a level here sets new pay sheets; sheets already started keep their figures.</p>`;
+};
+V.hr.levels.bind=()=>bindCells(el=>{const st=JSON.parse(JSON.stringify(set_()));st.levels[+el.dataset.i][el.dataset.col]=num(el.value);saveSoon("settings","main",st)});
+V.hr.labour=()=>loadingOr(["payroll","production","products"],()=>{
+  const ms=monthsWithData();if(!ms.length)return emptyState("No months on record","Fill in a pay sheet and a production sheet to see labour cost per dozen.");
+  return `<div class="tw"><table><thead><tr><th>Month</th><th class="n">Pay sheet Ks</th><th class="n">Dozens produced</th><th class="n">Packed by female labour (dz)</th><th class="n">Gap dz</th><th class="n">Wages per dozen</th><th class="n">Wages per piece</th></tr></thead><tbody>
+  ${ms.map(m=>{const p=payrollTotal(m),dz=monthDozens(m),pk=num(prodDoc(m).packedDz);const gap=pk&&dz?pk-dz:null;return `<tr><td>${mlabel(m)}</td><td class="n">${p==null?"–":fmt(p)}</td><td class="n">${dz?fmt(dz,1):"–"}</td><td class="n">${pk?fmt(pk,1):"–"}</td><td class="n">${gap==null?"–":`<span class="chip ${Math.abs(gap)/dz>0.05?"bad":"good"}">${gap>0?"+":""}${fmt(gap,1)}</span>`}</td><td class="n">${p!=null&&dz?fmt(p/dz,1):"–"}</td><td class="n">${p!=null&&dz?fmt(p/dz/12,2):"–"}</td></tr>`}).join("")}</tbody></table></div>
+  <p class="small muted" style="margin:0">"Packed by female labour" is typed on the Production sheet. When it differs from the production sheet by more than 5%, the Overview raises it.</p>`;
+});
+
+/* ---- Mold & Maintenance ---- */
+V.mold={};
+V.mold.molds=()=>loadingOr(["products","maint"],()=>{
+  const cd=num(set_().cleanDays)||30;
+  const ps=products().filter(p=>p.active!==false);
+  const dzHr=(cyc,cav)=>num(cyc)&&num(cav)?3600/num(cyc)*num(cav)/12:null;
+  return `<div class="sum"><span>Cleaning interval <b>${cd} days</b> (change in Settings)</span><span>Dozens per hour = 3600 ÷ cycle seconds × cavities ÷ 12</span></div>
+  <div class="tw"><table><thead><tr><th class="paperhead">အမျိုးအမည်</th><th>Product</th><th class="n">Body cav.</th><th class="n">Body cycle s</th><th class="n">Body dz/hr</th><th class="n">Lid cav.</th><th class="n">Lid cycle s</th><th class="n">Lid dz/hr</th><th>Last cleaned</th><th>Cleaning</th><th></th></tr></thead><tbody>
+  ${ps.map(p=>{const lc=lastClean(p.id),ds=daysSince(lc);const a=dzHr(p.cycB,p.cavB),b=dzHr(p.cycL,p.cavL);
+    const chip=lc==null?'<span class="chip mute">Not recorded</span>':ds>cd?`<span class="chip bad">Due ${ds-cd}d ago</span>`:ds>cd-5?`<span class="chip warn">Due in ${cd-ds}d</span>`:'<span class="chip good">OK</span>';
+    return `<tr class="click" data-edit="${p.id}"><td class="my">${esc(p.my||"")}</td><td>${esc(p.en)}</td><td class="n">${num(p.cavB)||'<span class="muted">?</span>'}</td><td class="n">${num(p.cycB)||"–"}</td><td class="n">${a?fmt(a,1):"–"}</td><td class="n">${num(p.lidG)?(num(p.cavL)||'<span class="muted">?</span>'):"–"}</td><td class="n">${num(p.cycL)||"–"}</td><td class="n">${b?fmt(b,1):"–"}</td><td>${lc?esc(lc):"–"}</td><td>${chip}</td><td><button class="btn sm" data-clean="${p.id}" ${canWrite?"":"disabled"}>Cleaned today</button></td></tr>`}).join("")}</tbody></table></div>
+  <p class="small muted" style="margin:0">A "?" means the number of cavities is not recorded yet. Double-click a row to fill in cavities and cycle times.</p>`;
+});
+V.mold.molds.bind=()=>{document.querySelectorAll("[data-clean]").forEach(b=>b.onclick=e=>{e.stopPropagation();save("maint",uid("x"),{date:today(),target:"p:"+b.dataset.clean,type:"Clean",cost:0,note:""},"Cleaning recorded")});document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editProduct(r.dataset.edit))};
+V.mold.machines=()=>loadingOr(["machines"],()=>{
+  const ms=list("machines").sort((a,b)=>(a.name||"").localeCompare(b.name||"",undefined,{numeric:true}));
+  const C={Running:"good",Idle:"mute",Repair:"bad"};
+  return `<div class="bar"><div class="left sum"><span>Machines <b>${ms.length}</b></span><span>Running <b>${ms.filter(m=>m.status==="Running").length}</b></span></div><div class="right"><button class="btn primary" id="addMc" ${canWrite?"":"disabled"}>Add machine</button></div></div>
+  ${ms.length?`<div class="tw"><table><thead><tr><th>Machine</th><th>Type / size</th><th>Mold on it now</th><th>Status</th><th>Note</th></tr></thead><tbody>${ms.map(m=>`<tr class="click" data-edit="${m.id}"><td>${esc(m.name)}</td><td>${esc(m.type||"")}</td><td>${esc(pname(S.products[m.product]))}</td><td><span class="chip ${C[m.status]||"mute"}">${esc(m.status||"")}</span></td><td>${esc(m.note||"")}</td></tr>`).join("")}</tbody></table></div>`:emptyState("No machines recorded","Add each injection machine and which mold runs on it. Repairs in the log can then be tied to a machine.",`<button class="btn primary" id="addMc2" ${canWrite?"":"disabled"}>Add first machine</button>`)}`;
+});
+function editMachine(id){const m=id?S.machines[id]:{status:"Running"};openForm({title:id?"Edit "+m.name:"New machine",data:m,fields:[{k:"name",label:"Machine name / number",half:1},{k:"type",label:"Type / size (tons)",half:1},{k:"product",label:"Mold on it now",type:"select",opts:prodOpts()},{k:"status",label:"Status",type:"select",opts:[["Running","Running"],["Idle","Idle"],["Repair","Under repair"]]},{k:"note",label:"Note",type:"textarea"}],validate:d=>!d.name?"Name the machine":null,onSave:d=>save("machines",id||uid("c"),d,"Machine saved"),onDelete:id?()=>remove("machines",id,"Machine removed"):null})}
+V.mold.machines.bind=()=>{["#addMc","#addMc2"].forEach(s=>{const b=$(s);if(b)b.onclick=()=>editMachine(null)});document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editMachine(r.dataset.edit))};
+V.mold.log=()=>loadingOr(["maint"],()=>{
+  const m=UI.month;const xs=list("maint").filter(x=>ym(x.date)===m).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  const tname=t=>!t?"–":t.startsWith("p:")?pname(S.products[t.slice(2)])+" mold":t.startsWith("c:")?(S.machines[t.slice(2)]?.name||"Machine"):t;
+  const cost=xs.reduce((a,x)=>a+num(x.cost),0);
+  return `<div class="bar"><div class="left sum"><span>${mlabel(m)}: <b>${xs.length}</b> jobs</span><span>Maintenance cost <b>${ks(cost)}</b></span></div><div class="right"><button class="btn primary" id="addX" ${canWrite?"":"disabled"}>Add job</button></div></div>
+  ${xs.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Job</th><th>Mold / machine</th><th class="n">Cost Ks</th><th>Done by</th><th>Note</th></tr></thead><tbody>${xs.map(x=>`<tr class="click" data-edit="${x.id}"><td>${esc(x.date)}</td><td><span class="chip ${x.type==="Repair"?"bad":x.type==="Clean"?"good":"mute"}">${esc(x.type)}</span></td><td>${esc(tname(x.target))}</td><td class="n">${num(x.cost)?fmt(x.cost):"–"}</td><td>${esc(x.by||"")}</td><td>${esc(x.note||"")}</td></tr>`).join("")}</tbody></table></div>`:emptyState(`No maintenance in ${mlabel(m)}`,"Record mold cleaning, repairs, spare parts and service bills here so the monthly maintenance cost is known.")}`;
+});
+function editMaint(id){const x=id?S.maint[id]:{date:today(),type:"Repair"};
+  const tg=[["","—"]].concat(products().map(p=>["p:"+p.id,pname(p)+" mold"])).concat(list("machines").map(c=>["c:"+c.id,c.name]));
+  openForm({title:id?"Edit job":"New maintenance job",data:x,fields:[{k:"date",label:"Date",type:"date",half:1},{k:"type",label:"Job",type:"select",opts:[["Clean","Mold cleaning"],["Repair","Repair"],["Service","Service / oiling"],["Parts","Spare parts"],["Other","Other"]],half:1},{k:"target",label:"Mold or machine",type:"select",opts:tg},{k:"cost",label:"Cost (Ks)",type:"num",half:1},{k:"by",label:"Done by",half:1},{k:"note",label:"What was done",type:"textarea"}],onSave:d=>save("maint",id||uid("x"),d,"Saved"),onDelete:id?()=>remove("maint",id,"Deleted"):null})}
+V.mold.log.bind=()=>{$("#addX")&&($("#addX").onclick=()=>editMaint(null));document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editMaint(r.dataset.edit))};
+
+/* ---- Electricity ---- */
+V.power={};
+V.power.bills=()=>loadingOr(["power","production","products"],()=>{
+  const m=UI.month;const months=[];for(let i=11;i>=0;i--)months.push(addMonth(m,-i));
+  const have=months.filter(x=>S.power[x]||monthDozens(x));
+  const rows=months.slice().reverse().filter(x=>S.power[x]||monthDozens(x)||x===m).map(x=>{const d=S.power[x]||{};const dz=monthDozens(x);const tot=num(d.elec)+num(d.water);const pr=addMonth(x,-1);const pd=monthDozens(pr),pt=powerTotal(pr);
+    const per=tot&&dz?tot/dz:null,pper=pt&&pd?pt/pd:null;const ch=per&&pper?(per/pper-1)*100:null;
+    const cell=k=>`<td><input class="cell" style="width:120px" data-col="${k}" data-m="${x}" inputmode="decimal" value="${num(d[k])?esc(d[k]):""}" placeholder="–" ${canWrite?"":"disabled"}></td>`;
+    return `<tr><td class="t">${mlabel(x)}</td>${cell("elec")}${cell("kwh")}${cell("water")}<td class="n">${dz?fmt(dz,1):"–"}</td><td class="n">${per?fmt(per,1):"–"}</td><td class="n">${num(d.kwh)&&dz?fmt(num(d.kwh)/dz,2):"–"}</td><td class="n">${ch==null?"–":`<span class="chip ${ch>20?"bad":ch>5?"warn":"good"}">${ch>0?"+":""}${fmt(ch)}%</span>`}</td></tr>`}).join("");
+  const ent=months.map(x=>({l:MN[+x.slice(5)-1],v:num(S.power[x]?.elec)}));
+  const avg=(()=>{const v=months.map(x=>num(S.power[x]?.elec)).filter(Boolean);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0})();
+  return `<div class="kpis"><div class="kpi"><span class="l">${mlabel(m)} electricity</span><span class="v">${num(S.power[m]?.elec)?fmt(S.power[m].elec):"—"}</span><span class="d">Kyat</span></div><div class="kpi"><span class="l">Monthly average</span><span class="v">${avg?fmt(avg):"—"}</span><span class="d">Months on record in the last 12</span></div><div class="kpi"><span class="l">Per dozen this month</span><span class="v">${powerTotal(m)&&monthDozens(m)?fmt(powerTotal(m)/monthDozens(m),1):"—"}</span><span class="d">Electricity + water, Ks</span></div></div>
+  <section class="panel"><h3>Electricity bill by month</h3><div class="pb">${have.length?svgBars(ent,{unit:" Ks"}):emptyState("No bills yet","Type the bill amounts in the table below.")}</div></section>
+  <div class="tw"><table class="sheet"><thead><tr><th>Month</th><th class="n">Electricity Ks</th><th class="n">Units (kWh)</th><th class="n">Water Ks</th><th class="n">Dozens produced</th><th class="n">Ks per dozen</th><th class="n">kWh per dozen</th><th class="n">vs last month</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="small muted" style="margin:0">To add an older month, move the month picker back to it. Ks per dozen includes water.</p>`;
+});
+V.power.bills.bind=()=>bindCells(el=>{const x=el.dataset.m;const d=Object.assign({},S.power[x]||{});d[el.dataset.col]=el.value===""?"":num(el.value);saveSoon("power",x,d)});
+
+/* ---- Retail ---- */
+V.retail={};
+V.retail.sales=()=>loadingOr(["sales","customers","products"],()=>{
+  const m=UI.month;const xs=list("sales").filter(s=>ym(s.date)===m).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  const tot=xs.reduce((a,s)=>a+saleTotal(s),0),paid=xs.reduce((a,s)=>a+num(s.paid),0),dz=xs.reduce((a,s)=>a+(s.lines||[]).reduce((b,l)=>b+num(l.dz),0),0);
+  return `<div class="bar"><div class="left sum"><span>${mlabel(m)} sales <b>${ks(tot)}</b></span><span>Dozens sold <b>${fmt(dz,1)}</b></span><span>Received <b>${ks(paid)}</b></span><span>Owed <b>${ks(tot-paid)}</b></span></div><div class="right"><button class="btn primary" id="addSale" ${canWrite?"":"disabled"}>New sale</button></div></div>
+  ${xs.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Customer</th><th>Items</th><th class="n">Dozens</th><th class="n">Total Ks</th><th class="n">Paid Ks</th><th>Payment</th><th>Delivery</th></tr></thead><tbody>${xs.map(s=>{const t=saleTotal(s),p=num(s.paid);return `<tr class="click" data-edit="${s.id}"><td>${esc(s.date)}</td><td>${esc(S.customers[s.cust]?.name||s.custName||"Walk-in")}</td><td>${esc((s.lines||[]).map(l=>S.products[l.p]?.en||"?").join(", "))}</td><td class="n">${fmt((s.lines||[]).reduce((a,l)=>a+num(l.dz),0),1)}</td><td class="n">${fmt(t)}</td><td class="n">${fmt(p)}</td><td>${p>=t-0.5?'<span class="chip good">Paid</span>':p>0?'<span class="chip warn">Part paid</span>':'<span class="chip bad">Unpaid</span>'}</td><td>${s.delivered?'<span class="chip good">Delivered</span>':'<span class="chip mute">Waiting</span>'}</td></tr>`}).join("")}</tbody></table></div>`:emptyState(`No sales in ${mlabel(m)}`,"Record each sale with its customer, products and dozens. Finished stock goes down automatically.",`<button class="btn primary" id="addSale2" ${canWrite?"":"disabled"}>Record first sale</button>`)}`;
+});
+function editSale(id){
+  const s=id?JSON.parse(JSON.stringify(S.sales[id])):{date:UI.month===ym(today())?today():UI.month+"-01",lines:[{p:"",dz:"",price:""}],paid:0,delivered:false};
+  let lines=s.lines||[];
+  const linesHTML=()=>{const t=lines.reduce((a,l)=>a+num(l.dz)*num(l.price),0);return `<div class="field"><label>Products (dozens × price per dozen)</label><div class="lines">${lines.map((l,i)=>`<div class="ln"><div>${sel(prodOpts(),l.p,`data-i="${i}" data-k="p" aria-label="Product"`)}</div><input data-i="${i}" data-k="dz" inputmode="decimal" placeholder="Dozens" value="${esc(l.dz)}" aria-label="Dozens"><input data-i="${i}" data-k="price" inputmode="decimal" placeholder="Ks / dz" value="${esc(l.price)}" aria-label="Price per dozen"><button class="btn sm" data-rm="${i}" aria-label="Remove">✕</button></div>`).join("")}</div><button class="btn sm" id="addLn" style="margin-top:6px">Add product</button><div class="sum" style="margin-top:8px"><span>Goods total <b id="lt">${ks(t)}</b></span></div></div>`};
+  openForm({title:id?"Edit sale":"New sale",data:s,fields:[{k:"date",label:"Date",type:"date",half:1},{k:"cust",label:"Customer",type:"select",opts:[["","Walk-in / other"]].concat(list("customers").map(c=>[c.id,c.name])),half:1},{k:"delivery",label:"Delivery charge (Ks)",type:"num",half:1},{k:"paid",label:"Amount paid (Ks)",type:"num",half:1},{k:"delivered",label:"Delivered?",type:"check",half:1},{k:"note",label:"Note",half:1}],extra:linesHTML,
+    bindExtra:()=>{const box=$("#dExtra");const rebind=()=>{box.innerHTML=linesHTML();hook()};const hook=()=>{
+      box.querySelectorAll("[data-k]").forEach(el=>el.oninput=el.onchange=()=>{const l=lines[+el.dataset.i];l[el.dataset.k]=el.value;if(el.dataset.k==="p"&&!num(l.price)&&num(S.products[el.value]?.sellDz)){l.price=S.products[el.value].sellDz;rebind();return}$("#lt").textContent=ks(lines.reduce((a,l)=>a+num(l.dz)*num(l.price),0))});
+      box.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{lines.splice(+b.dataset.rm,1);rebind()});$("#addLn").onclick=()=>{lines.push({p:"",dz:"",price:""});rebind()}};hook()},
+    collect:d=>{d.lines=lines.filter(l=>l.p&&num(l.dz)).map(l=>({p:l.p,dz:num(l.dz),price:num(l.price)}))},
+    validate:d=>!d.lines.length?"Add at least one product with dozens":null,
+    onSave:d=>save("sales",id||uid("o"),d,"Sale saved"),onDelete:id?()=>remove("sales",id,"Sale deleted"):null});
+}
+V.retail.sales.bind=()=>{["#addSale","#addSale2"].forEach(x=>{const b=$(x);if(b)b.onclick=()=>editSale(null)});document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editSale(r.dataset.edit))};
+V.retail.fstock=()=>loadingOr(["products","production","sales"],()=>{
+  const st=finishedStock();const ps=products().filter(p=>p.active!==false||st[p.id]);
+  const sold={};list("sales").forEach(s=>(s.lines||[]).forEach(l=>sold[l.p]=(sold[l.p]||0)+num(l.dz)));
+  const made={};for(const d of Object.values(S.production))for(const [pid,b] of Object.entries(d.bags||{}))made[pid]=(made[pid]||0)+num(b)*num(S.products[pid]?.dzPerBag);
+  let val=0;
+  const rows=ps.map(p=>{const s=st[p.id]||0;const c=productCost(p,UI.month);if(c.dz&&s>0)val+=c.dz*s;return `<tr><td class="my">${esc(p.my||"")}</td><td>${esc(p.en)}</td><td class="n">${fmt(p.openingDz||0,1)}</td><td class="n">${fmt(made[p.id]||0,1)}</td><td class="n">${fmt(sold[p.id]||0,1)}</td><td class="n"><b>${fmt(s,1)}</b></td><td class="n">${num(p.dzPerBag)?fmt(s/num(p.dzPerBag),1):"–"}</td><td>${s<0?'<span class="chip bad">Below zero</span>':""}</td></tr>`}).join("");
+  return `<div class="sum"><span>Stock at cost <b>${ks(val)}</b></span><span>On hand = opening + all production − all sales. Set opening stock in each product.</span></div>
+  <div class="tw"><table><thead><tr><th class="paperhead">အမျိုးအမည်</th><th>Product</th><th class="n">Opening dz</th><th class="n">Made dz</th><th class="n">Sold dz</th><th class="n">On hand dz</th><th class="n">Big bags</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+});
+V.retail.prices=()=>loadingOr(["products","recipes","materials"],()=>{
+  const ps=products().filter(p=>p.active!==false);
+  return `<div class="tw"><table class="sheet"><thead><tr><th class="paperhead">အမျိုးအမည်</th><th>Product</th><th class="n">Cost / dz</th><th class="n">Target / dz (+${fmt(set_().profitPct,1)}%)</th><th class="n">Selling price / dz</th><th class="n">Profit / dz</th><th class="n">Margin</th></tr></thead><tbody>
+  ${ps.map(p=>{const c=productCost(p,UI.month);const sp=num(p.sellDz);const pr=sp&&c.dz?sp-c.dz:null;return `<tr><td class="my">${esc(p.my||"")}</td><td class="t">${esc(p.en)}</td><td class="n">${fmt(c.dz)}</td><td class="n">${fmt(c.target)}</td><td><input class="cell" style="width:120px" data-col="sellDz" data-p="${p.id}" inputmode="decimal" value="${sp?esc(sp):""}" placeholder="–" ${canWrite?"":"disabled"}></td><td class="n">${pr==null?"–":fmt(pr)}</td><td class="n">${pr==null?"–":`<span class="chip ${pr<0?"bad":pr/sp<0.1?"warn":"good"}">${fmt(pr/sp*100)}%</span>`}</td></tr>`}).join("")}</tbody></table></div>
+  <p class="small muted" style="margin:0">Type the selling price per dozen. New sales fill it in automatically.</p>`;
+});
+V.retail.prices.bind=()=>bindCells(el=>{const p=Object.assign({},S.products[el.dataset.p]);p.sellDz=el.value===""?"":num(el.value);saveSoon("products",el.dataset.p,p)});
+V.retail.customers=()=>loadingOr(["customers","sales"],()=>{
+  const cs=list("customers").sort((a,b)=>a.name.localeCompare(b.name));
+  const owed=id=>list("sales").filter(s=>s.cust===id).reduce((a,s)=>a+saleTotal(s)-num(s.paid),0);
+  const total=id=>list("sales").filter(s=>s.cust===id).reduce((a,s)=>a+saleTotal(s),0);
+  return `<div class="bar"><div class="left sum"><span>Customers <b>${cs.length}</b></span></div><div class="right"><button class="btn primary" id="addC" ${canWrite?"":"disabled"}>Add customer</button></div></div>
+  ${cs.length?`<div class="tw"><table><thead><tr><th>Customer</th><th>Town / area</th><th>Phone</th><th class="n">Bought Ks</th><th class="n">Owes Ks</th><th>Note</th></tr></thead><tbody>${cs.map(c=>{const o=owed(c.id);return `<tr class="click" data-edit="${c.id}"><td>${esc(c.name)}</td><td>${esc(c.area||"")}</td><td>${esc(c.phone||"")}</td><td class="n">${fmt(total(c.id))}</td><td class="n">${o>0.5?`<span class="chip warn">${fmt(o)}</span>`:"–"}</td><td>${esc(c.note||"")}</td></tr>`}).join("")}</tbody></table></div>`:emptyState("No customers yet","Add the shops and agents you sell to.")}`;
+});
+function editCustomer(id){const c=id?S.customers[id]:{};openForm({title:id?"Edit "+c.name:"New customer",data:c,fields:[{k:"name",label:"Name"},{k:"area",label:"Town / area",half:1},{k:"phone",label:"Phone",half:1},{k:"deliveryKs",label:"Usual delivery charge (Ks)",type:"num"},{k:"note",label:"Note",type:"textarea"}],validate:d=>!d.name?"Enter a name":null,onSave:d=>save("customers",id||uid("k"),d,"Customer saved"),onDelete:id?()=>remove("customers",id,"Customer deleted"):null})}
+V.retail.customers.bind=()=>{$("#addC")&&($("#addC").onclick=()=>editCustomer(null));document.querySelectorAll("[data-edit]").forEach(r=>r.ondblclick=()=>editCustomer(r.dataset.edit))};
+
+/* ---- Settings ---- */
+V.settings=()=>{const st=set_();const lock=canWrite&&!canSystem?`<div class="banner">Only the owner can change settings. You can still enter and edit the factory records.</div>`:"";const f=(k,l,h)=>`<div class="field"><label for="st_${k}">${esc(l)}</label><input class="cell txt" id="st_${k}" data-col="${k}" inputmode="decimal" value="${esc(st[k])}" ${sysDis()}>${h?`<span class="small muted">${esc(h)}</span>`:""}</div>`;
+  return lock+`<section class="panel"><h3>Units and rules</h3><div class="pb" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+  ${f("gPerLb","Grams in 1 lb","453.59 g, as on the price sheet")}${f("gPerViss","Grams in 1 viss (ပိဿာ)","Your rope note uses 1,600 g")}${f("bigBagExtra","Extra cost per big bag (Ks)","Added to every big bag price, as in the Packaging sheet (cover)")}${f("cleanDays","Clean each mold every (days)")}${f("workDays","Paid working days per month")}
+  <div class="field"><label for="st_pl">Add piece labour ('Male L') to product cost?</label><select id="st_pl" data-k="includePieceLabour" ${sysDis()}><option value="1" ${st.includePieceLabour?"selected":""}>Yes</option><option value="" ${!st.includePieceLabour?"selected":""}>No</option></select></div>
+  </div></section>
+  <section class="panel"><h3>Product costing</h3><div class="pb" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+  <div class="field"><label for="st_sm">Female L (staff wages) per piece</label><select id="st_sm" data-k="staffMode" ${sysDis()}><option value="fixed" ${st.staffMode!=="auto"?"selected":""}>Fixed rate below</option><option value="auto" ${st.staffMode==="auto"?"selected":""}>Work out from each month's pay sheet</option></select></div>
+  ${f("staffPc","Fixed Female L (Ks per piece)","Your costing sheet uses 16.933")}
+  <div class="field"><label for="st_em">Electricity per piece</label><select id="st_em" data-k="elecMode" ${sysDis()}><option value="fixed" ${st.elecMode!=="auto"?"selected":""}>Fixed rate below</option><option value="auto" ${st.elecMode==="auto"?"selected":""}>Work out from each month's bills</option></select></div>
+  ${f("elecPc","Fixed electricity (Ks per piece)","Your costing sheet uses 21")}
+  ${f("maintPc","Maintenance (Ks per piece)")}${f("deliveryPc","Delivery (Ks per piece)")}${f("deprPc","Depreciation of molds and machines (Ks per piece)","Not set on your sheet yet")}${f("wastePct","Waste (% of material)","Not set on your sheet yet")}${f("riskPct","Risk allowance (%)")}${f("profitPct","Target profit (%)")}
+  </div></section>${canSystem?usersPanel()+suggestionsPanel():""}`};
+let USERS=null;
+async function loadUsers(){if(!SB||!canSystem)return;const {data}=await SB.from("app_users").select("user_id,email,username,role");USERS=data||[];if(UI.page==="settings")render()}
+function usersPanel(){if(USERS===null){loadUsers();return `<section class="panel"><h3>Users</h3><div class="pb muted">Loading…</div></section>`}
+  const R={owner:"Owner",editor:"Editor",viewer:"Viewer"};
+  return `<section class="panel"><h3>Users</h3><div class="pb" style="display:flex;flex-direction:column;gap:12px">
+   <div class="tw"><table><thead><tr><th>Username</th><th>Access</th><th></th></tr></thead><tbody>${USERS.map(u=>`<tr><td class="notr">${esc(u.username||toName(u.email))}</td><td>${u.role==="owner"?"Owner":sel([["editor","Editor"],["viewer","Viewer"]],u.role,`data-urole="${u.user_id}" aria-label="Access"`)}</td><td>${u.role==="owner"?"":`<button class="btn sm danger" data-udel="${u.user_id}">Remove access</button>`}</td></tr>`).join("")}</tbody></table></div>
+   <div class="frow" style="align-items:end"><div class="field"><label for="nuName">New username</label><input id="nuName" autocapitalize="none" spellcheck="false"></div><div class="field"><label for="nuPass">Password</label><input id="nuPass" type="password" autocomplete="new-password"></div><div class="field"><label for="nuRole">Access</label><select id="nuRole"><option value="viewer">Viewer (look only)</option><option value="editor">Editor (can enter records)</option></select></div></div>
+   <div><button class="btn primary" id="nuAdd">Add user</button> <span id="nuMsg" class="small"></span></div>
+   <div class="small muted">Viewers can see everything but change nothing. Editors can enter and change records but not Settings. Give the person their username and password yourself.</div></div></section>`}
+async function addUser(){const un=$("#nuName").value.trim(),pw=$("#nuPass").value,role=$("#nuRole").value,m=$("#nuMsg");const my=UI.lang==="my";
+  if(!/^[a-zA-Z0-9._-]{3,30}$/.test(un)){m.textContent=my?"အသုံးပြုသူအမည် - အင်္ဂလိပ်စာ/ဂဏန်း ၃ လုံးမှ ၃၀ လုံး":"Username: 3–30 letters or numbers, no spaces";return}
+  if(pw.length<6){m.textContent=my?"စကားဝှက် အနည်းဆုံး ၆ လုံး":"Password needs at least 6 characters";return}
+  $("#nuAdd").disabled=true;m.textContent=my?"ဖန်တီးနေသည်…":"Creating…";
+  try{const tmp=window.supabase.createClient(CFG.url,CFG.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:"ap-tmp"}});
+    const {data,error}=await tmp.auth.signUp({email:toEmail(un),password:pw});
+    if(error){m.textContent=/registered|exists/i.test(error.message)?(my?"ဤအမည် ရှိပြီးသား":"That username is already taken"):error.message;return}
+    if(!data.user){m.textContent="Could not create the user";return}
+    if(!data.session){m.textContent=my?"Supabase တွင် \"Confirm email\" ပိတ်ရန် လိုသည်":"Turn off \"Confirm email\" in Supabase, then add the user again.";return}
+    const r=await SB.from("app_users").insert({user_id:data.user.id,email:toEmail(un),username:un,role});
+    if(r.error){m.textContent=r.error.message;return}
+    toast((my?"ထည့်ပြီး - ":"Added: ")+un);$("#nuName").value="";$("#nuPass").value="";USERS=null;loadUsers();
+  }finally{$("#nuAdd").disabled=false}}
+function suggestionsPanel(){const xs=list("suggestions").sort((a,b)=>(b.date||"").localeCompare(a.date||""));return `<section class="panel"><h3>Suggestions</h3><div class="pb">${xs.length?`<div class="alerts">${xs.map(x=>`<div class="alert"><span class="sev info"></span><span><span class="notr">${esc(x.text)}</span><br><span class="small muted">${esc(x.by||"")} · ${esc(x.date||"")} · ${esc(x.page||"")}</span></span><button class="btn sm go" data-sgdel="${x.id}">Done</button></div>`).join("")}</div>`:`<div class="muted">No suggestions yet.</div>`}</div></section>`}
+V.settings.bind=()=>{const na=$("#nuAdd");if(na)na.onclick=addUser;document.querySelectorAll("[data-urole]").forEach(el=>el.onchange=async()=>{const r=await SB.from("app_users").update({role:el.value}).eq("user_id",el.dataset.urole);toast(r.error?r.error.message:"Saved");USERS=null;loadUsers()});document.querySelectorAll("[data-udel]").forEach(b=>b.onclick=async()=>{if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent=UI.lang==="my"?"ထပ်နှိပ်ပါ":"Tap again to remove";return}const r=await SB.from("app_users").delete().eq("user_id",b.dataset.udel);toast(r.error?r.error.message:"Removed");USERS=null;loadUsers()});document.querySelectorAll("[data-sgdel]").forEach(b=>b.onclick=()=>remove("suggestions",b.dataset.sgdel,"Removed"));document.querySelectorAll("#view .cell").forEach(el=>el.onchange=()=>{const st=JSON.parse(JSON.stringify(set_()));st[el.dataset.col]=num(el.value);save("settings","main",st,"Saved")});document.querySelectorAll("#view select[data-k]").forEach(s=>s.onchange=()=>{const st=JSON.parse(JSON.stringify(set_()));st[s.dataset.k]=s.dataset.k==="includePieceLabour"?!!s.value:s.value;save("settings","main",st,"Saved")})};
+
+/* ---------------- trend charts ---------------- */
+UI.trend={};UI.trendN=+(ls("ap.trendN")||6);UI.rMeasure=ls("ap.rMeasure")||"sold";UI.mMeasure=ls("ap.mMeasure")||"use";UI.mGroup=ls("ap.mGroup")||"Resin";
+function trendMonths(){const out=[];for(let i=UI.trendN-1;i>=0;i--)out.push(addMonth(UI.month,-i));return out}
+function svgLines(labels,series,{h=230,dec=0}={}){
+  const W=Math.max(380,labels.length*78),pl=54,pr=18,pt=16,pb=28,iw=W-pl-pr,ih=h-pt-pb;
+  const max=Math.max(1,...series.flatMap(s=>s.vals.map(v=>v||0)));const step=niceStep(max/4);const top=Math.ceil(max/step)*step;
+  const x=i=>pl+(labels.length<2?iw/2:iw*i/(labels.length-1)),y=v=>pt+ih-ih*(v||0)/top;
+  let g="";for(let v=0;v<=top+1e-9;v+=step)g+=`<line class="grid" x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}"/><text x="${pl-6}" y="${y(v)+4}" text-anchor="end">${fmtShort(v)}</text>`;
+  labels.forEach((l,i)=>g+=`<text x="${x(i)}" y="${h-8}" text-anchor="middle">${esc(l)}</text>`);
+  for(const s of series){const d=s.vals.map((v,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+    g+=`<path class="ln" d="${d}" style="stroke:${s.color}"/>`;
+    s.vals.forEach((v,i)=>{const last=i===s.vals.length-1;g+=`<circle cx="${x(i)}" cy="${y(v)}" r="${last?4.5:2.8}" style="fill:${last?s.color:"var(--surface)"};stroke:${s.color};stroke-width:2"><title>${esc(s.name)} · ${esc(labels[i])}: ${fmt(v,dec)}</title></circle>`})}
+  return `<div style="overflow-x:auto"><svg class="chart" viewBox="0 0 ${W} ${h}" width="100%" style="min-width:${Math.min(W,560)}px" role="img" aria-label="Trend chart">${g}</svg></div>`;
+}
+function trendPanel(key,months,rows,{unit="",dec=0,empty}){
+  const sum=a=>a.reduce((x,y)=>x+(y||0),0);
+  const ranked=rows.filter(r=>r.vals.some(v=>v)).sort((a,b)=>sum(b.vals)-sum(a.vals));
+  if(!ranked.length)return empty;
+  const st=UI.trend[key]||(UI.trend[key]={});
+  let sel=(st.sel||[]).filter(id=>ranked.some(r=>r.id===id));if(!sel.length)sel=ranked.slice(0,5).map(r=>r.id);st.sel=sel;
+  const colorOf=id=>{const i=sel.indexOf(id);return i<0?null:`var(--s${i%6+1})`};
+  const labels=months.map(m=>MN[+m.slice(5)-1]+(UI.trendN>6||months[0].slice(0,4)!==months[months.length-1].slice(0,4)?" "+m.slice(2,4):""));
+  const series=sel.map(id=>{const r=ranked.find(x=>x.id===id);return {name:r.name,vals:r.vals,color:colorOf(id)}});
+  const n=months.length;
+  const chg=r=>{const a=r.vals[n-2]||0,b=r.vals[n-1]||0;if(!a&&!b)return "–";if(!a)return '<span class="chip good">new</span>';const p=(b/a-1)*100;return `<span class="chip ${p>=5?"good":p<=-5?"bad":"mute"}">${p>0?"+":""}${fmt(p)}%</span>`};
+  return `<section class="panel"><div class="pb" style="display:flex;flex-direction:column;gap:12px">
+   <div class="chips" role="group" aria-label="Items shown on the chart">${ranked.slice(0,30).map(r=>{const c=colorOf(r.id);return `<button class="chipbtn" data-tk="${key}" data-id="${esc(r.id)}" aria-pressed="${!!c}"><i style="${c?"background:"+c:""}"></i>${esc(r.name)}</button>`}).join("")}</div>
+   ${svgLines(labels,series,{dec})}
+   <div class="small muted">Tap names to add or remove lines (up to 6). Hover a point for its value.</div></div></section>
+  <div class="tw"><table><thead><tr><th>Item</th>${labels.map(l=>`<th class="n">${esc(l)}</th>`).join("")}<th class="n">Total</th><th class="n">vs last month</th></tr></thead><tbody>
+  ${ranked.map(r=>{const c=colorOf(r.id);return `<tr><td>${c?`<span class="sw" style="background:${c};border:0"></span> `:""}${esc(r.name)}</td>${r.vals.map(v=>`<td class="n">${v?fmt(v,dec):"–"}</td>`).join("")}<td class="n"><b>${fmt(sum(r.vals),dec)}</b></td><td class="n">${chg(r)}</td></tr>`}).join("")}</tbody></table></div>
+  <p class="small muted" style="margin:0">Figures in ${esc(unit)}. "vs last month" compares ${mlabel(months[n-1])} with ${mlabel(months[n-2]||months[n-1])}.</p>`;
+}
+function bindTrend(){
+  document.querySelectorAll("[data-tk]").forEach(b=>b.onclick=()=>{const st=UI.trend[b.dataset.tk];const id=b.dataset.id;const i=st.sel.indexOf(id);if(i>=0){if(st.sel.length>1)st.sel.splice(i,1)}else{st.sel.push(id);if(st.sel.length>6)st.sel.shift()}render()});
+  document.querySelectorAll("[data-seg]").forEach(b=>b.onclick=()=>{UI[b.dataset.seg]=isNaN(+b.dataset.v)?b.dataset.v:+b.dataset.v;ls("ap."+b.dataset.seg,b.dataset.v);render()});
+}
+const seg=(k,opts)=>`<div class="seg" role="group">${opts.map(([v,l])=>`<button data-seg="${k}" data-v="${v}" aria-pressed="${String(UI[k])===String(v)}">${esc(l)}</button>`).join("")}</div>`;
+V.retail.trends=()=>loadingOr(["sales","products","production"],()=>{
+  const months=trendMonths();const M=UI.rMeasure;
+  const rows=products().map(p=>({id:p.id,name:p.en+(p.my&&p.my!==p.en?" · "+p.my:""),vals:months.map(m=>{
+    if(M==="made")return num(prodDoc(m).bags?.[p.id])*num(p.dzPerBag);
+    return list("sales").filter(s=>ym(s.date)===m).reduce((a,s)=>a+(s.lines||[]).filter(l=>l.p===p.id).reduce((b,l)=>b+(M==="value"?num(l.dz)*num(l.price):num(l.dz)),0),0)})}));
+  const unit=M==="value"?"kyat":"dozens";
+  return `<div class="bar"><div class="left">${seg("rMeasure",[["sold","Dozens sold"],["value","Sales Ks"],["made","Dozens produced"]])}</div><div class="right">${seg("trendN",[[6,"6 months"],[12,"12 months"]])}</div></div>
+  ${trendPanel("retail-"+M,months,rows,{unit,dec:M==="value"?0:1,empty:emptyState(M==="made"?"No production in these months":"No sales recorded in these months",M==="made"?"Fill in the production sheet to see the trend.":"Record sales in the Sales tab and each product's monthly trend appears here. Switch to Dozens produced to see output trends now.",M==="made"?"":`<button class="btn" data-seg="rMeasure" data-v="made">Show dozens produced</button>`)})}`;
+});
+V.retail.trends.bind=bindTrend;
+V.raw.trends=()=>loadingOr(["materials","stock","production","products","recipes"],()=>{
+  const months=trendMonths();const M=UI.mMeasure,G=UI.mGroup;const st=set_();
+  const mats=list("materials").filter(m=>G==="All"||m.group===G);
+  const per={};months.forEach(m=>{
+    if(M==="use"){per[m]=expectedUse(m)}
+    else{const o={};list("stock").filter(x=>ym(x.date)===m&&x.kind===(M==="issued"?"out":"in")).forEach(x=>{const mt=S.materials[x.mat];o[x.mat]=(o[x.mat]||0)+(M==="received"?num(x.qty)*num(x.price):num(x.qty)*gPerUnit(mt))});per[m]=o}});
+  const asG=G==="Colour";
+  const conv=(id,v)=>M==="received"?v:(asG?v:v/st.gPerLb);
+  const rows=mats.map(m=>({id:m.id,name:m.name,vals:months.map(mo=>conv(m.id,per[mo][m.id]||0))}));
+  const unit=M==="received"?"kyat":asG?"grams":"lb";
+  const totals=months.map((mo,i)=>rows.reduce((a,r)=>a+r.vals[i],0));
+  return `<div class="bar"><div class="left">${seg("mMeasure",[["use","Used by production"],["issued","Issued"],["received","Bought Ks"]])}${seg("mGroup",[["Resin","Resin"],["B grade","B grade"],["Colour","Colour"],["Packaging","Packaging"],["All","All"]])}</div><div class="right">${seg("trendN",[[6,"6 months"],[12,"12 months"]])}</div></div>
+  ${totals.some(Boolean)?`<section class="panel"><h3>Total ${esc(G==="All"?"materials":G.toLowerCase())} per month (${unit})</h3><div class="pb">${svgBars(months.map((m,i)=>({l:MN[+m.slice(5)-1],v:totals[i]})),{unit:" "+unit})}</div></section>`:""}
+  ${trendPanel("raw-"+M+G,months,rows,{unit,dec:asG?0:1,empty:emptyState("Nothing to show for these months",M==="use"?(G==="Packaging"?"Packaging use is not worked out from mixes. Record issues to see it.":"Fill in the production sheet; use is worked out from each product's mix."):"Record materials received and issued in the Receive / issue tab to see this trend.")})}
+  ${M==="use"?'<p class="small muted" style="margin:0">"Used by production" = pieces produced × piece weight, split by each product\'s mix.</p>':""}`;
+});
+V.raw.trends.bind=bindTrend;
+
+/* ---------------- colour lab ---------------- */
+// Estimated swatches for each powder at 70 g per 85 lb Clean. Calibrate against real test plates in the Powders table.
+const SW_DEFAULT={"m-c11426":["#1F4FA8",1],"m-c11471":["#0A6FCF",1],"m-c11527":["#138A4A",1],"m-cgreen758":["#0E6B5C",1],"m-c11250":["#F6C700",1],"m-c12211":["#E84F95",1],"m-c11622":["#E0457F",1],"m-cdarkpink990":["#B0145F",1],"m-c12214":["#F27A0F",1],"m-c11122":["#C8202A",1],"m-c11625":["#6B3FA0",1],"m-c11522":["#6FAE3A",1],"m-c11554":["#5E9E33",0],"m-mbblack":["#1E1E1E",1],"m-c11449":["#F4F7FF",0],"m-c11427":["#7FA7D9",0],"m-c11123":["#D97F86",0],"m-c11539":["#8CC7A0",0],"m-c11132":["#E8A6C4",0]};
+UI.lab=(()=>{try{return Object.assign({hex:"#2E8B57",base:"clean",batchLb:85,maxP:3,v:.75,mix:[]},JSON.parse(ls("ap.lab")||"{}"))}catch(e){return {hex:"#2E8B57",base:"clean",batchLb:85,maxP:3,v:.75,mix:[]}}})();
+const saveLab=()=>ls("ap.lab",JSON.stringify(Object.assign({},UI.lab,{results:undefined})));
+function hex2rgb(h){h=String(h||"#000").replace("#","");if(h.length===3)h=h.split("").map(c=>c+c).join("");const n=parseInt(h,16)||0;return [(n>>16)&255,(n>>8)&255,n&255]}
+function rgb2hex(c){return "#"+c.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join("")}
+const s2l=c=>{c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4)};
+const l2s=c=>{c=Math.max(0,Math.min(1,c));return 255*(c<=0.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-0.055)};
+const lin=hex=>hex2rgb(hex).map(s2l);
+const KS=r=>{r=Math.min(0.999,Math.max(0.001,r));return (1-r)*(1-r)/(2*r)};
+const RKS=k=>{k=Math.max(1e-6,k);return 1+k-Math.sqrt(k*k+2*k)};
+function toLab(l){const [r,g,b]=l;const X=(r*0.4124+g*0.3576+b*0.1805)/0.95047,Y=r*0.2126+g*0.7152+b*0.0722,Z=(r*0.0193+g*0.1192+b*0.9505)/1.08883;const f=t=>t>0.008856?Math.cbrt(t):7.787*t+16/116;const fx=f(X),fy=f(Y),fz=f(Z);return [116*fy-16,500*(fx-fy),200*(fy-fz)]}
+const dE76=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+function dE00(A,B){const [L1,a1,b1]=A,[L2,a2,b2]=B,R=Math.PI/180;const C1=Math.hypot(a1,b1),C2=Math.hypot(a2,b2),Cm=(C1+C2)/2,G=0.5*(1-Math.sqrt(Math.pow(Cm,7)/(Math.pow(Cm,7)+6103515625)));
+  const a1p=(1+G)*a1,a2p=(1+G)*a2,C1p=Math.hypot(a1p,b1),C2p=Math.hypot(a2p,b2);const hh=(x,y)=>{if(!x&&!y)return 0;const t=Math.atan2(y,x)/R;return t<0?t+360:t};const h1=hh(a1p,b1),h2=hh(a2p,b2);
+  let dh=0;if(C1p*C2p){dh=h2-h1;if(dh>180)dh-=360;else if(dh<-180)dh+=360}const dL=L2-L1,dC=C2p-C1p,dH=2*Math.sqrt(C1p*C2p)*Math.sin(dh*R/2);const Lm=(L1+L2)/2,Cpm=(C1p+C2p)/2;
+  let hm=h1+h2;if(C1p*C2p){hm=Math.abs(h1-h2)>180?(h1+h2+(h1+h2<360?360:-360))/2:(h1+h2)/2}
+  const T=1-0.17*Math.cos((hm-30)*R)+0.24*Math.cos(2*hm*R)+0.32*Math.cos((3*hm+6)*R)-0.2*Math.cos((4*hm-63)*R);const dT=30*Math.exp(-Math.pow((hm-275)/25,2));const Rc=2*Math.sqrt(Math.pow(Cpm,7)/(Math.pow(Cpm,7)+6103515625));
+  const Sl=1+0.015*Math.pow(Lm-50,2)/Math.sqrt(20+Math.pow(Lm-50,2)),Sc=1+0.045*Cpm,Sh=1+0.015*Cpm*T,Rt=-Math.sin(2*dT*R)*Rc;return Math.sqrt(Math.pow(dL/Sl,2)+Math.pow(dC/Sc,2)+Math.pow(dH/Sh,2)+Rt*(dC/Sc)*(dH/Sh))}
+function hsv2rgb(h,s,v){const f=n=>{const k=(n+h/60)%6;return v-v*s*Math.max(0,Math.min(k,4-k,1))};return [f(5)*255,f(3)*255,f(1)*255]}
+function rgb2hsv([r,g,b]){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}return [h,mx?d/mx:0,mx]}
+const BASE_DEF={clean:"#ECEBE4",normal:"#D6D0BE"};
+const labBaseHex=k=>(set_().labBase||{})[k]||BASE_DEF[k];
+function labPowders(){return list("materials").filter(m=>m.group==="Colour").map(m=>{const d=SW_DEFAULT[m.id];const hex=m.swatch||d?.[0];if(!hex)return null;return {id:m.id,name:m.name,code:m.code||"",hex,g:num(m.swatchG)||70,inc:m.labUse!==undefined?!!m.labUse:!!d?.[1],pg:matPerG(m)||0,est:!m.swatch}}).filter(Boolean).sort((a,b)=>a.name.localeCompare(b.name))}
+function unitK(p){const c=lin(labBaseHex("clean")).map(KS);return lin(p.hex).map((v,i)=>(KS(v)-c[i])/p.g)}
+function predictLin(baseHex,parts){const k=lin(baseHex).map(KS);for(const {p,g} of parts){const u=unitK(p);for(let i=0;i<3;i++)k[i]+=u[i]*g}return k.map(RKS)}
+const linHex=l=>rgb2hex(l.map(l2s));
+function labSearch(targetHex,baseHex,pw,maxP){
+  const tL=toLab(lin(targetHex)),bK=lin(baseHex).map(KS);const P=pw.map(p=>({p,u:unitK(p)}));
+  const ev=(idx,gs)=>{const k=bK.slice();for(let n=0;n<idx.length;n++){const u=P[idx[n]].u;for(let i=0;i<3;i++)k[i]+=u[i]*gs[n]}return dE76(toLab(k.map(RKS)),tL)};
+  const combos=[];const rec=(st,acc)=>{if(acc.length)combos.push(acc.slice());if(acc.length===maxP)return;for(let i=st;i<P.length;i++){acc.push(i);rec(i+1,acc);acc.pop()}};rec(0,[]);
+  const res=[];
+  for(const idx of combos){let gs=idx.map(()=>40),best=ev(idx,gs),f=3;
+    for(let it=0;it<60&&f>1.004;it++){let imp=false;for(let n=0;n<idx.length;n++)for(const m of [f,1/f]){const t=gs.slice();t[n]=Math.min(4000,Math.max(0.05,t[n]*m));const e=ev(idx,t);if(e<best-1e-7){best=e;gs=t;imp=true}}if(!imp)f=Math.sqrt(f)}
+    const parts=idx.map((j,n)=>({p:P[j].p,g:gs[n]})).filter(x=>x.g>=0.3);if(!parts.length)continue;
+    const pl=predictLin(baseHex,parts);
+    res.push({parts,e00:dE00(toLab(pl),tL),hex:linHex(pl)})}
+  res.forEach(r=>r.score=r.e00+0.8*(r.parts.length-1)+r.parts.filter(x=>x.g<1).length*0.6);res.sort((a,b)=>a.score-b.score);
+  const out=[],seen=new Set();for(const r of res){const k=r.parts.map(x=>x.p.id).sort().join("+");if(seen.has(k)||!r.parts.length)continue;seen.add(k);out.push(r);if(out.length===3)break}
+  return {out,tL,baseL:toLab(lin(baseHex))};
+}
+function ratioText(parts){const mn=Math.min(...parts.map(x=>x.g));return parts.map(x=>fmt(x.g/mn,x.g/mn<10?1:0).replace(/\.0$/,"")).join(" : ")}
+function matchChip(e){return e<2?'<span class="chip good">Very close</span>':e<5?'<span class="chip good">Close match</span>':e<10?'<span class="chip warn">Rough match</span>':'<span class="chip bad">Not reachable with these powders</span>'}
+function textOn(hex){const l=toLab(lin(hex))[0];return l>60?"":"lt"}
+V.lab=()=>loadingOr(["materials"],()=>{
+  const L=UI.lab;const pw=labPowders();const inc=pw.filter(p=>p.inc);
+  const myMixes=list("recipes").map(r=>{const lines=r.lines||[];if(lines.some(l=>String(l.mat).startsWith("r:")))return null;
+    const resin=lines.filter(l=>l.unit==="lb"&&["Resin"].includes(S.materials[l.mat]?.group)).reduce((a,l)=>a+num(l.qty),0);if(!resin)return null;
+    const parts=lines.map(l=>({p:pw.find(p=>p.id===l.mat),g:lineGrams(l)*85/resin})).filter(x=>x.p);if(!parts.length)return null;
+    const base=lines.some(l=>l.mat==="m-normal")?"normal":"clean";return {name:r.name,hex:linHex(predictLin(labBaseHex(base),parts))}}).filter(Boolean);
+  return `<div class="banner">Predictions come from the swatch colour set for each powder. They are a starting point for a test batch, not a guarantee. Make a small plate, compare, and correct the swatch in the Powders table so the next prediction is better.</div>
+  <div class="lab">
+   <section class="panel"><h3>Target colour</h3><div class="pb" style="display:flex;flex-direction:column;gap:12px">
+    <div class="wheelbox" id="wheelbox"><canvas id="wheel" width="240" height="240" aria-label="Colour wheel"></canvas><div class="marker" id="marker"></div></div>
+    <div class="field"><label for="labV">Lightness</label><input type="range" id="labV" min="0.05" max="1" step="0.01" value="${L.v}"></div>
+    <div class="tgt" id="tgtSw" style="background:${esc(L.hex)}"></div>
+    <div class="frow"><div class="field"><label for="labHex">Colour code</label><input id="labHex" value="${esc(L.hex)}" maxlength="7"></div><div class="field"><label for="labPick">Picker</label><input type="color" id="labPick" class="colorin" value="${esc(L.hex)}"></div></div>
+    <div class="field"><label for="labPhoto">Or pick from a photo of a sample</label><input type="file" id="labPhoto" accept="image/*"></div>
+    <div class="photo" id="photoBox" hidden><canvas id="photoCv"></canvas><span class="small muted">Tap the photo to take its colour.</span></div>
+    <div class="frow">
+     <div class="field"><label for="labBase">Base resin</label><select id="labBase"><option value="clean" ${L.base==="clean"?"selected":""}>Clean</option><option value="normal" ${L.base==="normal"?"selected":""}>Normal + Regrind</option></select></div>
+     <div class="field"><label for="labLb">Batch size (lb resin)</label><input id="labLb" inputmode="decimal" value="${esc(L.batchLb)}"></div>
+     <div class="field"><label for="labMax">Most powders in a mix</label><select id="labMax">${[1,2,3].map(n=>`<option ${+L.maxP===n?"selected":""}>${n}</option>`).join("")}</select></div>
+    </div>
+    ${myMixes.length?`<div class="field"><label>Your current mixes (predicted)</label><div class="chips">${myMixes.map(m=>`<button class="swbtn" data-tgt="${m.hex}" title="${esc(m.name)}"><span class="sw" style="background:${m.hex}"></span>${esc(m.name.replace(/^Lid: |^K Pu /,""))}</button>`).join("")}</div></div>`:""}
+   </div></section>
+   <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+    <section class="panel"><h3>Suggested mixes</h3><div class="pb" id="labResults">${inc.length?'<div class="muted">Working out…</div>':emptyState("No powders switched on","Turn on at least one powder in the Powders table below.")}</div></section>
+    <section class="panel"><h3>Test a mix by hand</h3><div class="pb" id="labMixer"></div></section>
+   </div>
+  </div>
+  <section class="panel"><h3>Powders</h3><div class="pb" style="display:flex;flex-direction:column;gap:10px">
+   <div class="small muted">Swatch = the colour a batch turns out with the stated grams in 85 lb of Clean resin. Swatches marked "estimate" are guesses from the powder name; set them from a real plate.</div>
+   <div class="tw"><table><thead><tr><th>Use</th><th>Powder</th><th>Code</th><th>Swatch</th><th class="n">Grams per 85 lb for swatch</th><th class="n">Ks per g</th><th></th></tr></thead><tbody>
+   ${pw.map(p=>`<tr><td><input type="checkbox" data-pinc="${p.id}" ${p.inc?"checked":""} aria-label="Use ${esc(p.name)}" ${canWrite?"":"disabled"}></td><td>${esc(p.name)}</td><td class="n">${esc(p.code)}</td><td><input type="color" class="colorin" data-psw="${p.id}" value="${esc(p.hex)}" aria-label="Swatch for ${esc(p.name)}" ${canWrite?"":"disabled"}></td><td><input class="cell" style="width:90px" data-pg="${p.id}" inputmode="decimal" value="${esc(p.g)}" ${canWrite?"":"disabled"}></td><td class="n">${fmt(p.pg,1)}</td><td>${p.est?'<span class="chip warn">estimate</span>':'<span class="chip good">set</span>'}</td></tr>`).join("")}
+   </tbody></table></div>
+   <div class="frow" style="max-width:420px"><div class="field"><label for="bClean">Clean resin with no colour</label><input type="color" class="colorin" id="bClean" value="${labBaseHex("clean")}" ${sysDis()}></div><div class="field"><label for="bNormal">Normal + Regrind with no colour</label><input type="color" class="colorin" id="bNormal" value="${labBaseHex("normal")}" ${sysDis()}></div></div>
+  </div></section>`;
+});
+let labTimer=null;
+function labSetTarget(hex,{fromWheel}={}){
+  if(!/^#[0-9a-fA-F]{6}$/.test(hex))return;UI.lab.hex=hex.toLowerCase();
+  const sw=$("#tgtSw");if(sw)sw.style.background=hex;const hi=$("#labHex");if(hi&&document.activeElement!==hi)hi.value=hex;const pk=$("#labPick");if(pk)pk.value=hex;
+  const [h,s,v]=rgb2hsv(hex2rgb(hex));if(!fromWheel&&Math.abs(v-UI.lab.v)>0.005){UI.lab.v=Math.max(0.05,v);const vs=$("#labV");if(vs)vs.value=UI.lab.v;drawWheel()}
+  placeMarker(h,s);saveLab();clearTimeout(labTimer);labTimer=setTimeout(labCompute,220);renderMixer();
+}
+function drawWheel(){const cv=$("#wheel");if(!cv)return;const dpr=Math.min(2,window.devicePixelRatio||1),N=Math.round(240*dpr);cv.width=N;cv.height=N;const ctx=cv.getContext("2d");const img=ctx.createImageData(N,N),R=N/2,v=UI.lab.v;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const dx=x-R+.5,dy=y-R+.5,r=Math.hypot(dx,dy),o=(y*N+x)*4;if(r>R){img.data[o+3]=0;continue}let h=Math.atan2(dy,dx)*180/Math.PI;if(h<0)h+=360;const c=hsv2rgb(h,Math.min(1,r/R),v);img.data[o]=c[0];img.data[o+1]=c[1];img.data[o+2]=c[2];img.data[o+3]=255}
+  ctx.putImageData(img,0,0)}
+function placeMarker(h,s){const m=$("#marker");if(!m)return;const a=h*Math.PI/180;m.style.left=(120+Math.cos(a)*s*120)+"px";m.style.top=(120+Math.sin(a)*s*120)+"px";m.style.background=UI.lab.hex}
+function labCompute(){
+  const box=$("#labResults");if(!box)return;const L=UI.lab;const inc=labPowders().filter(p=>p.inc);if(!inc.length)return;
+  const baseHex=labBaseHex(L.base);const {out,tL,baseL}=labSearch(L.hex,baseHex,inc,+L.maxP||3);L.results=out;
+  const k=num(L.batchLb)/85||1;
+  const lighter=tL[0]>baseL[0]+3;
+  if(dE00(tL,baseL)<2){box.innerHTML=`<div class="empty"><b>No colour powder needed</b><div>This is the colour of the ${L.base==="clean"?"Clean":"Normal + Regrind"} resin by itself.</div></div>`;return}
+  box.innerHTML=(lighter?`<div class="banner" style="margin-bottom:10px">This colour is lighter than the ${L.base==="clean"?"Clean":"Normal + Regrind"} base. Colour powder can only darken it, so the match will fall short.${L.base==="normal"?" Try the Clean base.":""}</div>`:"")+`<div class="sugs">${out.map((r,i)=>{const cost=r.parts.reduce((a,x)=>a+x.g*k*x.p.pg,0);return `<div class="sug">
+    <div class="pair"><div style="background:${esc(L.hex)}" class="${textOn(L.hex)}">Target</div><div style="background:${r.hex}" class="${textOn(r.hex)}">Predicted</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">${matchChip(r.e00)}<span class="small muted">ΔE ${fmt(r.e00,1)}</span></div>
+    <table><tbody>${r.parts.map(x=>`<tr><td><span class="sw" style="background:${x.p.hex}"></span> ${esc(x.p.name)}</td><td class="n"><b>${fmt(x.g*k,x.g*k<10?1:0)} g</b></td></tr>`).join("")}</tbody></table>
+    ${r.parts.length>1?`<div class="ratio">Ratio ${ratioText(r.parts)}</div>`:""}
+    <div class="small muted">For ${fmt(L.batchLb)} lb ${L.base==="clean"?"Clean":"Normal + Regrind"} · colour cost ${ks(cost)} per batch</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" data-try="${i}">Adjust by hand</button><button class="btn sm primary" data-savemix="${i}" ${canWrite?"":"disabled"}>Save as mix</button></div></div>`}).join("")}</div>`;
+  box.querySelectorAll("[data-try]").forEach(b=>b.onclick=()=>{const r=out[+b.dataset.try];L.mix=r.parts.map(x=>({id:x.p.id,g:+(x.g*k).toFixed(1)}));saveLab();renderMixer();$("#labMixer").scrollIntoView({behavior:"smooth",block:"nearest"})});
+  box.querySelectorAll("[data-savemix]").forEach(b=>b.onclick=()=>saveLabMix(out[+b.dataset.savemix].parts.map(x=>({id:x.p.id,g:x.g*k}))));
+}
+function saveLabMix(parts){
+  const L=UI.lab,lb=num(L.batchLb)||85;
+  const base=L.base==="normal"?[{mat:"m-normal",qty:+(lb*55/85).toFixed(2),unit:"lb"},{mat:"m-regrind",qty:+(lb*30/85).toFixed(2),unit:"lb"}]:[{mat:"m-clean",qty:lb,unit:"lb"}];
+  const lines=base.concat([{mat:"m-whiteoil",qty:+(38*lb/85).toFixed(1),unit:"g"}],parts.map(x=>({mat:x.id,qty:+x.g.toFixed(1),unit:"g"})));
+  openForm({title:"Save colour as a mix",data:{name:"Colour "+L.hex.toUpperCase(),note:"Made in Colour Lab from target "+L.hex.toUpperCase()},fields:[{k:"name",label:"Mix name",help:"Give it the colour name your team uses"},{k:"note",label:"Note",type:"textarea"}],
+    extra:()=>`<table><tbody>${lines.map(l=>`<tr><td>${esc(S.materials[l.mat]?.name||l.mat)}</td><td class="n">${fmt(l.qty,1)} ${l.unit}</td></tr>`).join("")}</tbody></table>`,
+    validate:d=>!d.name?"Name the mix":null,onSave:d=>save("recipes",uid("r"),{name:d.name,note:d.note,lines,labHex:L.hex},"Mix saved. Find it under Raw Materials → Mixes")});
+}
+function renderMixer(){
+  const box=$("#labMixer");if(!box)return;const L=UI.lab;const pw=labPowders();const k=num(L.batchLb)/85||1;
+  const parts=(L.mix||[]).map(x=>({p:pw.find(p=>p.id===x.id),g:num(x.g)/k})).filter(x=>x.p);
+  const pl=predictLin(labBaseHex(L.base),parts);const hex=linHex(pl);const e=dE00(toLab(pl),toLab(lin(L.hex)));
+  box.innerHTML=`<div style="display:flex;flex-direction:column;gap:10px">
+   <div class="pair"><div style="background:${esc(L.hex)}" class="${textOn(L.hex)}">Target</div><div style="background:${hex}" class="${textOn(hex)}">This mix</div></div>
+   <div style="display:flex;justify-content:space-between;align-items:center">${parts.length?matchChip(e):'<span class="muted small">Add a powder to start</span>'}<span class="small muted">${parts.length?"ΔE "+fmt(e,1):""}</span></div>
+   <div class="lines">${(L.mix||[]).map((x,i)=>`<div class="ln" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr) auto"><div>${sel(pw.map(p=>[p.id,p.name]),x.id,`data-mi="${i}" data-mk="id" aria-label="Powder"`)}</div><input data-mi="${i}" data-mk="g" inputmode="decimal" value="${esc(x.g)}" aria-label="Grams"><button class="btn sm" data-mrm="${i}" aria-label="Remove">✕</button></div>`).join("")}</div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="mAdd">Add powder</button>${parts.length?`<button class="btn sm primary" id="mSave" ${canWrite?"":"disabled"}>Save as mix</button>`:""}</div>
+   <div class="small muted">Grams for ${fmt(L.batchLb)} lb of resin. The preview updates as you type.</div></div>`;
+  box.querySelectorAll("[data-mk]").forEach(el=>{el.oninput=el.onchange=()=>{const m=L.mix[+el.dataset.mi];m[el.dataset.mk]=el.dataset.mk==="g"?el.value:el.value;saveLab();
+    const parts2=L.mix.map(x=>({p:pw.find(p=>p.id===x.id),g:num(x.g)/k})).filter(x=>x.p);const pl2=predictLin(labBaseHex(L.base),parts2);const h2=linHex(pl2);const d=box.querySelector(".pair div:last-child");d.style.background=h2;d.className=textOn(h2);
+    const e2=dE00(toLab(pl2),toLab(lin(L.hex)));box.querySelector(".pair").nextElementSibling.innerHTML=`${matchChip(e2)}<span class="small muted">ΔE ${fmt(e2,1)}</span>`;if(el.tagName==="SELECT")renderMixer()}});
+  box.querySelectorAll("[data-mrm]").forEach(b=>b.onclick=()=>{L.mix.splice(+b.dataset.mrm,1);saveLab();renderMixer()});
+  $("#mAdd").onclick=()=>{L.mix=L.mix||[];L.mix.push({id:pw[0]?.id,g:10});saveLab();renderMixer()};
+  const sv=$("#mSave");if(sv)sv.onclick=()=>saveLabMix(L.mix.filter(x=>num(x.g)>0).map(x=>({id:x.id,g:num(x.g)})));
+}
+V.lab.bind=()=>{
+  const L=UI.lab;drawWheel();const [h,s]=rgb2hsv(hex2rgb(L.hex));placeMarker(h,s);
+  const box=$("#wheelbox"),cv=$("#wheel");
+  const pick=e=>{const r=cv.getBoundingClientRect();const dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2;const rad=r.width/2;let s=Math.min(1,Math.hypot(dx,dy)/rad);let h=Math.atan2(dy,dx)*180/Math.PI;if(h<0)h+=360;labSetTarget(rgb2hex(hsv2rgb(h,s,L.v)),{fromWheel:true})};
+  let down=false;cv.addEventListener("pointerdown",e=>{down=true;cv.setPointerCapture(e.pointerId);pick(e)});cv.addEventListener("pointermove",e=>{if(down)pick(e)});cv.addEventListener("pointerup",()=>down=false);
+  $("#labV").oninput=e=>{L.v=+e.target.value;drawWheel();const [h,s]=rgb2hsv(hex2rgb(L.hex));labSetTarget(rgb2hex(hsv2rgb(h,s,L.v)),{fromWheel:true})};
+  $("#labHex").oninput=e=>{let v=e.target.value.trim();if(!v.startsWith("#"))v="#"+v;if(/^#[0-9a-fA-F]{6}$/.test(v))labSetTarget(v)};
+  $("#labPick").oninput=e=>labSetTarget(e.target.value);
+  $("#labBase").onchange=e=>{L.base=e.target.value;saveLab();labCompute();renderMixer()};
+  $("#labLb").onchange=e=>{L.batchLb=num(e.target.value)||85;saveLab();labCompute();renderMixer()};
+  $("#labMax").onchange=e=>{L.maxP=+e.target.value;saveLab();labCompute()};
+  document.querySelectorAll("[data-tgt]").forEach(b=>b.onclick=()=>labSetTarget(b.dataset.tgt));
+  $("#labPhoto").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);const img=new Image();img.onload=()=>{const pc=$("#photoCv");const w=Math.min(img.width,600),hgt=Math.round(img.height*w/img.width);pc.width=w;pc.height=hgt;pc.getContext("2d").drawImage(img,0,0,w,hgt);$("#photoBox").hidden=false;URL.revokeObjectURL(url)};img.src=url};
+  $("#photoCv").onclick=e=>{const pc=e.target,r=pc.getBoundingClientRect();const x=Math.round((e.clientX-r.left)*pc.width/r.width),y=Math.round((e.clientY-r.top)*pc.height/r.height);const d=pc.getContext("2d").getImageData(Math.max(0,x-3),Math.max(0,y-3),7,7).data;let c=[0,0,0],n=0;for(let i=0;i<d.length;i+=4){c[0]+=d[i];c[1]+=d[i+1];c[2]+=d[i+2];n++}labSetTarget(rgb2hex(c.map(v=>v/n)))};
+  const upd=(id,patch)=>{const m=Object.assign({},S.materials[id],patch);save("materials",id,m,"Powder saved")};
+  document.querySelectorAll("[data-pinc]").forEach(c=>c.onchange=()=>upd(c.dataset.pinc,{labUse:c.checked}));
+  document.querySelectorAll("[data-psw]").forEach(c=>c.onchange=()=>upd(c.dataset.psw,{swatch:c.value}));
+  document.querySelectorAll("[data-pg]").forEach(c=>c.onchange=()=>upd(c.dataset.pg,{swatchG:num(c.value)||70}));
+  const sb=(id,k)=>{const el=$(id);if(el)el.onchange=()=>{const st=JSON.parse(JSON.stringify(set_()));st.labBase=Object.assign({},st.labBase||{},{[k]:el.value});save("settings","main",st,"Saved")}};sb("#bClean","clean");sb("#bNormal","normal");
+  renderMixer();setTimeout(labCompute,30);
+};
+
+/* ---------------- language: English / Myanmar ---------------- */
+let DICT={};try{DICT=JSON.parse(document.getElementById("i18nDict").textContent)}catch(e){}
+UI.lang=ls("ap.lang")==="my"?"my":"en";
+const MY_MON=["ဇန်နဝါရီ","ဖေဖော်ဝါရီ","မတ်","ဧပြီ","မေ","ဇွန်","ဇူလိုင်","ဩဂုတ်","စက်တင်ဘာ","အောက်တိုဘာ","နိုဝင်ဘာ","ဒီဇင်ဘာ"];
+const MY_MS=["ဇန်","ဖေ","မတ်","ဧ","မေ","ဇွန်","ဇူ","ဩ","စက်","အောက်","နို","ဒီ"];
+const MRX="(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)";
+const mIdx=s=>MN.indexOf(s);
+const UNIT={kyat:"ကျပ်",dozens:"ဒါဇင်",lb:"ပေါင်",grams:"ဂရမ်"};
+const tm=s=>String(s).replace(new RegExp(MRX+" (\\d{4})","g"),(x,a,b)=>MY_MON[mIdx(a)]+" "+b);
+const PAT=[
+ [new RegExp("^"+MRX+" (\\d{4})$"),(x,a,b)=>MY_MON[mIdx(a)]+" "+b],
+ [new RegExp("^"+MRX+"( \\d\\d)?$"),(x,a,b)=>MY_MS[mIdx(a)]+(b||"")],
+ [/^([\d,.\-−+]+) Ks$/,(x,a)=>a+" ကျပ်"],
+ [/^([\d,.]+) dz$/,(x,a)=>a+" ဒါဇင်"],
+ [/^([\d,.]+) Ks per dozen$/,(x,a)=>"တစ်ဒါဇင် "+a+" ကျပ်"],
+ [/^([\d,.]+) big bags(?: · ([+-]?[\d,.]+)% vs (\w+))?$/,(x,a,p,m)=>a+" အိတ်"+(p?` · ${MY_MS[mIdx(m)]}လထက် ${p}%`:"")],
+ [/^(\d+) sales? this month$/,(x,a)=>"ဤလ အရောင်း "+a+" ကြိမ်"],
+ [/^(.+) electricity$/,(x,a)=>tm(a)+" လျှပ်စစ်"],
+ [/^No production entered for (.+)\.$/,(x,a)=>tm(a)+" အတွက် ထုတ်လုပ်မှု မထည့်ရသေးပါ။"],
+ [/^Payroll sheet for (.+) not started\.$/,(x,a)=>tm(a)+" လစာစာရင်း မစရသေးပါ။"],
+ [/^Electricity bill for (.+) not entered\.$/,(x,a)=>tm(a)+" မီတာခ မထည့်ရသေးပါ။"],
+ [/^(.+): packed by female labour (.+) dz but production sheet says (.+) dz \(gap (.+) dz\)\.$/,(x,a,b,c,d)=>`${tm(a)} - အမျိုးသမီးလုပ်သား ထုပ်ပိုးမှု ${b} ဒါဇင်၊ ထုတ်လုပ်မှုစာရင်းတွင် ${c} ဒါဇင် (ကွာခြား ${d} ဒါဇင်)။`],
+ [/^Electricity per dozen rose (.+)% from (.+) \((.+) → (.+) Ks\/dz\)\.$/,(x,a,b,c,d)=>`တစ်ဒါဇင် လျှပ်စစ်စရိတ် ${tm(b)} ထက် ${a}% တက်လာသည် (${c} → ${d} ကျပ်/ဒါဇင်)။`],
+ [/^(.+) is low: (.+) left \(minimum (.+)\)\.$/,(x,a,b,c)=>`${a} နည်းနေသည် - ${b} ကျန် (အနည်းဆုံး ${c})။`],
+ [/^(\d+) molds? (?:are|is) past the (\d+)-day cleaning interval\.$/,(x,a,b)=>`မိုလ် ${a} ခု သန့်ရှင်းရေး ${b} ရက် ကျော်နေပြီ။`],
+ [/^(\d+) products? ha(?:s|ve) no body mix set, so cost cannot be worked out: (.+)\.$/,(x,a,b)=>`ကုန်ပစ္စည်း ${a} မျိုးတွင် ရောစပ်နည်း မသတ်မှတ်ရသေး၍ ကုန်ကျစရိတ် မတွက်နိုင်ပါ - ${b}။`],
+ [/^Piece weight missing for (.+)\.$/,(x,a)=>`အလေးချိန် မရှိသေးပါ - ${a}။`],
+ [/^(\d+) sales? not fully paid \((.+) owed\)\.$/,(x,a,b)=>`ငွေမချေရသေးသော အရောင်း ${a} ခု (${b.replace(/ Ks$/," ကျပ်")} ကျန်)။`],
+ [/^All clear for (.+)$/,(x,a)=>tm(a)+" အတွက် အားလုံး ပြည့်စုံပါသည်"],
+ [/^Top products in (.+)$/,(x,a)=>tm(a)+" တွင် အများဆုံးထုတ်သော ကုန်ပစ္စည်းများ"],
+ [/^Nothing received or issued in (.+)$/,(x,a)=>tm(a)+" တွင် အဝင်/အထွက် မရှိပါ"],
+ [/^No sales in (.+)$/,(x,a)=>tm(a)+" တွင် အရောင်း မရှိပါ"],
+ [/^No maintenance in (.+)$/,(x,a)=>tm(a)+" တွင် ပြုပြင်မှု မရှိပါ"],
+ [/^No production in (.+)$/,(x,a)=>tm(a)+" တွင် ထုတ်လုပ်မှု မရှိပါ"],
+ [/^No pay sheet for (.+) yet$/,(x,a)=>tm(a)+" လစာစာရင်း မရှိသေးပါ"],
+ [/^Start (.+) pay sheet$/,(x,a)=>tm(a)+" လစာစာရင်း စမည်"],
+ [/^Due (\d+)d ago$/,(x,a)=>a+" ရက် ကျော်ပြီ"],[/^Due in (\d+)d$/,(x,a)=>a+" ရက်အတွင်း"],
+ [/^Edit (.+)$/,(x,a)=>(T(a))+" ပြင်မည်"],
+ [/^(.+) sales$/,(x,a)=>tm(a)+" အရောင်း"],
+ [/^(.+): (\d+) jobs$/,(x,a)=>tm(a)],
+ [/^Ratio (.+)$/,(x,a)=>"အချိုး "+a],
+ [/^For ([\d,.]+) lb (Clean|Normal \+ Regrind) · colour cost (.+) per batch$/,(x,a,b,c)=>`${a} ပေါင် (${T(b)}) · အရောင်ကုန်ကျ ${c.replace(/ Ks$/," ကျပ်")} / တစ်သုတ်`],
+ [/^Grams for ([\d,.]+) lb of resin\. The preview updates as you type\.$/,(x,a)=>`ပလတ်စတစ်စေ့ ${a} ပေါင်အတွက် ဂရမ်။ ရိုက်ထည့်သည်နှင့် အရောင် ပြောင်းမည်။`],
+ [/^This colour is lighter than the/,()=>"ဤအရောင်သည် အခြေခံပလတ်စတစ်ထက် ပိုလင်းသည်။ အရောင်မှုန့်က အရောင်ကို မှောင်စေနိုင်ရုံသာ ဖြစ်၍ အပြည့်အဝ မကိုက်နိုင်ပါ။"],
+ [/^This is the colour of the (.+) resin by itself\.$/,()=>"ဤအရောင်သည် အခြေခံပလတ်စတစ်၏ မူလအရောင် ဖြစ်သည်။"],
+ [/^Figures in (\w+)\. "vs last month" compares (.+) with (.+)\.$/,(x,u,a,b)=>`ယူနစ် - ${UNIT[u]||u}။ "ယခင်လနှင့်" သည် ${tm(a)} ကို ${tm(b)} နှင့် နှိုင်းယှဉ်သည်။`],
+ [/^Total (.+) per month \((\w+)\)$/,(x,a,u)=>`လစဉ် စုစုပေါင်း (${UNIT[u]||u})`],
+ [/^· (pay sheets|bills) give (.+)$/,(x,a,b)=>`· ${a==="bills"?"ဘေလ်အရ":"လစာစာရင်းအရ"} ${b}`],
+ [/^(.+) Ks fixed$/,(x,a)=>a+" ကျပ် ပုံသေ"],
+ [/^Used for: (.+)$/,(x,a)=>"သုံးသည့် ကုန်ပစ္စည်း - "+a],
+ [/^Not saved: open this page in Claude to save$/,()=>"မသိမ်းရပါ - သိမ်းရန် Claude မှ ဖွင့်ပါ"],
+];
+function trText(s){const t=s.trim();if(!t||!/[A-Za-z]/.test(t))return null;if(DICT[t])return s.replace(t,DICT[t]);for(const [re,f] of PAT){const m=t.match(re);if(m)return s.replace(t,f(...m))}return null}
+const SKIP=new Set(["SCRIPT","STYLE","TEXTAREA","INPUT"]);
+function trNode(root){
+  if(UI.lang!=="my"||!root)return;
+  if(root.nodeType===3){const p=root.parentNode;if(p&&!SKIP.has(p.nodeName)&&!(p.closest&&p.closest(".notr"))){const o=root.__en??root.nodeValue;const r=trText(o);if(r!=null){root.__en=o;if(root.nodeValue!==r)root.nodeValue=r}}return}
+  if(root.nodeType!==1||SKIP.has(root.nodeName)&&root.nodeName!=="INPUT"&&root.nodeName!=="TEXTAREA")return;
+  const els=[root,...root.querySelectorAll("[placeholder],[aria-label],[title]")];
+  for(const el of els)for(const a of ["placeholder","aria-label","title"]){if(!el.hasAttribute||!el.hasAttribute(a))continue;const k="__en_"+a;const o=el[k]??el.getAttribute(a);const r=trText(o);if(r!=null){el[k]=o;el.setAttribute(a,r)}}
+  if(root.nodeName==="INPUT"||root.nodeName==="TEXTAREA")return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;const list=[];while(n=w.nextNode())list.push(n);list.forEach(trNode);
+}
+function untranslate(){const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())if(n.__en!=null){n.nodeValue=n.__en;n.__en=null}
+  document.querySelectorAll("[placeholder],[aria-label],[title]").forEach(el=>["placeholder","aria-label","title"].forEach(a=>{if(el["__en_"+a]!=null){el.setAttribute(a,el["__en_"+a]);el["__en_"+a]=null}}))}
+new MutationObserver(recs=>{if(UI.lang!=="my")return;for(const r of recs)r.addedNodes.forEach(trNode)}).observe(document.body,{childList:true,subtree:true});
+const FLAG_MM=`<svg viewBox="0 0 18 12" width="22" height="15" aria-hidden="true"><rect width="18" height="4" fill="#FECB00"/><rect y="4" width="18" height="4" fill="#34B233"/><rect y="8" width="18" height="4" fill="#EA2839"/><polygon fill="#fff" points="9.00,2.90 9.81,5.38 12.42,5.39 10.31,6.93 11.12,9.41 9.00,7.88 6.88,9.41 7.69,6.93 5.58,5.39 8.19,5.38"/></svg>`;
+const FLAG_GB=`<svg viewBox="0 0 60 30" width="22" height="15" aria-hidden="true"><clipPath id="gbc"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><path d="M0,0v30h60v-30z" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0L60,30M60,0L0,30" clip-path="url(#gbc)" stroke="#C8102E" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></svg>`;
+function setLang(l){UI.lang=l;ls("ap.lang",l);document.documentElement.lang=l==="my"?"my":"en";drawLangSeg();if(l==="en")untranslate();render();if(l==="my")trNode(document.body);if(UI.kb.open)drawKb()}
+function drawLangSeg(){const l2=$("#lgLang");if(l2){l2.innerHTML=`<button type="button" data-lang="my" aria-pressed="${UI.lang==="my"}" class="notr">${FLAG_MM}<span>မြန်မာ</span></button><button type="button" data-lang="en" aria-pressed="${UI.lang==="en"}" class="notr">${FLAG_GB}<span>English</span></button>`;l2.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>setLang(b.dataset.lang))}const s=$("#langSeg");s.innerHTML=`<button data-lang="my" aria-pressed="${UI.lang==="my"}" class="notr">${FLAG_MM}<span>မြန်မာ</span></button><button data-lang="en" aria-pressed="${UI.lang==="en"}" class="notr">${FLAG_GB}<span>English</span></button>`;s.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>setLang(b.dataset.lang))}
+
+/* ---------------- on-screen keyboard: English and Myanmar ---------------- */
+// [key code, english, ENGLISH (shift), myanmar, MYANMAR (shift)] — Myanmar follows the Pyidaungsu / Myanmar3 layout
+const KB=[
+ [["Digit1","1","!","၁","ဍ"],["Digit2","2","@","၂","ၒ"],["Digit3","3","#","၃","ဋ"],["Digit4","4","$","၄","ၓ"],["Digit5","5","%","၅","ၔ"],["Digit6","6","^","၆","ၕ"],["Digit7","7","&","၇","ရ"],["Digit8","8","*","၈","*"],["Digit9","9","(","၉","("],["Digit0","0",")","၀",")"],["Minus","-","_","-","×"],["Equal","=","+","=","+"]],
+ [["KeyQ","q","Q","ဆ","ဈ"],["KeyW","w","W","တ","ဝ"],["KeyE","e","E","န","ဣ"],["KeyR","r","R","မ","၎"],["KeyT","t","T","အ","ဤ"],["KeyY","y","Y","ပ","၌"],["KeyU","u","U","က","ဥ"],["KeyI","i","I","င","၍"],["KeyO","o","O","သ","ဿ"],["KeyP","p","P","စ","ဏ"],["BracketLeft","[","{","ဟ","ဧ"],["BracketRight","]","}","ဩ","ဪ"]],
+ [["KeyA","a","A","ေ","ဗ"],["KeyS","s","S","ျ","ှ"],["KeyD","d","D","ိ","ီ"],["KeyF","f","F","်","္"],["KeyG","g","G","ါ","ွ"],["KeyH","h","H","့","ံ"],["KeyJ","j","J","ြ","ဲ"],["KeyK","k","K","ု","ဒ"],["KeyL","l","L","ူ","ဓ"],["Semicolon",";",":","း","ဂ"],["Quote","'","\"","'","\""]],
+ [["KeyZ","z","Z","ဖ","ဇ"],["KeyX","x","X","ထ","ဌ"],["KeyC","c","C","ခ","ဃ"],["KeyV","v","V","လ","ဠ"],["KeyB","b","B","ဘ","ယ"],["KeyN","n","N","ည","ဉ"],["KeyM","m","M","ာ","ဦ"],["Comma",",","<","၊","၊"],["Period",".",">","။","။"],["Slash","/","?","/","?"],["Backslash","\\","|","၏","ၑ"]]];
+const KBMAP={};KB.flat().forEach(k=>KBMAP[k[0]]=k);
+UI.kb=(()=>{try{return Object.assign({open:false,lang:"my",shift:false,phys:false},JSON.parse(ls("ap.kb")||"{}"),{open:false,shift:false})}catch(e){return {open:false,lang:"my",shift:false,phys:false}}})();
+const saveKb=()=>ls("ap.kb",JSON.stringify(UI.kb));
+let kbTarget=null;const kbPend={p:null};
+const isEditable=el=>!!el&&!el.disabled&&!el.readOnly&&(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&["text","search","tel","email",""].includes(el.type)));
+const isNumField=el=>(el.dataset&&el.dataset.im==="decimal")||el.getAttribute("inputmode")==="decimal";
+function quietNative(el){if(!UI.kb.open||!isEditable(el)||el.dataset.imSaved)return;el.dataset.imSaved="1";el.dataset.im=el.getAttribute("inputmode")||"";el.setAttribute("inputmode","none")}
+function restoreNative(){document.querySelectorAll("[data-im-saved]").forEach(el=>{if(el.dataset.im)el.setAttribute("inputmode",el.dataset.im);else el.removeAttribute("inputmode");delete el.dataset.imSaved;delete el.dataset.im})}
+document.addEventListener("focusin",e=>{if(isEditable(e.target)){kbTarget=e.target;quietNative(e.target)}});
+document.addEventListener("focusout",e=>{const el=e.target;if(el&&el.__oskDirty){el.__oskDirty=false;el.dispatchEvent(new Event("change",{bubbles:true}))}},true);
+function setVal(el,val,caret){el.value=val;try{el.setSelectionRange(caret,caret)}catch(e){}el.__oskDirty=true;el.dispatchEvent(new Event("input",{bubbles:true}))}
+const BASE=/[က-ဪဿ၎]/,MED=/[ျြွှ]/;
+function kbInsert(el,ch){
+  if(!el||!document.contains(el))return;const v=el.value;let s=el.selectionStart??v.length,e=el.selectionEnd??s;
+  // pending ေ / ြ typed before their consonant (visual order); kept by value so it survives the page redrawing the field
+  const pend=kbPend.p;const live=!!pend&&pend.val===v&&pend.end===s&&s===e;
+  const put=(val,caret,np)=>{kbPend.p=np?Object.assign(np,{val}):null;setVal(el,val,caret)};
+  if(BASE.test(ch)&&live){const pre=v.slice(pend.start,s);const out=ch+(pre.includes("ြ")?"ြ":"")+(pre.includes("ေ")?"ေ":"");return put(v.slice(0,pend.start)+out+v.slice(s),pend.start+out.length)}
+  if(ch==="ေ"||(ch==="ြ"&&(live||!(BASE.test(v[s-1]||"")||MED.test(v[s-1]||"")||v[s-1]==="ေ")))){return put(v.slice(0,s)+ch+v.slice(e),s+1,{start:live?pend.start:s,end:s+1})}
+  if(MED.test(ch)&&s===e&&v[s-1]==="ေ"&&!live)return put(v.slice(0,s-1)+ch+"ေ"+v.slice(s),s+1);
+  put(v.slice(0,s)+ch+v.slice(e),s+ch.length);
+}
+function kbBack(el){if(!el)return;const v=el.value;let s=el.selectionStart??v.length,e=el.selectionEnd??s;kbPend.p=null;if(s!==e)return setVal(el,v.slice(0,s)+v.slice(e),s);if(s>0)setVal(el,v.slice(0,s-1)+v.slice(s),s-1)}
+function kbEnter(el){if(!el)return;if(el.tagName==="TEXTAREA")return kbInsert(el,"\n");if(el.__oskDirty){el.__oskDirty=false;el.dispatchEvent(new Event("change",{bubbles:true}))}el.dispatchEvent(new KeyboardEvent("keydown",{key:"Enter",bubbles:true,cancelable:true}))}
+const showCh=c=>/[ါ-ှၖ-ၙ]/.test(c)?"◌"+c:c;
+function drawKb(){
+  const o=$("#osk");if(!o)return;const K=UI.kb,my=K.lang==="my",sh=K.shift;const col=my?(sh?4:3):(sh?2:1);
+  o.innerHTML=`<div class="osk-head"><div class="seg" role="group" aria-label="Keyboard language"><button data-kl="my" aria-pressed="${my}" class="notr" style="display:inline-flex;gap:6px;align-items:center">${FLAG_MM}<span>မြန်မာ</span></button><button data-kl="en" aria-pressed="${!my}" class="notr" style="display:inline-flex;gap:6px;align-items:center">${FLAG_GB}<span>English</span></button></div>
+   ${my?`<button class="btn sm" id="kbPhys" aria-pressed="${K.phys}" style="${K.phys?"background:var(--accent);color:var(--accent-ink);border-color:var(--accent)":""}">Type Myanmar with my own keyboard</button>`:""}
+   <button class="btn sm" id="kbClose">Close keyboard</button></div>
+   ${KB.map(row=>`<div class="osk-row">${row.map(k=>`<button class="key notr" data-ch="${esc(k[col])}" aria-label="${esc(k[col])}">${esc(showCh(k[col]))}</button>`).join("")}</div>`).join("")}
+   <div class="osk-row"><button class="key wide ${sh?"on":""}" data-kx="shift" aria-pressed="${sh}">⇧ Shift</button><button class="key space" data-kx="space">${my?"Space · နေရာခြား":"Space"}</button><button class="key wide" data-kx="back" aria-label="Backspace">⌫</button><button class="key wide" data-kx="enter" aria-label="Enter">↵</button></div>`;
+  const act=b=>{if(kbTarget&&!document.contains(kbTarget)&&kbTarget.id){const n=document.getElementById(kbTarget.id);if(n)kbTarget=n}const el=kbTarget;if(b.dataset.ch!==undefined){kbInsert(el,b.dataset.ch);if(K.shift){K.shift=false;drawKb()}}
+    else if(b.dataset.kx==="shift"){K.shift=!K.shift;drawKb()}else if(b.dataset.kx==="space")kbInsert(el," ");else if(b.dataset.kx==="back")kbBack(el);else if(b.dataset.kx==="enter")kbEnter(el);
+    if(el&&document.contains(el)&&document.activeElement!==el){try{el.focus({preventScroll:true})}catch(e){}}};
+  o.querySelectorAll(".key").forEach(b=>{b.addEventListener("pointerdown",e=>{e.preventDefault();act(b)});b.addEventListener("mousedown",e=>e.preventDefault());b.addEventListener("click",e=>{if(e.detail===0)act(b)})});
+  o.querySelectorAll("[data-kl]").forEach(b=>{b.addEventListener("mousedown",e=>e.preventDefault());b.onclick=()=>{K.lang=b.dataset.kl;K.shift=false;saveKb();drawKb()}});
+  const ph=$("#kbPhys");if(ph){ph.addEventListener("mousedown",e=>e.preventDefault());ph.onclick=()=>{K.phys=!K.phys;saveKb();drawKb()}}
+  $("#kbClose").onclick=()=>toggleKb(false);
+  if(UI.lang==="my")trNode(o);
+}
+function toggleKb(on){UI.kb.open=on;$("#osk").hidden=!on;document.body.classList.toggle("kb-open",on);const b=$("#kbBtn");b.setAttribute("aria-pressed",String(on));if(on){drawKb();if(kbTarget)quietNative(kbTarget)}else restoreNative()}
+$("#kbBtn").addEventListener("mousedown",e=>e.preventDefault());
+$("#kbBtn").onclick=()=>toggleKb(!UI.kb.open);
+document.addEventListener("keydown",e=>{const K=UI.kb;if(!K.open||K.lang!=="my"||!K.phys||e.ctrlKey||e.metaKey||e.altKey)return;const el=e.target;if(!isEditable(el)||isNumField(el))return;const k=KBMAP[e.code];if(!k)return;e.preventDefault();kbTarget=el;kbInsert(el,e.shiftKey?k[4]:k[3])},true);
+
+/* ---------------- suggestions box ---------------- */
+$("#cmtBtn").onclick=()=>openForm({title:"Suggest a change",data:{page:curPage().name},fields:[{k:"text",label:"What should change?",type:"textarea",help:"The owner will see this in Settings."}],
+  validate:d=>!String(d.text||"").trim()?"Write your suggestion first":null,
+  onSave:d=>save("suggestions",uid("g"),{text:String(d.text).trim(),page:d.page,by:toName(SESSION.email),date:new Date().toISOString().slice(0,16).replace("T"," ")},"Suggestion sent")});
+/* ---------------- render ---------------- */
+let pending=false;
+function scheduleRender(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;const a=document.activeElement;if(a&&$("#view").contains(a)&&/INPUT|SELECT|TEXTAREA/.test(a.tagName)&&a.classList.contains("cell")){deferred=true;return}if(drawerState)return void(deferred=true);render()})}
+let deferred=false;
+document.addEventListener("focusout",()=>{if(deferred){setTimeout(()=>{const a=document.activeElement;if(a&&a.classList&&a.classList.contains("cell"))return;if(drawerState)return;deferred=false;render()},120)}});
+const _close=closeForm;closeForm=function(){_close();if(deferred){deferred=false;render()}};
+function render(){
+  const pg=curPage();const al=alerts();
+  $("#nav").innerHTML=PAGES.map(p=>{const n=al.filter(a=>a.dept===p.id&&a.sev!=="info").length;return `<button data-page="${p.id}" aria-current="${p.id===pg.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[p.id]}</svg>${esc(p.name)}${n?`<span class="count">${n}</span>`:""}</button>`}).join("");
+  $("#nav").querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.page));
+  $("#pageTitle").textContent=pg.name;$("#pageSub").textContent=pg.sub;
+  $("#monthIn").value=UI.month;
+  const t=curTab();
+  $("#tabsArea").innerHTML=pg.tabs?`<div class="tabs" role="tablist">${pg.tabs.map(x=>`<button role="tab" aria-selected="${x[0]===t}" data-tab="${x[0]}">${esc(x[1])}</button>`).join("")}</div>`:"";
+  $("#tabsArea").querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>go(pg.id,b.dataset.tab));
+  let ban="";
+  if(dbState==="off")ban=`<div class="banner bad">This copy cannot save. Open the AP Plastic ERP from Claude to see and save the factory's records.</div>`;
+  else if(!canWrite)ban=`<div class="banner">You can view these records but not change them. Ask the owner for edit access.</div>`;
+  const nt=set_(),note=UI.lang==="my"&&nt.notice_my?nt.notice_my:nt.notice;
+  if(note)ban=`<div class="banner notr" style="background:var(--accent-soft);color:var(--ink);border-color:transparent">${esc(note)}</div>`+ban;
+  $("#bannerArea").innerHTML=ban;
+  const fn=pg.tabs?V[pg.id][t]:V[pg.id];
+  $("#view").innerHTML=fn();
+  if(fn.bind)fn.bind();
+  $("#view").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const [p,tb]=b.dataset.go.split(":");go(p,tb)});
+  $("#syncDot").className="dot"+(dbState==="on"?" on":"");$("#syncTxt").textContent=dbState==="on"?"Saved to shared records":dbState==="off"?"Not connected":"Connecting…";
+}
+function pickMonth(){const ms=Object.keys(S.production).filter(k=>monthBags(k)).sort();return ms[ms.length-1]||ym(today())}
+$("#mPrev").onclick=()=>{UI.month=addMonth(UI.month,-1);render()};
+$("#mNext").onclick=()=>{UI.month=addMonth(UI.month,1);render()};
+$("#monthIn").onchange=e=>{if(/^\d{4}-\d{2}$/.test(e.target.value)){UI.month=e.target.value;render()}};
+
+UI.month=ym(today());
+document.documentElement.lang=UI.lang==="my"?"my":"en";
+drawLangSeg();
+render();
+if(UI.lang==="my")trNode(document.body);
+/* ---------------- Supabase connection ---------------- */
+const CFG=window.AP_CONFIG||{};let SB=null;const SESSION={email:"",role:null};
+function makeDb(){
+  const subs={},cache={};let started=false;
+  const emit=col=>{const m=cache[col]||new Map();const docs=[...m.entries()].map(([id,data])=>({id,exists:true,data:()=>data}));(subs[col]||[]).forEach(f=>f({docs}))};
+  const err=e=>({code:e&&e.code||"unavailable",message:(e&&e.message)||"Database error"});
+  return {
+    async start(){
+      let from=0;const P=1000;
+      for(;;){const {data,error}=await SB.from("records").select("col,id,data").range(from,from+P-1);if(error)throw err(error);
+        data.forEach(r=>{(cache[r.col]||(cache[r.col]=new Map())).set(r.id,r.data)});if(data.length<P)break;from+=P}
+      started=true;Object.keys(subs).forEach(emit);
+      SB.channel("records-live").on("postgres_changes",{event:"*",schema:"public",table:"records"},p=>{
+        const r=(p.new&&p.new.col)?p.new:p.old;if(!r||!r.col)return;const m=cache[r.col]||(cache[r.col]=new Map());
+        if(p.eventType==="DELETE")m.delete(r.id);else m.set(r.id,p.new.data);emit(r.col)}).subscribe();
+    },
+    collection(col){return {
+      onSnapshot(next){(subs[col]||(subs[col]=[])).push(next);if(started)emit(col);return ()=>{}},
+      doc(id){return {
+        async set(data){const {error}=await SB.from("records").upsert({col,id,data});if(error)throw err(error);(cache[col]||(cache[col]=new Map())).set(id,data)},
+        async delete(){const {error}=await SB.from("records").delete().eq("col",col).eq("id",id);if(error)throw err(error);cache[col]&&cache[col].delete(id)}}}}}
+  };
+}
+const USER_DOMAIN="ap-plastic.app";
+const toEmail=u=>{u=String(u||"").trim().toLowerCase();return u.includes("@")?u:u.replace(/[^a-z0-9._-]/g,"")+"@"+USER_DOMAIN};
+const toName=e=>String(e||"").endsWith("@"+USER_DOMAIN)?String(e).split("@")[0]:String(e||"");
+let SETUP=false;
+async function showLogin(msg){$("#login").hidden=false;$("#lgMsg").textContent=msg||"";drawLangSeg();
+  try{const {data}=await SB.rpc("app_has_owner");SETUP=data===false}catch(e){SETUP=false}
+  $("#lgIntro").hidden=!SETUP;$("#lgPass2Box").hidden=!SETUP;
+  $("#lgIntro").textContent=UI.lang==="my"?"ပထမဆုံး အသုံးပြုခြင်း - ပိုင်ရှင်၏ အသုံးပြုသူအမည်နှင့် စကားဝှက်ကို ဖန်တီးပါ။":"First-time setup: choose the owner's username and password.";
+  $("#lgBtn").textContent=SETUP?(UI.lang==="my"?"ပိုင်ရှင်အကောင့် ဖန်တီးမည်":"Create owner account"):(UI.lang==="my"?"ဝင်မည်":"Sign in");
+  $("#lgPass").autocomplete=SETUP?"new-password":"current-password";
+  if(UI.lang==="my")trNode($("#login"));setTimeout(()=>$("#lgEmail").focus(),50)}
+async function afterLogin(user){
+  $("#login").hidden=true;SESSION.email=user.email||"";
+  const {data:me,error}=await SB.from("app_users").select("role").eq("user_id",user.id).maybeSingle();
+  if(error||!me){await SB.auth.signOut();return showLogin(UI.lang==="my"?"ဤအကောင့်ကို စနစ်ထဲ မထည့်ရသေးပါ။ ပိုင်ရှင်ကို ပြောပါ။":"This account is not set up for the app yet. Ask the owner to add you.")}
+  SESSION.role=me.role;canWrite=me.role==="owner"||me.role==="editor";canSystem=me.role==="owner";
+  $("#whoTxt").textContent=toName(SESSION.email)+" · "+(me.role==="owner"?"Owner":me.role==="editor"?"Editor":"Viewer");$("#signOut").hidden=false;
+  if(!canWrite)$("#cmtBtn").hidden=true;
+  db=makeDb();let monthPicked=false;
+  COLS.forEach(c=>db.collection(c).onSnapshot(snap=>{const o={};snap.docs.forEach(d=>{if(d.exists)o[d.id]=d.data()});S[c]=o;loaded.add(c);
+    if(c==="production"&&!monthPicked){monthPicked=true;UI.month=pickMonth()}scheduleRender()}));
+  try{await db.start();dbState="on"}catch(e){dbState="off";toast((e&&e.message)||"Could not load records")}
+  render();
+}
+$("#loginForm").addEventListener("submit",async e=>{e.preventDefault();const un=$("#lgEmail").value.trim(),pw=$("#lgPass").value;const my=UI.lang==="my";
+  const msg=t=>$("#lgMsg").textContent=t;
+  if(!un||!pw)return msg(my?"အသုံးပြုသူအမည်နှင့် စကားဝှက် ထည့်ပါ":"Enter your username and password");
+  $("#lgBtn").disabled=true;msg("");
+  try{
+    if(SETUP){
+      if(pw.length<6)return msg(my?"စကားဝှက် အနည်းဆုံး ၆ လုံး":"Use at least 6 characters for the password");
+      if(pw!==$("#lgPass2").value)return msg(my?"စကားဝှက် နှစ်ခု မတူပါ":"The two passwords are not the same");
+      const {data,error}=await SB.auth.signUp({email:toEmail(un),password:pw});
+      if(error)return msg(error.message);
+      if(!data.session)return msg(my?"Supabase တွင် \"Confirm email\" ကို ပိတ်ရန် လိုသည်":"Turn off \"Confirm email\" in Supabase first, then try again.");
+      const r=await SB.rpc("claim_owner",{uname:un});if(r.error)return msg(r.error.message);
+      SETUP=false;return afterLogin(data.user);
+    }
+    const {data,error}=await SB.auth.signInWithPassword({email:toEmail(un),password:pw});
+    if(error){const net=/fetch|network|load failed/i.test(error.message||"")||error.status===0;
+      return msg(net?(my?"Supabase နှင့် ချိတ်ဆက်၍ မရပါ။ အင်တာနက် စစ်ပါ။":"Cannot reach Supabase. Check the internet connection."):/confirm/i.test(error.message||"")?(my?"ဤအကောင့်ကို အတည်မပြုရသေးပါ။":"This account is not confirmed. Turn off \"Confirm email\" in Supabase."):(my?"အသုံးပြုသူအမည် သို့မဟုတ် စကားဝှက် မှားနေသည်":"Username or password is not right"))}
+    afterLogin(data.user);
+  }finally{$("#lgBtn").disabled=false}});
+$("#signOut").onclick=async()=>{await SB.auth.signOut();location.reload()};
+(async()=>{
+  if(!window.supabase||!CFG.url||!CFG.key||/PASTE/.test(CFG.key)){dbState="off";render();$("#syncTxt").textContent="Not set up";$("#bannerArea").innerHTML=`<div class="banner bad">${UI.lang==="my"?"Supabase နှင့် မချိတ်ရသေးပါ။ config.js တွင် anon key ထည့်ရန် လိုသည်။":"Not connected to Supabase yet: the anon key is missing in config.js."}</div>`;return}
+  SB=window.supabase.createClient(CFG.url,CFG.key,{auth:{persistSession:true,autoRefreshToken:true}});
+  const {data}=await SB.auth.getSession();
+  if(data&&data.session)afterLogin(data.session.user);else{dbState="connecting";showLogin()}
+})();
+</script>
+
+</body>
+</html>
