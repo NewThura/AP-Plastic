@@ -206,6 +206,74 @@ svg.chart .lbl{fill:var(--ink);font-weight:500}
 .field input[type=email],.field input[type=password]{border:1px solid var(--line);background:var(--sunk);border-radius:6px;padding:9px 10px;width:100%}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .dots{display:inline-flex;align-items:center;gap:3px;flex-wrap:nowrap;white-space:nowrap}.dots .dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.25);display:inline-block}.dots .small{margin-right:5px}th.c{text-align:center}td.wrap{white-space:normal;min-width:260px;max-width:560px}.warnt{color:var(--warn,#B26B00)}
+/* ---- new parts: home, orders, bills, buying ---- */
+.hdate{font:600 15px var(--f-display);color:var(--muted)}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.qbtn{cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 16px;min-height:56px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font:600 15px var(--f-body);color:var(--ink);text-align:left}
+html[lang="my"] .qbtn{font-family:var(--f-my);line-height:1.7}
+.qbtn svg{width:24px;height:24px;flex:none;stroke:var(--accent);fill:none;stroke-width:1.8}
+.qbtn:hover{border-color:var(--accent)}
+.qbtn:disabled{opacity:.5;cursor:default}
+.qbtn.main{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.qbtn.main svg{stroke:currentColor}
+.kpi.click{cursor:pointer;text-align:left}
+.kpi.click:hover{border-color:var(--accent)}
+.kpis.big .v{font-size:clamp(19px,2.1vw,26px);overflow-wrap:anywhere}
+.kpi .v.warnv{color:var(--warn)} .kpi .v.badv{color:var(--bad)}
+.badt,.badt b{color:var(--bad)!important}
+.mstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.mstrip div{background:var(--sunk);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.mstrip .l{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mstrip b{font:600 19px var(--f-data);font-variant-numeric:tabular-nums}
+.mini{display:flex;flex-direction:column}
+.mini .row{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.mini .row:last-child{border-bottom:0}
+.mini .row.click{cursor:pointer}
+.mini .row .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mini .row .grow>div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini .amt{font:600 14px var(--f-data);white-space:nowrap;font-variant-numeric:tabular-nums}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+.ocol{background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ocol h3{margin:0 2px 2px;font:700 14px var(--f-display);display:flex;align-items:center;gap:8px}
+.ocard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;cursor:pointer;min-width:0}
+.ocard:hover{border-color:var(--accent)}
+.ohead,.ofoot{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.ometa{display:flex;gap:6px 8px;align-items:center;flex-wrap:wrap}
+.ofoot b{font:600 14px var(--f-data)}
+.ocempty{padding:8px 4px}
+@media (max-width:900px){.board{grid-template-columns:minmax(0,1fr)}}
+/* bill */
+.billwrap{position:fixed;inset:0;z-index:35;background:rgba(10,18,22,.6);display:flex;flex-direction:column}
+.billbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top,0px));background:var(--surface);border-bottom:1px solid var(--line)}
+.billbar .spacer{flex:1}
+.billscroll{flex:1;overflow:auto;padding:20px 16px}
+.paperbill{background:#fff;color:#16202a;width:min(760px,100%);margin:0 auto;padding:36px 40px;border-radius:4px;box-shadow:0 8px 30px rgba(0,0,0,.3);font:14px/1.55 var(--f-body);display:flex;flex-direction:column;gap:18px}
+.paperbill .bmy{font-family:var(--f-my)}
+.paperbill .bsm{font-size:12px;color:#5b6975}
+.bhead{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid #16202a;padding-bottom:14px}
+.bco{font:800 24px var(--f-display)}
+.bttl{text-align:right}
+.bbig{font:800 22px var(--f-display);letter-spacing:.08em}
+.bto b{font-size:17px}
+.btab{width:100%;border-collapse:collapse}
+.paperbill .btab th{background:#f1f3f4;color:#444;position:static;font-size:11px;text-transform:none;letter-spacing:0}
+.paperbill .btab td,.paperbill .btab th{border-bottom:1px solid #d8dde1;padding:7px 8px;white-space:normal}
+.paperbill tbody tr:hover{background:none}
+.btot{margin-left:auto;width:min(360px,100%);display:flex;flex-direction:column}
+.btot>div{display:flex;justify-content:space-between;gap:12px;padding:4px 0}
+.btot>div>span:last-child{font-family:var(--f-data);white-space:nowrap}
+.btot .big{font-weight:700;font-size:16px;border-top:2px solid #16202a;padding-top:8px;margin-top:4px}
+.bbank{background:#f6f7f8;border-radius:6px;padding:10px 12px}
+.bfoot{text-align:center;color:#555;border-top:1px dashed #bbb;padding-top:12px}
+@media (max-width:560px){.paperbill{padding:22px 16px}.bttl{text-align:left}}
+@media print{
+  body.billopen>*:not(#billRoot){display:none!important}
+  body.billopen .billbar{display:none!important}
+  body.billopen .billwrap{position:static;background:none;display:block}
+  body.billopen .billscroll{overflow:visible;padding:0}
+  body.billopen .paperbill{box-shadow:none;width:auto;padding:0;border-radius:0}
+  @page{margin:14mm}
+}
 </style>
 
 
@@ -248,6 +316,7 @@ svg.chart .lbl{fill:var(--ink);font-weight:500}
 </form></div>
 <div id="drawerRoot"></div>
 <div id="toastRoot"></div>
+<div id="billRoot"></div>
 <div id="osk" class="osk" hidden role="group" aria-label="Keyboard"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
@@ -839,7 +908,7 @@ V.retail.sales=()=>loadingOr(["sales","customers","products"],()=>{
   const m=UI.month;const xs=list("sales").filter(s=>ym(s.date)===m).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
   const pm=paidMap();const xr=xs.filter(s=>!s.opening);const tot=xr.reduce((a,s)=>a+saleTotal(s),0),paid=xr.reduce((a,s)=>a+pm[s.id],0),dz=xr.reduce((a,s)=>a+(s.lines||[]).reduce((b,l)=>b+num(l.dz),0),0);
   return `<div class="bar"><div class="left sum"><span>${mlabel(m)} sales <b>${ks(tot)}</b></span><span>Dozens sold <b>${fmt(dz,1)}</b></span><span>Paid so far <b>${ks(paid)}</b></span><span>Still owed <b>${ks(tot-paid)}</b></span>${xr.length?`</div><div class="left sum" style="flex-basis:100%">${coSpans(coTotals(xr))}`:""}</div><div class="right"><button class="btn primary" id="addSale" ${canWrite?"":"disabled"}>New sale</button></div></div>
-  ${xs.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Customer</th><th>Items</th><th class="n">Dozens</th><th class="n">Total Ks</th><th class="n">Paid Ks</th><th>Payment</th></tr></thead><tbody>${xs.map(s=>{const t=saleTotal(s),p=pm[s.id];return `<tr class="click" data-edit="${s.id}"><td>${esc(s.date)}</td><td>${esc(S.customers[s.cust]?.name||s.custName||"Walk-in")}</td><td>${s.opening?'<span class="chip mute">Brought forward</span> ':""}${esc((s.lines||[]).map(l=>{const p=S.products[l.p];return p?(p.en||p.my):(l.item||"?")}).join(", "))}${(s.unsure||[]).length?' <span class="chip warn" title="'+esc(s.unsure.join("; "))+'">check</span>':""}</td><td class="n">${fmt((s.lines||[]).reduce((a,l)=>a+num(l.dz),0),1)}</td><td class="n">${fmt(t)}</td><td class="n">${fmt(p)}</td><td>${p>=t-0.5?'<span class="chip good">Paid</span>':p>0?'<span class="chip warn">Part paid</span>':'<span class="chip bad">Unpaid</span>'}</td></tr>`}).join("")}</tbody></table></div>`:emptyState(`No sales in ${mlabel(m)}`,"Record each sale with its customer, products and dozens. Finished stock goes down automatically.",`<button class="btn primary" id="addSale2" ${canWrite?"":"disabled"}>Record first sale</button>`)}`;
+  ${xs.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Customer</th><th>Items</th><th class="n">Dozens</th><th class="n">Total Ks</th><th class="n">Paid Ks</th><th>Payment</th><th></th></tr></thead><tbody>${xs.map(s=>{const t=saleTotal(s),p=pm[s.id];return `<tr class="click" data-edit="${s.id}"><td>${esc(s.date)}</td><td>${esc(S.customers[s.cust]?.name||s.custName||"Walk-in")}</td><td>${s.opening?'<span class="chip mute">Brought forward</span> ':""}${esc((s.lines||[]).map(l=>{const p=S.products[l.p];return p?(p.en||p.my):(l.item||"?")}).join(", "))}${(s.unsure||[]).length?' <span class="chip warn" title="'+esc(s.unsure.join("; "))+'">check</span>':""}</td><td class="n">${fmt((s.lines||[]).reduce((a,l)=>a+num(l.dz),0),1)}</td><td class="n">${fmt(t)}</td><td class="n">${fmt(p)}</td><td>${p>=t-0.5?'<span class="chip good">Paid</span>':p>0?'<span class="chip warn">Part paid</span>':'<span class="chip bad">Unpaid</span>'}</td><td>${s.opening?"":`<button class="btn sm" data-bill="${s.id}">Bill</button>`}</td></tr>`}).join("")}</tbody></table></div>`:emptyState(`No sales in ${mlabel(m)}`,"Record each sale with its customer, products and dozens. Finished stock goes down automatically.",`<button class="btn primary" id="addSale2" ${canWrite?"":"disabled"}>Record first sale</button>`)}`;
 });
 function editSale(id,cust){
   const s=id?JSON.parse(JSON.stringify(S.sales[id])):{date:UI.month===ym(today())?today():UI.month+"-01",cust:cust||"",lines:[{p:"",dz:"",price:""}],paid:0};
@@ -878,11 +947,11 @@ V.retail.ledger=()=>loadingOr(["customers","sales","payments","products"],()=>{
   let bal=0,bought=0,paid=0;
   const rows=ev.map(e=>{bal+=e.amt;if(e.amt>0)bought+=e.amt;else paid-=e.amt;const w=e.k==="s"?e.s.balWritten:e.k==="p"?e.p.balWritten:null;const wOk=w==null||w===""?null:Math.abs(num(w)-bal)<1;
     const what=e.k==="s"&&e.s.opening?`<span class="chip mute">Brought forward</span> ${esc(e.s.note||"")}`:e.k==="s"?(e.s.lines||[]).map(l=>{const p=S.products[l.p];return `${esc(p?(p.en||p.my):(l.item||"?"))} <span class="muted">${fmt(l.dz,1).replace(/\.0$/,"")} dz × ${fmt(l.price)}</span>`}).join("<br>")+(num(e.s.discPct)?`<br><span class="muted">Less ${fmt(num(e.s.discPct),1)}%</span>`:"")+(num(e.s.delivery)?`<br><span class="muted">Delivery ${fmt(e.s.delivery)}</span>`:""):e.k==="p"?`<span class="chip ${e.p.credit||CREDIT_M.includes(e.p.method)?"mute":"good"}">${esc(e.p.method||"Paid")}</span> ${e.p.invoiceDate?`<span class="muted">for ${esc(e.p.invoiceDate)}</span>`:""}${e.p.note?`<div class="small muted">${esc(e.p.note)}</div>`:""}`:esc(e.txt);
-    return `<tr class="${e.id?"click":""}" ${e.id?`data-${e.k==="s"?"es":"ep"}="${e.id}"`:""}><td>${esc(e.d||"")}</td><td class="wrap">${what}${e.k==="s"&&(e.s.unsure||[]).length?`<div class="small warnt">Check: ${esc(e.s.unsure.join("; "))}</div>`:""}${e.k==="s"&&e.s.src?`<div class="small muted">${esc(e.s.src)}</div>`:""}</td><td class="n">${e.amt>0?fmt(e.amt):""}</td><td class="n">${e.amt<0?fmt(-e.amt):""}</td><td class="n"><b>${fmt(bal)}</b></td><td class="n">${w==null||w===""?"":`<span class="chip ${wOk?"good":"warn"}" title="Balance written in the paper ledger">${fmt(num(w))}</span>`}</td></tr>`}).join("");
+    return `<tr class="${e.id?"click":""}" ${e.id?`data-${e.k==="s"?"es":"ep"}="${e.id}"`:""}><td>${esc(e.d||"")}</td><td class="wrap">${what}${e.k==="s"&&(e.s.unsure||[]).length?`<div class="small warnt">Check: ${esc(e.s.unsure.join("; "))}</div>`:""}${e.k==="s"&&e.s.src?`<div class="small muted">${esc(e.s.src)}</div>`:""}</td><td class="n">${e.amt>0?fmt(e.amt):""}</td><td class="n">${e.amt<0?fmt(-e.amt):""}</td><td class="n"><b>${fmt(bal)}</b></td><td class="n">${w==null||w===""?"":`<span class="chip ${wOk?"good":"warn"}" title="Balance written in the paper ledger">${fmt(num(w))}</span>`}</td><td>${e.k==="s"&&!e.s.opening?`<button class="btn sm" data-bill="${e.id}">Bill</button>`:""}</td></tr>`}).join("");
   const byCo=coTotals(list("sales").filter(s=>s.cust===cid));
   return head+`<div class="sum"><span>Bought <b>${ks(bought)}</b></span><span>Paid <b>${ks(paid)}</b></span><span>Balance <b>${ks(bal)}</b></span></div>
   <div class="sum"><span>Companies ${coChips(c)||"–"}</span>${coSpans(byCo)}</div>
-  ${ev.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Items / payment</th><th class="n">Sale Ks</th><th class="n">Paid Ks</th><th class="n">Balance Ks</th><th class="n">Paper ledger</th></tr></thead><tbody>${rows}</tbody></table></div><p class="small muted" style="margin:0">"Paper ledger" is the balance written in the notebook, where there was one: green when it matches the app, orange when it differs. Double-click a row to edit it.</p>`:emptyState("Nothing recorded for this customer yet","Record a sale or a payment.")}`;
+  ${ev.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Items / payment</th><th class="n">Sale Ks</th><th class="n">Paid Ks</th><th class="n">Balance Ks</th><th class="n">Paper ledger</th><th></th></tr></thead><tbody>${rows}</tbody></table></div><p class="small muted" style="margin:0">"Paper ledger" is the balance written in the notebook, where there was one: green when it matches the app, orange when it differs. Double-click a row to edit it.</p>`:emptyState("Nothing recorded for this customer yet","Record a sale or a payment.")}`;
 });
 V.retail.ledger.bind=()=>{const s=$("#ledC");if(s)s.onchange=()=>{UI.ledgerCust=s.value;ls("ap.ledgerCust",s.value);render()};
   $("#ledPay")&&($("#ledPay").onclick=()=>editPayment(null,UI.ledgerCust));$("#ledSale")&&($("#ledSale").onclick=()=>editSale(null,UI.ledgerCust));
@@ -1313,6 +1382,383 @@ $("#cmtBtn").onclick=()=>openForm({title:"Suggest a change",data:{page:curPage()
   validate:d=>!String(d.text||"").trim()?"Write your suggestion first":null,
   onSave:d=>save("suggestions",uid("g"),{text:String(d.text).trim(),page:d.page,by:toName(SESSION.email),date:new Date().toISOString().slice(0,16).replace("T"," ")},"Suggestion sent")});
 /* ---------------- render ---------------- */
+/* ================= New parts (2026-11-16): Home, Orders, Bills, Buying ================= */
+COLS.push("orders","suppliers","purchases","supPays","expenses");COLS.forEach(c=>{if(!S[c])S[c]={}});
+Object.assign(ICONS,{
+ home:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+ orders:'<path d="M2 6h11v10H2z"/><path d="M13 9h4l4 4v3h-8z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+ buying:'<path d="M3 4h2l2.4 11h11L21 7H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/>',
+ bill:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+ money:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>'});
+PAGES.unshift({id:"home",name:"Home",sub:"Today's money, orders and stock at a glance"});
+PAGES.splice(PAGES.findIndex(p=>p.id==="retail")+1,0,
+ {id:"orders",name:"Orders",sub:"Customer orders, from waiting to delivered",tabs:[["open","To deliver"],["done","Delivered"]]},
+ {id:"buying",name:"Buying",sub:"Purchases, suppliers, what you owe them and daily expenses",tabs:[["purchases","Purchases"],["pay","Pay suppliers"],["suppliers","Suppliers"],["expenses","Expenses"]]});
+if(!ls("ap.homeSeen")){ls("ap.homeSeen","1");UI.page="home"}
+UI.supLed=ls("ap.supLed")||"";
+
+/* ---- shared helpers ---- */
+const icon=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]||""}</svg>`;
+const isCredit=p=>!!(p.credit||CREDIT_M.includes(p.method));
+const lineAmt=l=>l.amount!=null&&l.amount!==""?num(l.amount):num(l.dz)*num(l.price);
+const dzTxt=v=>fmt(num(v),1).replace(/\.0$/,"");
+const lineSummary=lines=>(lines||[]).map(l=>{const p=S.products[l.p];return (p?(p.en||p.my):(l.item||"?"))+" "+dzTxt(l.dz)+" dz"}).join(", ");
+const custName=(cid,alt)=>S.customers[cid]?.name||alt||"Walk-in";
+const byDateDesc=(a,b)=>(b.date||"").localeCompare(a.date||"")||(b.t||0)-(a.t||0);
+const PAY_ONLY=PAY_M.filter(m=>!CREDIT_M.includes(m));
+function custBalances(){const b={};
+ for(const s of list("sales")){if(!s.cust)continue;b[s.cust]=(b[s.cust]||0)+saleTotal(s)-num(s.paid)}
+ for(const p of list("payments")){if(!p.cust)continue;b[p.cust]=(b[p.cust]||0)-num(p.amount)}return b}
+function dateLong(d){const x=new Date(d+"T00:00:00");if(UI.lang==="my")return x.getDate()+" "+MY_MON[x.getMonth()]+" "+x.getFullYear();return x.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+function bindRowClicks(attr,fn){document.querySelectorAll(`[${attr}]`).forEach(r=>r.onclick=e=>{if(e.target.closest("button,a,input,select"))return;fn(r.getAttribute(attr))})}
+function bindSearch(){const q=$("#q");if(q)q.oninput=()=>{UI.q=q.value;const pos=q.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)}}
+
+/* lines editor used by orders (product × dozens × price) */
+function prodLines(lines){
+ const html=()=>`<div class="field"><label>Products (dozens × price per dozen)</label><div class="lines">${lines.map((l,i)=>`<div class="ln"><div>${sel(prodOpts(),l.p,`data-i="${i}" data-k="p" aria-label="Product"`)}</div><input data-i="${i}" data-k="dz" inputmode="decimal" placeholder="Dozens" value="${esc(l.dz)}" aria-label="Dozens"><input data-i="${i}" data-k="price" inputmode="decimal" placeholder="Ks / dz" value="${esc(l.price)}" aria-label="Price per dozen"><button type="button" class="btn sm" data-rm="${i}" aria-label="Remove">✕</button></div>`).join("")}</div><button type="button" class="btn sm" id="addLn" style="margin-top:6px">Add product</button><div class="sum" style="margin-top:8px"><span>Goods total <b id="lt">${ks(saleGoods({lines}))}</b></span></div></div>`;
+ const bind=()=>{const box=$("#dLines");const re=()=>{box.innerHTML=html();hook()};const hook=()=>{
+  box.querySelectorAll("[data-k]").forEach(el=>el.oninput=el.onchange=()=>{const l=lines[+el.dataset.i];l[el.dataset.k]=el.value;if(el.dataset.k==="p"&&!num(l.price)&&num(S.products[el.value]?.sellDz)){l.price=S.products[el.value].sellDz;re();return}$("#lt").textContent=ks(saleGoods({lines}))});
+  box.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{lines.splice(+b.dataset.rm,1);re()});$("#addLn").onclick=()=>{lines.push({p:"",dz:"",price:""});re()}};hook()};
+ const clean=()=>lines.filter(l=>l.p&&num(l.dz)).map(l=>({p:l.p,dz:num(l.dz),price:num(l.price)}));
+ return {html:()=>`<div id="dLines">${html()}</div>`,bind,clean};
+}
+
+/* ================= Orders ================= */
+const OST=[["wait","Waiting"],["ready","Ready"],["out","On the way"],["done","Delivered"],["cancel","Cancelled"]];
+const ostName=k=>(OST.find(x=>x[0]===k)||OST[0])[1];
+const ostChip=k=>`<span class="chip ${k==="done"?"good":k==="cancel"?"mute":k==="ready"?"good":k==="out"?"warn":"mute"}">${ostName(k)}</span>`;
+const isOpen=o=>!["done","cancel"].includes(o.status||"wait");
+const openOrders=()=>list("orders").filter(isOpen);
+const NEXT={wait:["ready","Mark ready"],ready:["out","Send out"],out:["done","Delivered"]};
+function dueChip(d){if(!d)return "";const t=today();return d<t?`<span class="chip bad">Late</span> <span class="small muted notr">${esc(d)}</span>`:d===t?`<span class="chip warn">Due today</span>`:`<span class="small muted">Deliver by</span> <span class="small notr">${esc(d)}</span>`}
+function shortLines(o,st){if((o.status||"wait")==="out")return [];return (o.lines||[]).filter(l=>{const p=S.products[l.p];return p&&isAP(p)&&(st[l.p]||0)<num(l.dz)})}
+function orderCard(o,st){const k=o.status||"wait";const nx=NEXT[k];const sh=shortLines(o,st);
+ return `<div class="ocard" data-oe="${o.id}"><div class="ohead"><b class="notr">${esc(custName(o.cust,o.custName))}</b><span class="small muted notr">#${esc(o.no||"")}</span></div>
+ <div class="small notr">${esc(lineSummary(o.lines))}</div>
+ ${o.due||o.place?`<div class="ometa">${dueChip(o.due)}${o.place?`<span class="small muted notr">${esc(o.place)}</span>`:""}</div>`:""}
+ ${sh.length?`<div class="small warnt"><span>Not enough in stock:</span> <span class="notr">${esc(sh.map(l=>{const p=S.products[l.p];return (p.en||p.my)+" ("+dzTxt(st[l.p]||0)+" / "+dzTxt(l.dz)+" dz)"}).join(", "))}</span></div>`:""}
+ <div class="ofoot"><b class="notr">${fmt(saleTotal(o))} Ks</b>${nx&&canWrite?`<button class="btn sm primary" data-onext="${o.id}">${nx[1]}</button>`:""}</div></div>`}
+V.orders={};
+V.orders.open=()=>loadingOr(["orders","customers","products","production","sales"],()=>{
+ const t=today();const os=openOrders().sort((a,b)=>(a.due||"9999").localeCompare(b.due||"9999")||num(a.no)-num(b.no));const st=finishedStock();
+ const late=os.filter(o=>o.due&&o.due<t).length,dueT=os.filter(o=>o.due===t).length;
+ const col=k=>{const xs=os.filter(o=>(o.status||"wait")===k);return `<section class="ocol"><h3><span>${ostName(k)}</span><span class="chip mute notr">${xs.length}</span></h3>${xs.length?xs.map(o=>orderCard(o,st)).join(""):`<div class="muted small ocempty">Nothing here</div>`}</section>`};
+ return `<div class="bar"><div class="left sum"><span>Open orders <b>${os.length}</b></span><span>Worth <b>${ks(os.reduce((a,o)=>a+saleTotal(o),0))}</b></span>${late?`<span class="badt">Late <b>${late}</b></span>`:""}${dueT?`<span>Due today <b>${dueT}</b></span>`:""}</div><div class="right"><button class="btn primary" id="addOrd" ${canWrite?"":"disabled"}>New order</button></div></div>
+ ${os.length?`<div class="board">${["wait","ready","out"].map(col).join("")}</div><p class="small muted" style="margin:0">Tap a card to change it. The button moves it to the next step. "Delivered" records the sale, takes the dozens out of finished stock and adds it to the customer's ledger.</p>`:emptyState("No orders waiting","When a customer orders, write it here. Move it along as it gets ready and goes out. When it is delivered, the sale is recorded for you.",`<button class="btn primary" id="addOrd2" ${canWrite?"":"disabled"}>Write the first order</button>`)}`;
+});
+V.orders.open.bind=()=>{["#addOrd","#addOrd2"].forEach(x=>{const b=$(x);if(b)b.onclick=()=>editOrder(null)});bindRowClicks("data-oe",editOrder);document.querySelectorAll("[data-onext]").forEach(b=>b.onclick=e=>{e.stopPropagation();orderNext(b.dataset.onext)})};
+V.orders.done=()=>loadingOr(["orders","customers","products","sales"],()=>{
+ const m=UI.month;const xs=list("orders").filter(o=>!isOpen(o)&&ym(o.doneDate||o.date)===m).sort((a,b)=>(b.doneDate||b.date||"").localeCompare(a.doneDate||a.date||""));
+ const dn=xs.filter(o=>o.status==="done");
+ return `<div class="bar"><div class="left sum"><span>Delivered <b>${dn.length}</b></span><span>Worth <b>${ks(dn.reduce((a,o)=>a+(S.sales[o.saleId]?saleTotal(S.sales[o.saleId]):saleTotal(o)),0))}</b></span></div></div>
+ ${xs.length?`<div class="tw"><table><thead><tr><th>Date</th><th class="n">No</th><th>Customer</th><th>Items</th><th class="n">Total Ks</th><th>Step</th><th></th></tr></thead><tbody>${xs.map(o=>{const s=S.sales[o.saleId];return `<tr class="click" data-oe="${o.id}"><td class="notr">${esc(o.doneDate||o.date||"")}</td><td class="n">${esc(o.no||"")}</td><td class="notr">${esc(custName(o.cust,o.custName))}</td><td class="notr">${esc(lineSummary(o.lines))}</td><td class="n">${fmt(s?saleTotal(s):saleTotal(o))}</td><td>${ostChip(o.status)}</td><td>${s?`<button class="btn sm" data-bill="${o.saleId}">Bill</button>`:""}</td></tr>`}).join("")}</tbody></table></div>`:emptyState("Nothing delivered this month","Orders marked delivered or cancelled show here, month by month.")}`;
+});
+V.orders.done.bind=()=>bindRowClicks("data-oe",editOrder);
+function editOrder(id,cust){
+ const o=id?JSON.parse(JSON.stringify(S.orders[id])):{date:today(),due:"",cust:cust||"",status:"wait",lines:[{p:"",dz:"",price:""}],no:list("orders").reduce((a,x)=>Math.max(a,num(x.no)),0)+1};
+ if(!o.lines||!o.lines.length)o.lines=[{p:"",dz:"",price:""}];
+ const was=o.status||"wait";const ed=prodLines(o.lines);
+ openForm({title:id?"Order":"New order",data:o,fields:[
+  {k:"cust",label:"Customer",type:"select",opts:custOpts("Walk-in / other"),half:1},{k:"custName",label:"Name, if not in the list",half:1},
+  {k:"date",label:"Order date",type:"date",half:1},{k:"due",label:"Deliver by",type:"date",half:1},
+  {k:"status",label:"Step",type:"select",opts:OST,half:1},{k:"place",label:"Deliver to (town, shop)",half:1},
+  {k:"delivery",label:"Delivery charge (Ks)",type:"num",half:1},{k:"discPct",label:"Discount %",type:"num",half:1},
+  {k:"driver",label:"Car / driver",half:1},{k:"bags",label:"Bags",type:"num",half:1},{k:"note",label:"Note",type:"textarea"}],
+  extra:ed.html,
+  bindExtra:()=>{ed.bind();const c=$("#f_cust");c.onchange=()=>{const cu=S.customers[c.value];if(!cu)return;if(!$("#f_place").value)$("#f_place").value=cu.area||"";if(!$("#f_delivery").value&&num(cu.deliveryKs))$("#f_delivery").value=cu.deliveryKs}},
+  collect:d=>{d.lines=ed.clean();if(d.cust)d.custName="";if(d.status==="cancel"&&!d.doneDate)d.doneDate=today();if(isOpen(d))delete d.doneDate},
+  validate:d=>!d.lines.length?"Add at least one product with dozens":d.lines.some(l=>!num(l.price))?"Enter the price per dozen for each product":(!d.cust&&!d.custName)?"Choose the customer or type a name":null,
+  onSave:d=>{const oid=id||uid("d");
+   if(d.status==="done"&&was!=="done"&&!(d.saleId&&S.sales[d.saleId])){d.status=was;save("orders",oid,d);setTimeout(()=>deliverOrder(oid),0);return}
+   save("orders",oid,d,"Order saved")},
+  onDelete:id?()=>remove("orders",id,"Order deleted"):null});
+}
+function orderNext(id){const o=JSON.parse(JSON.stringify(S.orders[id]));const k=o.status||"wait";
+ if(k==="wait"){o.status="ready";o.readyDate=today();save("orders",id,o,"Marked ready")}
+ else if(k==="ready"){o.status="out";o.outDate=today();save("orders",id,o,"On the way")}
+ else if(k==="out")deliverOrder(id)}
+function deliverOrder(id){const o=JSON.parse(JSON.stringify(S.orders[id]));
+ openForm({title:"Delivered: record the sale",data:{date:today(),paid:"",delivery:o.delivery,discPct:o.discPct},fields:[
+  {k:"date",label:"Date delivered",type:"date",half:1},{k:"paid",label:"Paid on delivery (Ks)",type:"num",half:1,help:"Leave empty if the customer pays later"},
+  {k:"delivery",label:"Delivery charge (Ks)",type:"num",half:1},{k:"discPct",label:"Discount %",type:"num",half:1}],
+  extra:()=>`<div class="sum"><span>Customer <b class="notr">${esc(custName(o.cust,o.custName))}</b></span><span>Goods total <b>${ks(saleGoods(o))}</b></span></div><div class="small notr">${esc(lineSummary(o.lines))}</div><p class="small muted">Saving records this as a sale: the dozens come out of finished stock and the amount goes on the customer's ledger.</p>`,
+  onSave:d=>{const sid=o.saleId&&S.sales[o.saleId]?o.saleId:uid("o");
+   const s={date:d.date,cust:o.cust||"",lines:o.lines,delivery:d.delivery,discPct:d.discPct,paid:num(d.paid),note:"Order #"+(o.no||"")+(o.note?" · "+o.note:""),order:id,t:Date.now()};
+   if(!o.cust)s.custName=o.custName||"";if(num(o.bags))s.bags=o.bags;
+   save("sales",sid,s);o.status="done";o.doneDate=d.date;o.saleId=sid;save("orders",id,o,"Delivered. Sale recorded.")}});
+}
+
+/* ================= Bills ================= */
+function invNoFor(s){if(s.invNo)return s.invNo;const d=String(s.date||today());const pre="AP-"+d.slice(2,4)+d.slice(5,7)+"-";
+ const n=list("sales").filter(x=>String(x.invNo||"").startsWith(pre)).reduce((a,x)=>Math.max(a,parseInt(String(x.invNo).slice(pre.length),10)||0),0)+1;return pre+String(n).padStart(3,"0")}
+function billModel(id){const s=S.sales[id];const co=Object.assign({},set_().company||{});if(!co.name)co.name="AP Plastic";
+ const key=x=>(x.date||"")+"|"+String(x.t||0).padStart(15,"0")+"|"+x.id;let prior=0;
+ if(s.cust){const k0=key(Object.assign({id},s));list("sales").filter(x=>x.cust===s.cust&&x.id!==id&&key(x)<k0).forEach(x=>prior+=saleTotal(x)-num(x.paid));list("payments").filter(p=>p.cust===s.cust&&(p.date||"")<(s.date||"")).forEach(p=>prior-=num(p.amount))}
+ const goods=saleGoods(s),total=saleTotal(s),paid=num(s.paid);
+ const lines=(s.lines||[]).map(l=>{const p=S.products[l.p];return {name:p?pname(p):(l.item||"?"),dz:num(l.dz),price:num(l.price),amt:lineAmt(l)}});
+ const c=S.customers[s.cust];
+ return {co,s,no:invNoFor(s),cust:c?{name:c.name,area:c.area,phone:c.phone}:{name:s.custName||"Walk-in"},lines,goods,discPct:num(s.discPct),disc:goods-Math.round(goods*(1-num(s.discPct)/100)),delivery:num(s.delivery),total,paid,prior,after:prior+total-paid,hasCust:!!s.cust}}
+function billRows(b){const r=[["Goods total","စုစုပေါင်း",fmt(b.goods)]];
+ if(b.disc)r.push([`Discount ${fmt(b.discPct,1).replace(/\.0$/,"")}%`,"လျှော့ဈေး","− "+fmt(b.disc)]);
+ if(b.delivery)r.push(["Delivery","ပို့ခ",fmt(b.delivery)]);
+ r.push(["Total","ကျသင့်ငွေ",fmt(b.total),1]);
+ if(b.paid)r.push(["Paid","ပေးပြီး","− "+fmt(b.paid)]);
+ if(b.hasCust&&Math.abs(b.prior)>0.5)r.push(["Previous balance","ယခင်ကျန်ငွေ",fmt(b.prior)]);
+ r.push([b.hasCust?"Balance to pay":"Still to pay",b.hasCust?"ပေးရန်ကျန်ငွေ":"ပေးရန်ကျန်",fmt(b.hasCust?b.after:b.total-b.paid),1]);return r}
+function billHTML(b){
+ return `<div class="paperbill notr" id="paperBill">
+ <div class="bhead"><div><div class="bco">${esc(b.co.name)}</div>${b.co.address?`<div>${esc(b.co.address)}</div>`:""}${b.co.phone?`<div>${esc(b.co.phone)}</div>`:""}</div>
+ <div class="bttl"><div class="bbig">INVOICE</div><div class="bmy">ငွေတောင်းခံလွှာ</div><div>No. <b>${esc(b.no)}</b></div><div>Date · ရက်စွဲ ${esc(b.s.date||"")}</div></div></div>
+ <div class="bto"><div class="bsm">Bill to · <span class="bmy">ဝယ်သူ</span></div><b>${esc(b.cust.name)}</b>${b.cust.area?`<div>${esc(b.cust.area)}</div>`:""}${b.cust.phone?`<div>${esc(b.cust.phone)}</div>`:""}</div>
+ <table class="btab"><thead><tr><th>#</th><th>Item · <span class="bmy">ပစ္စည်း</span></th><th class="n">Dozen · <span class="bmy">ဒါဇင်</span></th><th class="n">Price · <span class="bmy">ဈေး</span></th><th class="n">Amount · <span class="bmy">ငွေ</span></th></tr></thead>
+ <tbody>${b.lines.map((l,i)=>`<tr><td>${i+1}</td><td class="bmy">${esc(l.name)}</td><td class="n">${l.dz?dzTxt(l.dz):""}</td><td class="n">${l.price?fmt(l.price):""}</td><td class="n">${fmt(l.amt)}</td></tr>`).join("")}</tbody></table>
+ <div class="btot">${billRows(b).map(r=>`<div class="${r[3]?"big":""}"><span>${esc(r[0])} · <span class="bmy">${r[1]}</span></span><span>${r[2]}</span></div>`).join("")}</div>
+ ${b.co.banks?`<div class="bbank"><div class="bsm">Pay to · <span class="bmy">ငွေလွှဲရန်</span></div><div style="white-space:pre-line">${esc(b.co.banks)}</div></div>`:""}
+ ${b.s.note?`<div class="bsm">Note: ${esc(b.s.note)}</div>`:""}
+ <div class="bfoot bmy">${esc(b.co.footer||"Thank you · ကျေးဇူးတင်ပါသည်")}</div></div>`}
+function closeBill(){$("#billRoot").innerHTML="";document.body.classList.remove("billopen")}
+function showBill(id){let s=S.sales[id];if(!s)return toast("Sale not found");
+ if(!s.invNo&&canWrite&&db){s=Object.assign({},s,{invNo:invNoFor(s)});save("sales",id,s)}
+ const b=billModel(id);const share=!!(navigator.share&&navigator.canShare);
+ $("#billRoot").innerHTML=`<div class="billwrap" role="dialog" aria-modal="true" aria-label="Bill"><div class="billbar"><b>Bill</b><span class="notr muted">${esc(b.no)}</span><span class="spacer"></span><button class="btn" id="bPrint">Print</button><button class="btn" id="bPic">Save picture</button>${share?`<button class="btn primary" id="bShare">Send (Viber…)</button>`:""}<button class="btn" id="bClose">Close</button></div><div class="billscroll" id="bScroll">${billHTML(b)}</div></div>`;
+ document.body.classList.add("billopen");
+ $("#bClose").onclick=closeBill;$("#bScroll").onclick=e=>{if(e.target.id==="bScroll")closeBill()};
+ $("#bPrint").onclick=()=>window.print();
+ $("#bPic").onclick=async()=>{const c=await billCanvas(b);c.toBlob(bl=>{const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=b.no+".png";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast("Picture saved")},"image/png")};
+ const sb=$("#bShare");if(sb)sb.onclick=async()=>{const c=await billCanvas(b);c.toBlob(async bl=>{const f=new File([bl],b.no+".png",{type:"image/png"});
+  try{if(navigator.canShare({files:[f]}))await navigator.share({files:[f],title:b.no});else $("#bPic").click()}catch(e){if(e&&e.name!=="AbortError")toast("Could not share. Use Save picture.")}},"image/png")};
+}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#billRoot").innerHTML)closeBill()});
+async function billCanvas(b){
+ try{await Promise.all(['500 20px "Noto Sans Myanmar"','600 20px "Noto Sans Myanmar"','500 20px "IBM Plex Sans"','700 20px "Archivo"','800 20px "Archivo"'].map(f=>document.fonts.load(f)))}catch(e){}
+ const W=900,P=44,FB='"IBM Plex Sans","Noto Sans Myanmar",sans-serif',FD='"Archivo","Noto Sans Myanmar",sans-serif',FM='"Noto Sans Myanmar","IBM Plex Sans",sans-serif';
+ const rows=billRows(b);const banks=b.co.banks?String(b.co.banks).split(/\n/):[];
+ const H=P+130+110+44+b.lines.length*40+20+rows.length*36+30+(banks.length?44+banks.length*28:0)+(b.s.note?34:0)+80;
+ const c=document.createElement("canvas");const k=2;c.width=W*k;c.height=H*k;const x=c.getContext("2d");x.scale(k,k);
+ x.fillStyle="#fff";x.fillRect(0,0,W,H);x.textBaseline="alphabetic";
+ const T=(s,px,py,{f=FB,w=500,sz=17,al="left",col="#16202a",max=0}={})=>{x.font=`${w} ${sz}px ${f}`;x.fillStyle=col;x.textAlign=al;s=String(s);if(max){while(s.length>1&&x.measureText(s).width>max)s=s.slice(0,-2)+"…"}x.fillText(s,px,py)};
+ const line=(y,col="#d8dde1",wd=1)=>{x.strokeStyle=col;x.lineWidth=wd;x.beginPath();x.moveTo(P,y);x.lineTo(W-P,y);x.stroke()};
+ let y=P+26;T(b.co.name,P,y,{f:FD,w:800,sz:30});T("INVOICE",W-P,y,{f:FD,w:800,sz:26,al:"right"});
+ y+=30;if(b.co.address)T(b.co.address,P,y,{max:480});T("ငွေတောင်းခံလွှာ",W-P,y,{f:FM,al:"right"});
+ y+=26;if(b.co.phone)T(b.co.phone,P,y);T("No. "+b.no,W-P,y,{w:600,al:"right"});
+ y+=26;T("Date · ရက်စွဲ  "+(b.s.date||""),W-P,y,{f:FM,al:"right"});
+ y+=20;line(y,"#16202a",2);
+ y+=30;T("Bill to · ဝယ်သူ",P,y,{f:FM,sz:14,col:"#5b6975"});y+=28;T(b.cust.name,P,y,{f:FM,w:600,sz:20,max:W-2*P});
+ y+=26;T([b.cust.area,b.cust.phone].filter(Boolean).join("  ·  "),P,y,{f:FM,col:"#33414c"});
+ y+=26;x.fillStyle="#f1f3f4";x.fillRect(P,y,W-2*P,36);
+ const cx=[P+10,P+46,W-P-330,W-P-180,W-P-10];
+ T("#",cx[0],y+24,{sz:13,col:"#444"});T("Item · ပစ္စည်း",cx[1],y+24,{f:FM,sz:13,col:"#444"});T("Dozen · ဒါဇင်",cx[2],y+24,{f:FM,sz:13,col:"#444",al:"right"});T("Price · ဈေး",cx[3],y+24,{f:FM,sz:13,col:"#444",al:"right"});T("Amount · ငွေ",cx[4],y+24,{f:FM,sz:13,col:"#444",al:"right"});
+ y+=36;
+ b.lines.forEach((l,i)=>{y+=40;T(i+1,cx[0],y-13);T(l.name,cx[1],y-13,{f:FM,max:cx[2]-cx[1]-90});T(l.dz?dzTxt(l.dz):"",cx[2],y-13,{al:"right"});T(l.price?fmt(l.price):"",cx[3],y-13,{al:"right"});T(fmt(l.amt),cx[4],y-13,{al:"right"});line(y)});
+ y+=20;const tx=W-P-470;
+ rows.forEach(r=>{y+=36;if(r[3]){x.strokeStyle="#16202a";x.lineWidth=2;x.beginPath();x.moveTo(tx,y-26);x.lineTo(W-P,y-26);x.stroke()}T(r[0]+" · "+r[1],tx,y,{f:FM,w:r[3]?600:500,sz:r[3]?18:16});T(r[2],W-P,y,{w:r[3]?700:500,sz:r[3]?19:16,al:"right"})});
+ y+=30;
+ if(banks.length){x.fillStyle="#f6f7f8";x.fillRect(P,y,W-2*P,30+banks.length*28);T("Pay to · ငွေလွှဲရန်",P+12,y+24,{f:FM,sz:13,col:"#5b6975"});banks.forEach((s,i)=>T(s,P+12,y+50+i*28,{f:FM,max:W-2*P-24}));y+=44+banks.length*28}
+ if(b.s.note){y+=26;T("Note: "+b.s.note,P,y,{f:FM,sz:14,col:"#5b6975",max:W-2*P})}
+ y+=30;x.setLineDash([5,4]);line(y,"#bbbbbb");x.setLineDash([]);T(b.co.footer||"Thank you · ကျေးဇူးတင်ပါသည်",W/2,y+34,{f:FM,al:"center",col:"#555"});
+ return c;
+}
+
+/* ================= Buying: suppliers, purchases, payments, expenses ================= */
+const purGoods=p=>(p.lines||[]).reduce((a,l)=>a+num(l.qty)*num(l.price),0);
+const purTotal=p=>Math.round(purGoods(p))+num(p.transport);
+const supName=(sid,alt)=>S.suppliers[sid]?.name||alt||"—";
+const supOpts=blank=>(blank?[["",blank]]:[]).concat(list("suppliers").sort((a,b)=>(a.name||"").localeCompare(b.name||"")).map(s=>[s.id,s.name+(s.sells?" · "+s.sells:"")]));
+function supBalances(){const b={};for(const p of list("purchases")){if(!p.sup)continue;b[p.sup]=(b[p.sup]||0)+purTotal(p)-num(p.paid)}for(const y of list("supPays")){if(!y.sup)continue;b[y.sup]=(b[y.sup]||0)-num(y.amount)}return b}
+function supPaidMap(){const out={},pool={};for(const y of list("supPays")){const k=y.sup||"";pool[k]=(pool[k]||0)+num(y.amount)}
+ for(const p of list("purchases").sort((a,b)=>(a.date||"").localeCompare(b.date||"")||(a.t||0)-(b.t||0))){const t=purTotal(p);let pd=num(p.paid);const k=p.sup||"";if(pd<t&&k&&pool[k]>0){const take=Math.min(pool[k],t-pd);pd+=take;pool[k]-=take}out[p.id]=pd}return out}
+const purItems=p=>(p.lines||[]).map(l=>{const m=S.materials[l.mat];return (m?m.name:(l.item||"?"))+" "+fmt(num(l.qty),2).replace(/\.00$/,"")+(m?" "+m.unit:"")}).join(", ");
+const paidChip=(t,p)=>p>=t-0.5?'<span class="chip good">Paid</span>':p>0?'<span class="chip warn">Part paid</span>':'<span class="chip bad">Unpaid</span>';
+V.buying={};
+V.buying.purchases=()=>loadingOr(["purchases","suppliers","materials","supPays"],()=>{
+ const m=UI.month;const xs=list("purchases").filter(p=>ym(p.date)===m).sort(byDateDesc);const pm=supPaidMap();
+ const tot=xs.reduce((a,p)=>a+purTotal(p),0),paid=xs.reduce((a,p)=>a+(pm[p.id]||0),0);
+ return `<div class="bar"><div class="left sum"><span>Bought <b>${ks(tot)}</b></span><span>Paid <b>${ks(paid)}</b></span><span>Still to pay <b>${ks(tot-paid)}</b></span></div><div class="right"><button class="btn primary" id="addPur" ${canWrite?"":"disabled"}>New purchase</button></div></div>
+ ${xs.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Supplier</th><th>Items</th><th class="n">Total Ks</th><th class="n">Paid Ks</th><th></th></tr></thead><tbody>${xs.map(p=>`<tr class="click" data-pe="${p.id}"><td class="notr">${esc(p.date)}</td><td class="notr">${esc(supName(p.sup,p.supName))}</td><td class="notr">${esc(purItems(p))}</td><td class="n">${fmt(purTotal(p))}</td><td class="n">${fmt(pm[p.id]||0)}</td><td>${paidChip(purTotal(p),pm[p.id]||0)}</td></tr>`).join("")}</tbody></table></div><p class="small muted" style="margin:0">Tap a row to change it. Materials bought here are added to raw material stock, and the price list takes the new price.</p>`:emptyState("Nothing bought this month","Write each purchase of resin, colour, bags or anything else: who from, how much, and what you paid.",`<button class="btn primary" id="addPur2" ${canWrite?"":"disabled"}>Write the first purchase</button>`)}`;
+});
+V.buying.purchases.bind=()=>{["#addPur","#addPur2"].forEach(x=>{const b=$(x);if(b)b.onclick=()=>editPurchase(null)});bindRowClicks("data-pe",editPurchase)};
+function editPurchase(id,sup){
+ const x=id?JSON.parse(JSON.stringify(S.purchases[id])):{date:today(),sup:sup||"",lines:[{mat:"",item:"",qty:"",price:""}],toStock:true,method:"Cash"};
+ const lines=x.lines&&x.lines.length?x.lines:[{mat:"",item:"",qty:"",price:""}];
+ const mOpts=[["","— other item —"]].concat(matOpts(false));
+ const html=()=>`<div class="field"><label>Items (quantity × price per unit)</label><div class="lines">${lines.map((l,i)=>{const m=S.materials[l.mat];return `<div class="ln"><div style="display:flex;flex-direction:column;gap:4px">${sel(mOpts,l.mat,`data-i="${i}" data-k="mat" aria-label="Material"`)}${m?"":`<input data-i="${i}" data-k="item" placeholder="What (e.g. tape, diesel)" value="${esc(l.item||"")}" aria-label="Item">`}</div><input data-i="${i}" data-k="qty" inputmode="decimal" placeholder="${m?"Qty ("+esc(m.unit)+")":"Qty"}" value="${esc(l.qty)}" aria-label="Quantity"><input data-i="${i}" data-k="price" inputmode="decimal" placeholder="Ks / unit" value="${esc(l.price)}" aria-label="Price per unit"><button type="button" class="btn sm" data-rm="${i}" aria-label="Remove">✕</button></div>`}).join("")}</div><button type="button" class="btn sm" id="addLn" style="margin-top:6px">Add item</button><div class="sum" style="margin-top:8px"><span>Goods total <b id="lt">${ks(purGoods({lines}))}</b></span></div></div>`;
+ openForm({title:id?"Purchase":"New purchase",data:x,fields:[
+  {k:"date",label:"Date",type:"date",half:1},{k:"sup",label:"Supplier",type:"select",opts:supOpts("Other / not in the list"),half:1},
+  {k:"supName",label:"Name, if not in the list",half:1},{k:"billNo",label:"Their bill no.",half:1},
+  {k:"transport",label:"Transport / loading (Ks)",type:"num",half:1},{k:"paid",label:"Paid now (Ks)",type:"num",half:1,help:"Leave empty if you pay later"},
+  {k:"method",label:"Paid by",type:"select",opts:PAY_ONLY.map(v=>[v,v]),half:1},{k:"toStock",label:"Add to raw material stock",type:"check",def:true,half:1},
+  {k:"note",label:"Note"}],
+  extra:()=>`<div id="dLines">${html()}</div>`,
+  bindExtra:()=>{const box=$("#dLines");const re=()=>{box.innerHTML=html();hook()};const hook=()=>{
+   box.querySelectorAll("[data-k]").forEach(el=>el.oninput=el.onchange=()=>{const l=lines[+el.dataset.i];l[el.dataset.k]=el.value;if(el.dataset.k==="mat"){const m=S.materials[el.value];if(m&&!num(l.price)&&num(m.price))l.price=m.price;re();return}$("#lt").textContent=ks(purGoods({lines}))});
+   box.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{lines.splice(+b.dataset.rm,1);re()});$("#addLn").onclick=()=>{lines.push({mat:"",item:"",qty:"",price:""});re()}};hook()},
+  collect:d=>{d.lines=lines.filter(l=>(l.mat||String(l.item||"").trim())&&num(l.qty)).map(l=>l.mat?{mat:l.mat,qty:num(l.qty),price:num(l.price)}:{item:String(l.item).trim(),qty:num(l.qty),price:num(l.price)});if(d.sup)d.supName="";d.t=d.t||Date.now()},
+  validate:d=>!d.lines.length?"Add at least one item with a quantity":(!d.sup&&!d.supName)?"Choose the supplier or type a name":(!d.sup&&num(d.paid)<purTotal(d)-0.5)?"To buy on credit, add the supplier in the Suppliers tab first":null,
+  onSave:d=>{const pid=id||uid("b");save("purchases",pid,d,"Purchase saved");syncPurchaseStock(pid,d)},
+  onDelete:id?()=>{remove("purchases",id,"Purchase deleted");list("stock").filter(m=>m.purchase===id).forEach(m=>remove("stock",m.id))}:null});
+}
+function syncPurchaseStock(pid,d){const want={};
+ if(d.toStock)d.lines.forEach((l,i)=>{if(l.mat&&S.materials[l.mat])want["sp-"+pid+"-"+i]={date:d.date,kind:"in",mat:l.mat,qty:num(l.qty),price:num(l.price),note:"Bought from "+supName(d.sup,d.supName),purchase:pid,t:d.t}});
+ list("stock").filter(m=>m.purchase===pid&&!want[m.id]).forEach(m=>remove("stock",m.id));
+ Object.entries(want).forEach(([k,v])=>save("stock",k,v));
+ d.lines.forEach(l=>{const mt=S.materials[l.mat];if(mt&&num(l.price)&&num(mt.price)!==num(l.price)&&(!mt.priceDate||mt.priceDate<=d.date))save("materials",l.mat,Object.assign({},mt,{price:num(l.price),priceDate:d.date}))})}
+V.buying.pay=()=>loadingOr(["purchases","suppliers","supPays"],()=>{
+ const sb=supBalances();const owed=list("suppliers").map(s=>Object.assign(s,{bal:sb[s.id]||0})).filter(s=>s.bal>0.5).sort((a,b)=>b.bal-a.bal);
+ const m=UI.month;const xs=list("supPays").filter(y=>ym(y.date)===m).sort(byDateDesc);
+ return `<div class="bar"><div class="left sum"><span>You owe in total <b>${ks(owed.reduce((a,s)=>a+s.bal,0))}</b></span><span>Paid out this month <b>${ks(xs.reduce((a,y)=>a+num(y.amount),0))}</b></span></div><div class="right"><button class="btn primary" id="addSP" ${canWrite?"":"disabled"}>Pay a supplier</button></div></div>
+ <section class="panel"><h3>Still to pay</h3><div class="pb">${owed.length?`<div class="mini">${owed.map(s=>`<div class="row"><div class="grow"><div class="notr"><b>${esc(s.name)}</b></div><div class="small muted notr">${esc([s.sells,s.phone,s.bank].filter(Boolean).join(" · "))}</div></div><span class="amt notr">${fmt(s.bal)} Ks</span><button class="btn sm primary" data-spay="${s.id}" ${canWrite?"":"disabled"}>Pay</button></div>`).join("")}</div>`:`<div class="empty"><b>Nothing owed</b><div>Every supplier is paid.</div></div>`}</div></section>
+ <section class="panel"><h3>Paid out this month</h3><div class="pb">${xs.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Supplier</th><th>Paid by</th><th class="n">Amount Ks</th><th>Note</th></tr></thead><tbody>${xs.map(y=>`<tr class="click" data-ype="${y.id}"><td class="notr">${esc(y.date)}</td><td class="notr">${esc(supName(y.sup))}</td><td>${esc(y.method||"")}</td><td class="n">${fmt(y.amount)}</td><td class="notr">${esc(y.note||"")}</td></tr>`).join("")}</tbody></table></div>`:`<div class="muted small">No payments to suppliers this month.</div>`}</div></section>`;
+});
+V.buying.pay.bind=()=>{$("#addSP")&&($("#addSP").onclick=()=>editSupPay(null));document.querySelectorAll("[data-spay]").forEach(b=>b.onclick=()=>editSupPay(null,b.dataset.spay));bindRowClicks("data-ype",editSupPay)};
+function editSupPay(id,sup){const bal=sup?Math.max(0,Math.round(supBalances()[sup]||0)):"";
+ const x=id?S.supPays[id]:{date:today(),sup:sup||"",amount:bal||"",method:"Cash"};
+ openForm({title:id?"Payment to supplier":"Pay a supplier",data:x,fields:[{k:"date",label:"Date paid",type:"date",half:1},{k:"sup",label:"Supplier",type:"select",opts:supOpts("— choose —"),half:1},{k:"amount",label:"Amount (Ks)",type:"num",half:1},{k:"method",label:"Paid by",type:"select",opts:PAY_ONLY.map(v=>[v,v]),half:1},{k:"note",label:"Note"}],
+  validate:d=>!d.sup?"Choose the supplier":!num(d.amount)?"Enter the amount":null,
+  onSave:d=>{d.t=d.t||Date.now();save("supPays",id||uid("q"),d,"Payment saved")},onDelete:id?()=>remove("supPays",id,"Payment deleted"):null})}
+V.buying.suppliers=()=>loadingOr(["suppliers","purchases","supPays"],()=>{
+ const q=UI.q.toLowerCase();const sb=supBalances();
+ const ss=list("suppliers").filter(s=>!q||[s.name,s.sells,s.area,s.phone].join(" ").toLowerCase().includes(q)).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+ const cur=S.suppliers[UI.supLed]?UI.supLed:"";
+ return `<div class="bar"><div class="left"><input class="search" id="q" placeholder="Find name, item or phone" value="${esc(UI.q)}"><span class="sum"><span>Suppliers <b>${ss.length}</b></span></span></div><div class="right"><button class="btn primary" id="addSup" ${canWrite?"":"disabled"}>Add supplier</button></div></div>
+ ${ss.length?`<div class="tw"><table><thead><tr><th>Supplier</th><th>Sells</th><th>Town</th><th>Phone</th><th>Bank</th><th class="n">You owe Ks</th><th></th></tr></thead><tbody>${ss.map(s=>{const o=sb[s.id]||0;return `<tr class="click" data-se="${s.id}"><td class="notr">${esc(s.name)}</td><td class="notr">${esc(s.sells||"")}</td><td class="notr">${esc(s.area||"")}</td><td class="notr">${esc(s.phone||"")}</td><td class="notr">${esc(s.bank||"")}</td><td class="n">${o>0.5?`<span class="chip warn">${fmt(o)}</span>`:o<-0.5?`<span class="chip good">${fmt(-o)} ahead</span>`:"–"}</td><td><button class="btn sm" data-sled="${s.id}" aria-pressed="${cur===s.id}">History</button></td></tr>`}).join("")}</tbody></table></div>`:emptyState("No suppliers yet","Add the shops and companies you buy resin, colour, bags and other things from.",`<button class="btn primary" id="addSup2" ${canWrite?"":"disabled"}>Add the first supplier</button>`)}
+ ${cur?supLedger(cur):""}`;
+});
+function supLedger(sid){const s=S.suppliers[sid];const ev=[];
+ list("purchases").filter(p=>p.sup===sid).forEach(p=>{ev.push({d:p.date,t:p.t||0,k:0,txt:purItems(p),amt:purTotal(p),id:p.id,kind:"p"});if(num(p.paid))ev.push({d:p.date,t:(p.t||0)+.5,k:1,txt:"Paid with purchase",amt:-num(p.paid)})});
+ list("supPays").filter(y=>y.sup===sid).forEach(y=>ev.push({d:y.date,t:y.t||0,k:1,txt:(y.method||"Paid")+(y.note?" · "+y.note:""),amt:-num(y.amount),id:y.id,kind:"y"}));
+ ev.sort((a,b)=>(a.d||"").localeCompare(b.d||"")||a.k-b.k||a.t-b.t);let bal=0;
+ const rows=ev.map(e=>{bal+=e.amt;return `<tr class="${e.id?"click":""}" ${e.id?`data-sl${e.kind}="${e.id}"`:""}><td class="notr">${esc(e.d||"")}</td><td class="notr wrap">${esc(e.txt)}</td><td class="n">${e.amt>0?fmt(e.amt):""}</td><td class="n">${e.amt<0?fmt(-e.amt):""}</td><td class="n"><b>${fmt(bal)}</b></td></tr>`}).join("");
+ return `<section class="panel"><h3><span>History</span>: <span class="notr">${esc(s.name)}</span></h3><div class="pb" style="display:flex;flex-direction:column;gap:10px"><div class="bar"><div class="left sum"><span>You owe <b>${ks(bal)}</b></span></div><div class="right"><button class="btn" id="slPay" ${canWrite?"":"disabled"}>Pay</button><button class="btn primary" id="slBuy" ${canWrite?"":"disabled"}>New purchase</button></div></div>
+ ${ev.length?`<div class="tw"><table><thead><tr><th>Date</th><th>Items / payment</th><th class="n">Bought Ks</th><th class="n">Paid Ks</th><th class="n">You owe Ks</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="muted small">Nothing bought from this supplier yet.</div>`}</div></section>`}
+V.buying.suppliers.bind=()=>{bindSearch();["#addSup","#addSup2"].forEach(x=>{const b=$(x);if(b)b.onclick=()=>editSupplier(null)});bindRowClicks("data-se",editSupplier);
+ document.querySelectorAll("[data-sled]").forEach(b=>b.onclick=()=>{UI.supLed=UI.supLed===b.dataset.sled?"":b.dataset.sled;ls("ap.supLed",UI.supLed);render()});
+ $("#slPay")&&($("#slPay").onclick=()=>editSupPay(null,UI.supLed));$("#slBuy")&&($("#slBuy").onclick=()=>editPurchase(null,UI.supLed));
+ bindRowClicks("data-slp",editPurchase);bindRowClicks("data-sly",editSupPay)};
+function editSupplier(id){const s=id?S.suppliers[id]:{};
+ openForm({title:id?s.name:"New supplier",data:s,fields:[{k:"name",label:"Name",half:1},{k:"sells",label:"What they sell",half:1},{k:"phone",label:"Phone",half:1},{k:"area",label:"Town / area",half:1},{k:"bank",label:"Bank account",half:1},{k:"terms",label:"Payment term",type:"select",opts:[["","—"],["Cash","Cash"],["On delivery","On delivery"],["Month-end","Month-end"],["30 days","30 days"]],half:1},{k:"note",label:"Note",type:"textarea"}],
+  validate:d=>!d.name?"Enter a name":null,onSave:d=>save("suppliers",id||uid("v"),d,"Supplier saved"),
+  onDelete:id?()=>{if(list("purchases").some(p=>p.sup===id)||list("supPays").some(y=>y.sup===id))return toast("This supplier has purchases or payments, so it is kept");remove("suppliers",id,"Supplier deleted")}:null})}
+const EXP_C=["Transport / fuel","Food / tea","Repairs / parts","Office / phone","Rent","Tax / fees","Gifts / donations","Other"];
+V.buying.expenses=()=>loadingOr(["expenses"],()=>{
+ const m=UI.month;const xs=list("expenses").filter(e=>ym(e.date)===m).sort(byDateDesc);const by={};xs.forEach(e=>by[e.cat||"Other"]=(by[e.cat||"Other"]||0)+num(e.amount));
+ return `<div class="bar"><div class="left sum"><span>Spent <b>${ks(xs.reduce((a,e)=>a+num(e.amount),0))}</b></span>${Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span>${esc(k)} <b>${fmt(v)}</b></span>`).join("")}</div><div class="right"><button class="btn primary" id="addExp" ${canWrite?"":"disabled"}>Add expense</button></div></div>
+ ${xs.length?`<div class="tw"><table><thead><tr><th>Date</th><th>What for</th><th>Kind</th><th>Paid by</th><th class="n">Amount Ks</th></tr></thead><tbody>${xs.map(e=>`<tr class="click" data-ee="${e.id}"><td class="notr">${esc(e.date)}</td><td class="notr">${esc(e.what||"")}</td><td><span class="chip mute">${esc(e.cat||"Other")}</span></td><td>${esc(e.method||"")}</td><td class="n">${fmt(e.amount)}</td></tr>`).join("")}</tbody></table></div><p class="small muted" style="margin:0">Small daily costs. Electricity, water and the pay sheet have their own pages.</p>`:emptyState("No expenses this month","Write small daily costs here: fuel, tea, repairs, phone bills.",`<button class="btn primary" id="addExp2" ${canWrite?"":"disabled"}>Add the first expense</button>`)}`;
+});
+V.buying.expenses.bind=()=>{["#addExp","#addExp2"].forEach(x=>{const b=$(x);if(b)b.onclick=()=>editExpense(null)});bindRowClicks("data-ee",editExpense)};
+function editExpense(id){const x=id?S.expenses[id]:{date:today(),cat:"Transport / fuel",method:"Cash"};
+ openForm({title:id?"Expense":"Add expense",data:x,fields:[{k:"date",label:"Date",type:"date",half:1},{k:"amount",label:"Amount (Ks)",type:"num",half:1},{k:"cat",label:"Kind",type:"select",opts:EXP_C.map(v=>[v,v]),half:1},{k:"method",label:"Paid by",type:"select",opts:PAY_ONLY.map(v=>[v,v]),half:1},{k:"what",label:"What for"}],
+  validate:d=>!num(d.amount)?"Enter the amount":null,onSave:d=>{d.t=d.t||Date.now();save("expenses",id||uid("x"),d,"Expense saved")},onDelete:id?()=>remove("expenses",id,"Expense deleted"):null})}
+
+/* ================= Home ================= */
+V.home=()=>loadingOr(["sales","payments","customers","orders","purchases","supPays","expenses"],()=>{
+ const t=today(),m=UI.month;
+ const salesT=list("sales").filter(s=>s.date===t&&!s.opening);const sT=salesT.reduce((a,s)=>a+saleTotal(s),0);
+ const moneyIn=pred=>list("payments").filter(p=>pred(p.date)&&!isCredit(p)).reduce((a,p)=>a+num(p.amount),0)+list("sales").filter(s=>pred(s.date)&&!s.opening).reduce((a,s)=>a+num(s.paid),0);
+ const inT=moneyIn(d=>d===t),inM=moneyIn(d=>ym(d)===m);
+ const cb=custBalances();const owed=Object.values(cb).reduce((a,v)=>a+Math.max(0,v),0);
+ const sb=supBalances();const oweSup=Object.values(sb).reduce((a,v)=>a+Math.max(0,v),0);
+ const oo=openOrders().sort((a,b)=>(a.due||"9999").localeCompare(b.due||"9999"));const late=oo.filter(o=>o.due&&o.due<t).length,dueT=oo.filter(o=>o.due===t).length;
+ const salesM=list("sales").filter(s=>ym(s.date)===m&&!s.opening).reduce((a,s)=>a+saleTotal(s),0);
+ const buyM=list("purchases").filter(p=>ym(p.date)===m).reduce((a,p)=>a+purTotal(p),0);
+ const expM=list("expenses").filter(e=>ym(e.date)===m).reduce((a,e)=>a+num(e.amount),0);
+ const months=[];for(let i=5;i>=0;i--)months.push(addMonth(m,-i));
+ const top=list("customers").map(c=>Object.assign({},c,{bal:cb[c.id]||0})).filter(c=>c.bal>0.5).sort((a,b)=>b.bal-a.bal).slice(0,6);
+ const tsup=list("suppliers").map(s=>Object.assign({},s,{bal:sb[s.id]||0})).filter(s=>s.bal>0.5).sort((a,b)=>b.bal-a.bal).slice(0,5);
+ const bal=stockBalances();const lowM=list("materials").filter(mt=>num(mt.minStock)&&(bal[mt.id]??0)<num(mt.minStock));
+ const fst=finishedStock();const need={};oo.forEach(o=>(o.lines||[]).forEach(l=>{const p=S.products[l.p];if(p&&isAP(p))need[l.p]=(need[l.p]||0)+num(l.dz)}));
+ const lowP=Object.entries(need).filter(([p,n])=>(fst[p]||0)<n).map(([p,n])=>({p:S.products[p],have:fst[p]||0,n}));
+ const Q=[["qSale","New sale","retail",1],["qOrder","New order","orders"],["qPay","Record payment","money"],["qBuy","New purchase","buying"],["qExp","Add expense","bill"]];
+ const kpi=(go,l,v,d,cls="")=>`<div class="kpi click" data-go="${go}" role="button" tabindex="0"><span class="l">${l}</span><span class="v ${cls} notr">${v}</span><span class="d">${d}</span></div>`;
+ return `<div class="hdate notr">${esc(dateLong(t))}</div>
+ <div class="quick">${Q.map(q=>`<button class="qbtn ${q[3]?"main":""}" id="${q[0]}" ${canWrite?"":"disabled"}>${icon(q[2])}<span>${q[1]}</span></button>`).join("")}</div>
+ <div class="kpis big">
+  ${kpi("retail:sales","Sales today",fmt(sT),`<span class="notr">${salesT.length}</span> <span>${salesT.length===1?"sale":"sales"}</span>`)}
+  ${kpi("retail:payments","Money in today",fmt(inT),"<span>Cash and bank</span>")}
+  ${kpi("retail:customers","Customers owe you",fmt(owed),"<span>Kyat, all customers</span>",owed>0.5?"warnv":"")}
+  ${kpi("buying:pay","You owe suppliers",fmt(oweSup),"<span>Kyat, all suppliers</span>")}
+  ${kpi("orders:open","Orders to deliver",oo.length,late?`<span class="badt"><span class="notr">${late}</span> <span>late</span></span>`:dueT?`<span class="notr">${dueT}</span> <span>due today</span>`:"<span>None late</span>",late?"badv":"")}
+ </div>
+ <section class="panel"><h3><span>Month</span> <span class="notr">${UI.lang==="my"?tm(mlabel(m)):mlabel(m)}</span></h3><div class="pb" style="display:flex;flex-direction:column;gap:12px">
+  <div class="mstrip"><div><span class="l">Sales</span><b class="notr">${fmt(salesM)}</b></div><div><span class="l">Money in</span><b class="notr">${fmt(inM)}</b></div><div><span class="l">Bought</span><b class="notr">${fmt(buyM)}</b></div><div><span class="l">Expenses</span><b class="notr">${fmt(expM)}</b></div></div>
+  <div class="small muted">Sales, last 6 months (Kyat)</div>${svgBars(months.map(x=>({l:MN[+x.slice(5)-1],v:list("sales").filter(s=>ym(s.date)===x&&!s.opening).reduce((a,s)=>a+saleTotal(s),0)})))}</div></section>
+ <div class="grid2">
+  <section class="panel"><h3>Orders to deliver</h3><div class="pb">${oo.length?`<div class="mini">${oo.slice(0,6).map(o=>`<div class="row click" data-oe="${o.id}"><div class="grow"><div class="notr"><b>${esc(custName(o.cust,o.custName))}</b></div><div class="small muted notr">${esc(lineSummary(o.lines))}</div><div class="small">${dueChip(o.due)} ${ostChip(o.status||"wait")}</div></div><span class="amt notr">${fmt(saleTotal(o))}</span>${NEXT[o.status||"wait"]&&canWrite?`<button class="btn sm primary" data-onext="${o.id}">${NEXT[o.status||"wait"][1]}</button>`:""}</div>`).join("")}</div>${oo.length>6?`<button class="btn sm" data-go="orders:open" style="margin-top:8px">See all orders</button>`:""}`:`<div class="empty"><b>No orders waiting</b><div>New orders show here until they are delivered.</div></div>`}</div></section>
+  <section class="panel"><h3>Who owes the most</h3><div class="pb">${top.length?`<div class="mini">${top.map(c=>`<div class="row"><div class="grow"><div class="notr"><b>${esc(c.name)}</b></div><div class="small muted notr">${esc([c.area,c.phone].filter(Boolean).join(" · "))}</div></div><span class="amt notr">${fmt(c.bal)}</span><button class="btn sm" data-hled="${c.id}">Ledger</button><button class="btn sm" data-hpay="${c.id}" ${canWrite?"":"disabled"}>Paid</button></div>`).join("")}</div>`:`<div class="empty"><b>Nobody owes you</b><div>Every customer is paid up.</div></div>`}</div></section>
+  <section class="panel"><h3>Running low</h3><div class="pb">${lowM.length||lowP.length?`<div class="mini">${lowP.map(x=>`<div class="row"><div class="grow"><div class="notr"><b>${esc(x.p.en||x.p.my)}</b></div><div class="small muted"><span>Orders need</span> <span class="notr">${dzTxt(x.n)} dz</span></div></div><span class="amt notr">${dzTxt(x.have)} dz</span><span class="chip bad">Make more</span></div>`).join("")}${lowM.map(mt=>`<div class="row"><div class="grow"><div class="notr"><b>${esc(mt.name)}</b></div><div class="small muted"><span>Minimum</span> <span class="notr">${fmt(mt.minStock)} ${esc(mt.unit)}</span></div></div><span class="amt notr">${fmt(bal[mt.id]??0,1)} ${esc(mt.unit)}</span><span class="chip bad">Buy</span></div>`).join("")}</div>`:`<div class="empty"><b>Nothing is low</b><div>Raw materials are above their minimum and finished stock covers the open orders.</div></div>`}</div></section>
+  <section class="panel"><h3>Suppliers to pay</h3><div class="pb">${tsup.length?`<div class="mini">${tsup.map(s=>`<div class="row"><div class="grow"><div class="notr"><b>${esc(s.name)}</b></div><div class="small muted notr">${esc(s.sells||"")}</div></div><span class="amt notr">${fmt(s.bal)}</span><button class="btn sm" data-hspay="${s.id}" ${canWrite?"":"disabled"}>Pay</button></div>`).join("")}</div>`:`<div class="empty"><b>Nothing owed</b><div>Purchases bought on credit show here until they are paid.</div></div>`}</div></section>
+ </div>
+ <p class="small muted" style="margin:0">Tap a box to open its page. Factory production, pay sheet and bills are on the Overview page.</p>`;
+});
+V.home.bind=()=>{const on=(s,f)=>{const b=$(s);if(b)b.onclick=f};
+ on("#qSale",()=>editSale(null));on("#qOrder",()=>editOrder(null));on("#qPay",()=>editPayment(null));on("#qBuy",()=>editPurchase(null));on("#qExp",()=>editExpense(null));
+ document.querySelectorAll(".kpi.click").forEach(k=>k.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();k.click()}});
+ bindRowClicks("data-oe",editOrder);document.querySelectorAll("[data-onext]").forEach(b=>b.onclick=e=>{e.stopPropagation();orderNext(b.dataset.onext)});
+ document.querySelectorAll("[data-hled]").forEach(b=>b.onclick=()=>{UI.ledgerCust=b.dataset.hled;ls("ap.ledgerCust",UI.ledgerCust);go("retail","ledger")});
+ document.querySelectorAll("[data-hpay]").forEach(b=>b.onclick=()=>editPayment(null,b.dataset.hpay));
+ document.querySelectorAll("[data-hspay]").forEach(b=>b.onclick=()=>editSupPay(null,b.dataset.hspay))};
+
+/* ---- alerts for late orders ---- */
+const _alerts0=alerts;
+alerts=function(){const out=_alerts0();if(!loaded.has("orders"))return out;const t=today();const oo=openOrders();
+ const late=oo.filter(o=>o.due&&o.due<t).length,dueT=oo.filter(o=>o.due===t).length;
+ if(late)out.push({sev:"bad",dept:"orders",t:`${late} order${late>1?"s are":" is"} late for delivery.`,go:["orders","open"]});
+ if(dueT)out.push({sev:"warn",dept:"orders",t:`${dueT} order${dueT>1?"s":""} to deliver today.`,go:["orders","open"]});
+ return out};
+
+/* ---- Settings: what the bill shows ---- */
+const _setV=V.settings,_setB=V.settings.bind;
+function companyPanel(){const c=set_().company||{};const f=(k,l,ta,ph)=>`<div class="field"><label for="co_${k}">${l}</label>${ta?`<textarea id="co_${k}" data-cof="${k}" ${sysDis()} placeholder="${esc(ph||"")}">${esc(c[k]||"")}</textarea>`:`<input id="co_${k}" data-cof="${k}" value="${esc(c[k]||"")}" ${sysDis()} placeholder="${esc(ph||"")}">`}</div>`;
+ return `<section class="panel"><h3>Bill details</h3><div class="pb" style="display:flex;flex-direction:column;gap:10px"><div class="muted small">Printed at the top and bottom of every bill.</div><div class="frow">${f("name","Company name",0,"AP Plastic")}${f("phone","Phone",0,"09 …")}</div>${f("address","Address")}${f("banks","Bank accounts for payment (one per line)",1,"KBZ  0000 0000 0000  ·  name")}${f("footer","Last line of the bill",0,"Thank you · ကျေးဇူးတင်ပါသည်")}</div></section>`}
+V.settings=()=>_setV()+companyPanel();
+V.settings.bind=()=>{if(_setB)_setB();document.querySelectorAll("[data-cof]").forEach(el=>el.onchange=()=>{const st=JSON.parse(JSON.stringify(set_()));st.company=Object.assign({},st.company||{},{[el.dataset.cof]:el.value.trim()});save("settings","main",st,"Saved")})};
+
+/* ---- Myanmar words for the new parts ---- */
+Object.assign(DICT,{
+ "Home":"ပင်မ","Today's money, orders and stock at a glance":"ယနေ့ ငွေ၊ အော်ဒါနှင့် လက်ကျန်ကို တစ်ချက်တည်း ကြည့်ရန်",
+ "Orders":"အော်ဒါများ","Customer orders, from waiting to delivered":"ဖောက်သည်အော်ဒါများ - စောင့်ဆဲမှ ပို့ပြီးအထိ",
+ "Buying":"အဝယ်","Purchases, suppliers, what you owe them and daily expenses":"ဝယ်ယူမှု၊ ကုန်ပေးသွင်းသူ၊ ပေးရန်ကျန်ငွေနှင့် နေ့စဉ်အသုံးစရိတ်",
+ "To deliver":"ပို့ရန်","Delivered":"ပို့ပြီး","Purchases":"ဝယ်ယူမှုများ","Pay suppliers":"ကုန်ပေးသွင်းသူကို ငွေချေ","Suppliers":"ကုန်ပေးသွင်းသူများ","Expenses":"အသုံးစရိတ်",
+ "Waiting":"စောင့်ဆဲ","Ready":"အသင့်ဖြစ်ပြီ","On the way":"ပို့နေဆဲ","Cancelled":"ပယ်ဖျက်ပြီး","Step":"အဆင့်",
+ "Mark ready":"အသင့်ဖြစ်ပြီ","Send out":"ပို့ရန် ထွက်ပြီ","Late":"နောက်ကျနေ","late":"နောက်ကျနေ","Due today":"ယနေ့ ပို့ရမည်","due today":"ယနေ့ ပို့ရမည်","Deliver by":"ပို့ရမည့်ရက်","None late":"နောက်ကျသည် မရှိ",
+ "Open orders":"ပို့ရန်ကျန် အော်ဒါ","Worth":"တန်ဖိုး","New order":"အော်ဒါအသစ်","Order":"အော်ဒါ","Nothing here":"မရှိပါ","Not enough in stock:":"လက်ကျန် မလောက်ပါ -",
+ "No orders waiting":"စောင့်နေသော အော်ဒါ မရှိပါ","Write the first order":"ပထမ အော်ဒါ ရေးမည်",
+ "When a customer orders, write it here. Move it along as it gets ready and goes out. When it is delivered, the sale is recorded for you.":"ဖောက်သည် မှာလျှင် ဒီမှာ ရေးပါ။ အသင့်ဖြစ်လျှင်၊ ပို့ရန်ထွက်လျှင် အဆင့်တိုးပါ။ ပို့ပြီးလျှင် အရောင်းကို အလိုအလျောက် မှတ်ပေးမည်။",
+ "Tap a card to change it. The button moves it to the next step. \"Delivered\" records the sale, takes the dozens out of finished stock and adds it to the customer's ledger.":"ပြင်ရန် ကတ်ကို နှိပ်ပါ။ ခလုတ်က နောက်အဆင့်သို့ ရွှေ့ပေးသည်။ \"ပို့ပြီး\" က အရောင်းမှတ်ပြီး ကုန်ချောလက်ကျန်မှ နုတ်ကာ ဖောက်သည်စာရင်းထဲ ထည့်ပေးသည်။",
+ "Nothing delivered this month":"ဤလတွင် ပို့ပြီးသည် မရှိပါ","Orders marked delivered or cancelled show here, month by month.":"ပို့ပြီး သို့မဟုတ် ပယ်ဖျက်ပြီး အော်ဒါများ လအလိုက် ဒီမှာ ပေါ်မည်။",
+ "Name, if not in the list":"စာရင်းထဲ မရှိလျှင် အမည်","Order date":"မှာသည့်ရက်","Deliver to (town, shop)":"ပို့ရမည့်နေရာ (မြို့၊ ဆိုင်)","Car / driver":"ကား / ယာဉ်မောင်း",
+ "Enter the price per dozen for each product":"ကုန်ပစ္စည်းတိုင်းအတွက် တစ်ဒါဇင်ဈေး ထည့်ပါ","Choose the customer or type a name":"ဖောက်သည်ကို ရွေးပါ သို့မဟုတ် အမည် ရိုက်ပါ","Add at least one product with dozens":"ဒါဇင်နှင့် ကုန်ပစ္စည်း အနည်းဆုံး တစ်ခု ထည့်ပါ",
+ "Order saved":"အော်ဒါ သိမ်းပြီး","Order deleted":"အော်ဒါ ဖျက်ပြီး","Marked ready":"အသင့်ဖြစ်ပြီ ဟု မှတ်ပြီး","Delivered. Sale recorded.":"ပို့ပြီး။ အရောင်း မှတ်ပြီး။",
+ "Delivered: record the sale":"ပို့ပြီး - အရောင်း မှတ်မည်","Date delivered":"ပို့သည့်ရက်","Paid on delivery (Ks)":"ပို့ချိန် ပေးငွေ (ကျပ်)","Leave empty if the customer pays later":"နောက်မှ ပေးလျှင် အလွတ်ထားပါ",
+ "Saving records this as a sale: the dozens come out of finished stock and the amount goes on the customer's ledger.":"သိမ်းလျှင် အရောင်းအဖြစ် မှတ်မည် - ဒါဇင်များ ကုန်ချောလက်ကျန်မှ နုတ်ပြီး ငွေကို ဖောက်သည်စာရင်းထဲ ထည့်မည်။",
+ "Bill":"ဘောက်ချာ","Print":"ပရင့်ထုတ်မည်","Save picture":"ပုံ သိမ်းမည်","Send (Viber…)":"ပို့မည် (Viber…)","Picture saved":"ပုံ သိမ်းပြီး","Could not share. Use Save picture.":"မျှဝေ၍ မရပါ။ ပုံ သိမ်းမည် ကို သုံးပါ။","Sale not found":"အရောင်း မတွေ့ပါ",
+ "Bill details":"ဘောက်ချာ အချက်အလက်","Printed at the top and bottom of every bill.":"ဘောက်ချာတိုင်း၏ အပေါ်နှင့် အောက်တွင် ပါမည်။","Company name":"ကုမ္ပဏီအမည်","Address":"လိပ်စာ","Bank accounts for payment (one per line)":"ငွေလွှဲရန် ဘဏ်အကောင့် (တစ်ကြောင်းလျှင် တစ်ခု)","Last line of the bill":"ဘောက်ချာ၏ နောက်ဆုံးစာကြောင်း",
+ "Bought":"ဝယ်ပြီး","Still to pay":"ပေးရန်ကျန်","New purchase":"အဝယ်အသစ်","Purchase":"အဝယ်","Supplier":"ကုန်ပေးသွင်းသူ","Write the first purchase":"ပထမ အဝယ် ရေးမည်",
+ "Nothing bought this month":"ဤလတွင် ဝယ်ထားသည် မရှိပါ","Write each purchase of resin, colour, bags or anything else: who from, how much, and what you paid.":"ပလတ်စတစ်စေ့၊ အရောင်၊ အိတ် စသည် ဝယ်တိုင်း ရေးပါ - ဘယ်သူ့ဆီက၊ ဘယ်လောက်၊ ဘယ်လောက် ပေးခဲ့သလဲ။",
+ "Tap a row to change it. Materials bought here are added to raw material stock, and the price list takes the new price.":"ပြင်ရန် အတန်းကို နှိပ်ပါ။ ဒီမှာ ဝယ်သော ကုန်ကြမ်းများ လက်ကျန်ထဲ ဝင်ပြီး ဈေးနှုန်းစာရင်းလည်း ဈေးသစ်သို့ ပြောင်းမည်။",
+ "Items (quantity × price per unit)":"ပစ္စည်းများ (အရေအတွက် × တစ်ယူနစ်ဈေး)","— other item —":"— အခြားပစ္စည်း —","Add item":"ပစ္စည်း ထည့်မည်","What (e.g. tape, diesel)":"ဘာလဲ (ဥပမာ တိပ်၊ ဒီဇယ်)","Qty":"အရေအတွက်","Ks / unit":"ကျပ် / ယူနစ်",
+ "Other / not in the list":"အခြား / စာရင်းထဲ မရှိ","Their bill no.":"သူတို့၏ ဘောက်ချာနံပါတ်","Transport / loading (Ks)":"သယ်ခ / အတင်အချ (ကျပ်)","Paid now (Ks)":"ယခု ပေးငွေ (ကျပ်)","Leave empty if you pay later":"နောက်မှ ပေးလျှင် အလွတ်ထားပါ","Add to raw material stock":"ကုန်ကြမ်း လက်ကျန်ထဲ ထည့်မည်",
+ "Add at least one item with a quantity":"အရေအတွက်နှင့် ပစ္စည်း အနည်းဆုံး တစ်ခု ထည့်ပါ","Choose the supplier or type a name":"ကုန်ပေးသွင်းသူကို ရွေးပါ သို့မဟုတ် အမည် ရိုက်ပါ","To buy on credit, add the supplier in the Suppliers tab first":"အကြွေးဝယ်ရန် ကုန်ပေးသွင်းသူများ တွင် အရင် ထည့်ပါ",
+ "Purchase saved":"အဝယ် သိမ်းပြီး","Purchase deleted":"အဝယ် ဖျက်ပြီး",
+ "You owe in total":"ပေးရန်ကျန် စုစုပေါင်း","Paid out this month":"ဤလ ပေးပြီးငွေ","Pay a supplier":"ကုန်ပေးသွင်းသူကို ငွေချေမည်","Pay":"ငွေချေမည်","Nothing owed":"ပေးရန် မကျန်ပါ","Every supplier is paid.":"ကုန်ပေးသွင်းသူ အားလုံး ပေးချေပြီး။",
+ "No payments to suppliers this month.":"ဤလ ကုန်ပေးသွင်းသူထံ ပေးငွေ မရှိပါ။","Payment to supplier":"ကုန်ပေးသွင်းသူထံ ပေးငွေ","Date paid":"ပေးသည့်ရက်","Choose the supplier":"ကုန်ပေးသွင်းသူကို ရွေးပါ","Enter the amount":"ငွေပမာဏ ထည့်ပါ","Payment saved":"ငွေပေးချေမှု သိမ်းပြီး","Payment deleted":"ငွေပေးချေမှု ဖျက်ပြီး",
+ "Find name, item or phone":"အမည်၊ ပစ္စည်း သို့မဟုတ် ဖုန်း ရှာရန်","Add supplier":"ကုန်ပေးသွင်းသူ ထည့်မည်","Sells":"ရောင်းသည့်ပစ္စည်း","You owe Ks":"ပေးရန်ကျန် (ကျပ်)","History":"မှတ်တမ်း","ahead":"ကြိုပေးထား",
+ "No suppliers yet":"ကုန်ပေးသွင်းသူ မရှိသေးပါ","Add the shops and companies you buy resin, colour, bags and other things from.":"ပလတ်စတစ်စေ့၊ အရောင်၊ အိတ် စသည် ဝယ်သော ဆိုင်နှင့် ကုမ္ပဏီများကို ထည့်ပါ။","Add the first supplier":"ပထမ ကုန်ပေးသွင်းသူ ထည့်မည်",
+ "You owe":"ပေးရန်ကျန်","Items / payment":"ပစ္စည်း / ငွေပေး","Bought Ks":"ဝယ်ငွေ (ကျပ်)","Nothing bought from this supplier yet.":"ဤကုန်ပေးသွင်းသူထံမှ ဝယ်ထားသည် မရှိသေးပါ။","Paid with purchase":"ဝယ်စဉ် ပေးငွေ",
+ "New supplier":"ကုန်ပေးသွင်းသူ အသစ်","Name":"အမည်","What they sell":"ရောင်းသည့်ပစ္စည်း","Town / area":"မြို့ / ရပ်ကွက်","Bank account":"ဘဏ်အကောင့်","Payment term":"ငွေပေးချေရက်","On delivery":"ပစ္စည်းရောက်မှ","Month-end":"လကုန်","30 days":"ရက် ၃၀",
+ "Enter a name":"အမည် ထည့်ပါ","Supplier saved":"ကုန်ပေးသွင်းသူ သိမ်းပြီး","Supplier deleted":"ကုန်ပေးသွင်းသူ ဖျက်ပြီး","This supplier has purchases or payments, so it is kept":"ဤကုန်ပေးသွင်းသူတွင် အဝယ် သို့မဟုတ် ငွေပေးမှတ်တမ်း ရှိသဖြင့် မဖျက်ပါ",
+ "Spent":"သုံးငွေ","Add expense":"အသုံးစရိတ် ထည့်မည်","Expense":"အသုံးစရိတ်","What for":"ဘာအတွက်","Kind":"အမျိုးအစား","Amount Ks":"ငွေ (ကျပ်)",
+ "Small daily costs. Electricity, water and the pay sheet have their own pages.":"နေ့စဉ် အသုံးစရိတ်ငယ်များ။ မီတာခ၊ ရေဖိုးနှင့် လစာစာရင်းတို့မှာ ၎င်းတို့၏ စာမျက်နှာ သီးသန့် ရှိသည်။",
+ "No expenses this month":"ဤလ အသုံးစရိတ် မရှိပါ","Write small daily costs here: fuel, tea, repairs, phone bills.":"နေ့စဉ် အသုံးစရိတ်ငယ်များ ဒီမှာ ရေးပါ - ဆီ၊ လက်ဖက်ရည်၊ ပြင်ဆင်ခ၊ ဖုန်းဘေလ်။","Add the first expense":"ပထမ အသုံးစရိတ် ထည့်မည်","Expense saved":"အသုံးစရိတ် သိမ်းပြီး","Expense deleted":"အသုံးစရိတ် ဖျက်ပြီး",
+ "Transport / fuel":"သယ်ယူ / ဆီ","Food / tea":"စားသောက် / လက်ဖက်ရည်","Repairs / parts":"ပြင်ဆင် / အပိုပစ္စည်း","Office / phone":"ရုံး / ဖုန်း","Rent":"ငှားရမ်းခ","Tax / fees":"အခွန် / အခကြေးငွေ","Gifts / donations":"လက်ဆောင် / အလှူ",
+ "Sales today":"ယနေ့ အရောင်း","sale":"ကြိမ်","sales":"ကြိမ်","Money in today":"ယနေ့ ဝင်ငွေ","Cash and bank":"ငွေသားနှင့် ဘဏ်","Customers owe you":"ဖောက်သည်ထံမှ ရရန်","Kyat, all customers":"ကျပ်၊ ဖောက်သည်အားလုံး",
+ "You owe suppliers":"ကုန်ပေးသွင်းသူထံ ပေးရန်","Kyat, all suppliers":"ကျပ်၊ ကုန်ပေးသွင်းသူအားလုံး","Orders to deliver":"ပို့ရန် အော်ဒါများ","Month":"လ","Money in":"ဝင်ငွေ","Sales, last 6 months (Kyat)":"အရောင်း၊ နောက်ဆုံး ၆ လ (ကျပ်)",
+ "See all orders":"အော်ဒါအားလုံး ကြည့်မည်","New orders show here until they are delivered.":"အော်ဒါအသစ်များ ပို့ပြီးသည်အထိ ဒီမှာ ပေါ်မည်။","Who owes the most":"အများဆုံး ကျန်သူများ","Nobody owes you":"ကျန်ငွေ မရှိပါ","Every customer is paid up.":"ဖောက်သည် အားလုံး ပေးချေပြီး။",
+ "Running low":"နည်းနေသည်","Orders need":"အော်ဒါအတွက် လိုသည်","Make more":"ထပ်ထုတ်ရန်","Minimum":"အနည်းဆုံး","Buy":"ဝယ်ရန်","Nothing is low":"နည်းနေသည် မရှိပါ","Raw materials are above their minimum and finished stock covers the open orders.":"ကုန်ကြမ်းများ အနည်းဆုံးထက် များပြီး ကုန်ချောလက်ကျန်က အော်ဒါများအတွက် လောက်သည်။",
+ "Suppliers to pay":"ပေးရန်ကျန် ကုန်ပေးသွင်းသူ","Purchases bought on credit show here until they are paid.":"အကြွေးဝယ်ထားသည်များ ပေးချေသည်အထိ ဒီမှာ ပေါ်မည်။",
+ "Tap a box to open its page. Factory production, pay sheet and bills are on the Overview page.":"စာမျက်နှာဖွင့်ရန် အကွက်ကို နှိပ်ပါ။ ထုတ်လုပ်မှု၊ လစာနှင့် ဘေလ်များမှာ အကျဉ်းချုပ် စာမျက်နှာတွင် ရှိသည်။"
+});
+
 let pending=false;
 function scheduleRender(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;const a=document.activeElement;if(a&&$("#view").contains(a)&&/INPUT|SELECT|TEXTAREA/.test(a.tagName)&&a.classList.contains("cell")){deferred=true;return}if(drawerState)return void(deferred=true);render()})}
 let deferred=false;
@@ -1337,6 +1783,7 @@ function render(){
   $("#view").innerHTML=fn();
   if(fn.bind)fn.bind();
   $("#view").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const [p,tb]=b.dataset.go.split(":");go(p,tb)});
+  $("#view").querySelectorAll("[data-bill]").forEach(b=>{b.onclick=e=>{e.stopPropagation();showBill(b.dataset.bill)};b.ondblclick=e=>e.stopPropagation()});
   $("#syncDot").className="dot"+(dbState==="on"?" on":"");$("#syncTxt").textContent=dbState==="on"?"Saved to shared records":dbState==="off"?"Not connected":"Connecting…";
 }
 function pickMonth(){const ms=Object.keys(S.production).filter(k=>monthBags(k)).sort();return ms[ms.length-1]||ym(today())}
