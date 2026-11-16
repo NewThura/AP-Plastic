@@ -60,7 +60,8 @@ def main():
     if page.count(CDN) != 1:
         sys.exit("run_test: the Supabase script line in index.html changed; update CDN in this file")
     (OUT / "index.html").write_text(page.replace(CDN, '<script src="fake-supabase.js"></script>'), encoding="utf-8")
-    for f in ["config.js", "icon.png", "manifest.webmanifest"]:
+    for f in ["config.js", "manifest.webmanifest", "sw.js", "icon.png", "icon-192.png", "icon-512.png",
+              "icon-maskable-512.png", "apple-touch-icon.png"]:
         shutil.copy(ROOT / f, OUT / f)
     shutil.copy(ROOT / "test" / "fake-supabase.js", OUT / "fake-supabase.js")
     (OUT / "sample.json").write_text(json.dumps(sample(), ensure_ascii=False), encoding="utf-8")

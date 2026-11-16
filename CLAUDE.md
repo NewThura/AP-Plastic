@@ -41,6 +41,10 @@ Everything is in `index.html` (one file, no build step): styles at the top, then
   Text that must not be translated (names, numbers) goes inside an element with class `notr`.
 - The block "New parts (2026-11-16): Home, Orders, Bills, Buying" holds the Home page, Orders, Bills and Buying.
 - `config.js`: Supabase address and the public (publishable) key. Never put a secret key in this project.
+- Installing: `manifest.webmanifest` (name, icons), `sw.js` (needed for the Install button; it loads the newest
+  version first and keeps a copy for no-internet; when you add a new file the app needs offline, nothing else is
+  required), the "Install as an app" block in `index.html`, and `install/` (Windows setup for computers without
+  Chrome or Edge). The icons are `icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`.
 
 ## Testing
 - `python test/run_test.py`, then open http://127.0.0.1:8765/ . It runs the app with a pretend database and

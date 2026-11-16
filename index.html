@@ -6,6 +6,10 @@
 <meta name="theme-color" content="#14262E">
 <link rel="icon" href="icon.png">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AP ERP">
 <title>AP Plastic Factory ERP</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -266,6 +270,10 @@ html[lang="my"] .qbtn{font-family:var(--f-my);line-height:1.7}
 .bbank{background:#f6f7f8;border-radius:6px;padding:10px 12px}
 .bfoot{text-align:center;color:#555;border-top:1px dashed #bbb;padding-top:12px}
 @media (max-width:560px){.paperbill{padding:22px 16px}.bttl{text-align:left}}
+.insthelp h3{margin:6px 0 0;font:700 15px var(--f-display)}
+.insthelp ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.insthelp p{margin:0}
+@media (max-width:520px){.iconbtn.instbtn span{display:inline}}
 @media print{
   body.billopen>*:not(#billRoot){display:none!important}
   body.billopen .billbar{display:none!important}
@@ -291,6 +299,7 @@ html[lang="my"] .qbtn{font-family:var(--f-my);line-height:1.7}
       <div class="topr">
         <div class="seg langseg" role="group" aria-label="Language" id="langSeg"></div>
         <button class="btn iconbtn" id="cmtBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Suggest a change</span></button>
+        <button class="btn iconbtn instbtn" id="instBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg><span>Install app</span></button>
         <button class="btn iconbtn" id="kbBtn" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h1M9 10h1M12 10h1M15 10h1M18 10h0M7 14h10"/></svg><span>Keyboard</span></button>
         <div class="month" aria-label="Month">
           <button id="mPrev" aria-label="Previous month">◀</button>
@@ -1758,6 +1767,32 @@ Object.assign(DICT,{
  "Suppliers to pay":"ပေးရန်ကျန် ကုန်ပေးသွင်းသူ","Purchases bought on credit show here until they are paid.":"အကြွေးဝယ်ထားသည်များ ပေးချေသည်အထိ ဒီမှာ ပေါ်မည်။",
  "Tap a box to open its page. Factory production, pay sheet and bills are on the Overview page.":"စာမျက်နှာဖွင့်ရန် အကွက်ကို နှိပ်ပါ။ ထုတ်လုပ်မှု၊ လစာနှင့် ဘေလ်များမှာ အကျဉ်းချုပ် စာမျက်နှာတွင် ရှိသည်။"
 });
+
+/* ---- Install as an app (computer and phone) ---- */
+const INST={evt:null};
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+function drawInstall(){const b=$("#instBtn");if(b)b.hidden=isStandalone()}
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();INST.evt=e;drawInstall()});
+window.addEventListener("appinstalled",()=>{INST.evt=null;drawInstall();toast("AP Plastic ERP is installed")});
+$("#instBtn").onclick=async()=>{if(INST.evt){const e=INST.evt;INST.evt=null;e.prompt();try{await e.userChoice}catch(x){}drawInstall();return}showInstallHelp()};
+function showInstallHelp(){const close=()=>{$("#drawerRoot").innerHTML=""};
+ $("#drawerRoot").innerHTML=`<div class="scrim" id="scrim"><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="iTitle"><header><h2 id="iTitle">Install the app</h2><button class="btn sm" id="iClose">Close</button></header><div class="body insthelp">
+ <p>The app then opens from its own icon, in its own window, like any other app. It always shows the newest version.</p>
+ <h3>iPhone or iPad</h3><ol><li>Open this page in Safari.</li><li>Tap the Share button (the square with an arrow).</li><li>Tap "Add to Home Screen", then "Add".</li></ol>
+ <h3>Android phone</h3><ol><li>Open this page in Chrome.</li><li>Tap the ⋮ menu, then "Install app" or "Add to Home screen".</li></ol>
+ <h3>Computer</h3><ol><li>Open this page in Chrome or Edge.</li><li>Click the install icon at the right end of the address bar, or the ⋮ menu, then "Install AP ERP".</li></ol>
+ <p class="small muted">No Chrome or Edge? Use the Windows setup in the install folder of the project.</p></div></div></div>`;
+ $("#scrim").onclick=e=>{if(e.target.id==="scrim")close()};$("#iClose").onclick=close}
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register("sw.js").catch(()=>{});
+drawInstall();
+Object.assign(DICT,{"Install app":"အက်ပ် ထည့်သွင်းမည်","Install the app":"အက်ပ်အဖြစ် ထည့်သွင်းရန်","AP Plastic ERP is installed":"AP Plastic ERP ထည့်သွင်းပြီးပါပြီ",
+ "The app then opens from its own icon, in its own window, like any other app. It always shows the newest version.":"ထို့နောက် အက်ပ်ကို ၎င်း၏ အိုင်ကွန်မှ သီးသန့် ဝင်းဒိုးဖြင့် ဖွင့်နိုင်သည်။ နောက်ဆုံးဗားရှင်းကို အမြဲ ပြမည်။",
+ "iPhone or iPad":"iPhone သို့မဟုတ် iPad","Open this page in Safari.":"ဤစာမျက်နှာကို Safari ဖြင့် ဖွင့်ပါ။","Tap the Share button (the square with an arrow).":"Share ခလုတ် (မြှားပါသော လေးထောင့်) ကို နှိပ်ပါ။",
+ "Tap \"Add to Home Screen\", then \"Add\".":"\"Add to Home Screen\" ကို နှိပ်ပြီး \"Add\" ကို နှိပ်ပါ။","Android phone":"Android ဖုန်း","Open this page in Chrome.":"ဤစာမျက်နှာကို Chrome ဖြင့် ဖွင့်ပါ။",
+ "Tap the ⋮ menu, then \"Install app\" or \"Add to Home screen\".":"⋮ မီနူးကို နှိပ်ပြီး \"Install app\" သို့မဟုတ် \"Add to Home screen\" ကို နှိပ်ပါ။","Computer":"ကွန်ပျူတာ",
+ "Open this page in Chrome or Edge.":"ဤစာမျက်နှာကို Chrome သို့မဟုတ် Edge ဖြင့် ဖွင့်ပါ။",
+ "Click the install icon at the right end of the address bar, or the ⋮ menu, then \"Install AP ERP\".":"လိပ်စာဘား၏ ညာဘက်အစွန်ရှိ install အိုင်ကွန်ကို နှိပ်ပါ၊ သို့မဟုတ် ⋮ မီနူးမှ \"Install AP ERP\" ကို နှိပ်ပါ။",
+ "No Chrome or Edge? Use the Windows setup in the install folder of the project.":"Chrome သို့မဟုတ် Edge မရှိလျှင် project ၏ install ဖိုင်တွဲထဲရှိ Windows setup ကို သုံးပါ။"});
 
 let pending=false;
 function scheduleRender(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;const a=document.activeElement;if(a&&$("#view").contains(a)&&/INPUT|SELECT|TEXTAREA/.test(a.tagName)&&a.classList.contains("cell")){deferred=true;return}if(drawerState)return void(deferred=true);render()})}
