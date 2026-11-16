@@ -1,0 +1,20 @@
+# This project is public. Private files must never be committed.
+# Sales sheets, records and database files
+*.xlsx
+*.xls
+*.csv
+*.sql
+*.zip
+/private/
+/AP import*.json
+# Photos and screenshots (the app's own icon.png is allowed)
+*.jpg
+*.jpeg
+*.heic
+Screenshot*
+# Secrets
+.env
+*.key
+# Test output
+/test/out/
+__pycache__/
