@@ -2,6 +2,10 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`): graphs on every tab. Payments (each day, 6 months, paid by),
+  Customers (owe the most, bought the most), Raw materials (used each day, bought), Finished products (made each
+  day, 6 months, in store), Waste (each day, 6 months, by reason). Chart scales now use round steps.
+
 - 2026-11-21, Thura with Claude: new app (`app/`): removed the "Sales records" line under the logo.
 
 - 2026-11-21, Thura with Claude: wrote down the cloud plan for the new app in `CLAUDE.md`: records on both the
