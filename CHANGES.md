@@ -2,6 +2,10 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`) is split into departments with tabs: Sales (Receipts, Payments,
+  Customers) and Production (Raw materials, Finished products, Waste products), plus Overview and Settings. Sales
+  are now called receipts. Raw materials and Waste products are empty for now (next step).
+
 - 2026-11-21, Thura with Claude: new app (`app/`): the records file name is no longer shown anywhere (sales
   workers would not understand it); the saving status is plain words: Saved, Not saved, Records file is closed.
 
