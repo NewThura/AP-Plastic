@@ -158,9 +158,13 @@ svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
 .bnav button{position:relative}
 .bnav .count{position:absolute;top:4px;left:calc(50% + 6px);background:var(--bad);color:#fff;font:600 10px var(--f-data);border-radius:8px;padding:0 5px}
 .nsum{display:flex;flex-wrap:wrap;gap:8px}
-.nchip{display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border-radius:999px;font-weight:600;font-size:13px}
+.charts.ovg{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.panel.ov>h2{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px 8px 16px}
+.ovnow{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;font-size:12px;color:var(--muted)}
+.ovnow b{font:600 20px var(--f-data);color:var(--ink)}
+.nchip{white-space:nowrap;display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border-radius:999px;font-weight:600;font-size:13px}
 .nchip b{font:700 14px var(--f-data)}
-.nchip.bad{background:var(--bad-soft);color:var(--bad)} .nchip.warn{background:var(--warn-soft);color:var(--warn)} .nchip.info{background:var(--sunk);color:var(--ink)}
+.nchip.bad{background:var(--bad-soft);color:var(--bad)} .nchip.warn{background:var(--warn-soft);color:var(--warn)} .nchip.info{background:var(--sunk);color:var(--ink);display:inline-flex;flex-direction:row}
 .ngroup{display:flex;flex-direction:column;gap:8px}
 .ngroup h3{margin:0;display:flex;align-items:center;gap:8px;font:700 15px var(--f-display)}
 .ngroup h3 i{width:10px;height:10px;border-radius:50%;background:var(--warn)}
@@ -279,7 +283,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
+ "Edit":"ပြင်မည်","Money in":"ငွေဝင်","Raw material used":"ကုန်ကြမ်း အသုံး","this month":"ဤလ","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
  "All":"အားလုံး","Bought this month":"ဤလ ဝယ်ယူမှု","customers":"ဦး","All customers":"ဖောက်သည် အားလုံး","Materials":"ကုန်ကြမ်း အမျိုးအစား","Used this month":"ဤလ အသုံး","Low in store":"လက်ကျန် နည်းနေသည်","materials":"မျိုး",
  "Products":"ကုန်ပစ္စည်း","Still sold":"ရောင်းဆဲ","Sold this month":"ဤလ ရောင်းပြီး","products":"မျိုး","In and out":"အဝင်အထွက်","Made":"ထုတ်ပြီး","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
  "Owe you the most":"အကြွေး အများဆုံး","Bought the most, last 6 months":"နောက်ဆုံး ၆ လ အများဆုံး ဝယ်သူ",
@@ -686,12 +690,28 @@ function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
   return out}
 const SEV=[["bad","Urgent"],["warn","To do"],["info","For information"]];
 let ALERTS=[];
+/* Overview: one small graph per area (last 6 months), each opens its tab */
+function overviewCharts(){const m=ym(today()),K=" "+t("Kyat"),L=" "+t("lb"),D=" "+t("dz");
+  const lbOnly=x=>(DB.materials[x.mat]?.unit||"lb")==="lb";
+  const money=[...list("payments").map(p=>({date:p.date,v:num(p.amount)})),...list("sales").map(s=>({date:s.date,v:num(s.paid)}))];
+  const owe=Object.entries(balances()).filter(([c,v])=>c&&v>0.5).map(([c,v])=>({l:custName(c),v})).sort((a,b)=>b.v-a.v);
+  const panel=(title,goTo,now,u,dec,body)=>`<div class="panel ov"><h2><span>${T(title)}</span><button class="btn sm" data-go="${goTo}">${T("Open")}</button></h2>
+     <div class="pb"><div class="ovnow"><b class="notr">${fmt(now,dec)}</b> <span>${u}</span></div>${body}</div></div>`;
+  const six=(title,goTo,rows,val,u,dec=0)=>{const d=perMonth(m,rows,val);
+    return panel(title,goTo,d[d.length-1].v,`${T(u.trim())} · ${T("this month")}`,dec,barChart(d,{h:150,tip:x=>`${monthName(x.m)}: ${fmt(x.v,dec)}${u}`}))};
+  return `<div class="charts ovg">
+   ${six("Sales","receipts",list("sales"),saleTotal,K)}
+   ${six("Money in","payments",money,r=>r.v,K)}
+   ${panel("Customers owe you","customers",owe.reduce((a,r)=>a+r.v,0),`${T("Kyat")} · <span class="notr">${owe.length}</span> ${T("customers")}`,0,hBars(owe.slice(0,5),r=>`${r.l}: ${fmt(r.v)}${K}`))}
+   ${six("Raw material used","raw",list("matMoves").filter(x=>x.kind==="out"&&lbOnly(x)),x=>num(x.qty),L,1)}
+   ${six("Production","finished",list("made"),x=>dzOf(DB.products[x.p],x.unit,x.qty),D,1)}
+   ${six("Waste","waste",list("waste").filter(x=>x.kind==="waste"),x=>num(x.qty),L,1)}</div>`}
 V.overview=()=>{const al=ALERTS=alerts();const cnt=k=>al.filter(a=>a.sev===k).length;
   const icon={Settings:"settings",Customers:"customers",Sales:"sales","Finished products":"products","Raw materials":"production","Waste products":"production",Payments:"payments"};
   const item=(a,i)=>`<button class="nitem ${a.sev}" data-al="${i}"><span class="nic">${svg(icon[a.area]||"sales")}</span><span class="nbody"><span class="narea">${T(a.area)}${a.head?` · <b class="notr">${esc(a.head)}</b>`:""}</span><span class="ntext notr">${esc(a.txt)}</span></span><span class="ngo">${T("Open")}</span></button>`;
   const groups=SEV.map(([k,l])=>{const xs=al.map((a,i)=>[a,i]).filter(([a])=>a.sev===k);return xs.length?`<section class="ngroup ${k}"><h3><i></i><span>${T(l)}</span><span class="notr ncount">${xs.length}</span></h3><div class="nlist">${xs.map(([a,i])=>item(a,i)).join("")}</div></section>`:""}).join("");
-  return salesKpis(ym(today()))+`<div class="nsum">${SEV.map(([k,l])=>`<span class="nchip ${k}"><b class="notr">${cnt(k)}</b> <span>${T(l)}</span></span>`).join("")}</div>${groups}`};
-V.overview.bind=()=>$$("[data-al]").forEach(b=>b.onclick=()=>{const a=ALERTS[+b.dataset.al];if(a)a.go()});
+  return `<div class="nsum">${SEV.map(([k,l])=>`<span class="nchip ${k}"><b class="notr">${cnt(k)}</b> <span>${T(l)}</span></span>`).join("")}</div>${overviewCharts()}${groups}`};
+V.overview.bind=()=>{bindTips();$$("[data-al]").forEach(b=>b.onclick=()=>{const a=ALERTS[+b.dataset.al];if(a)a.go()})};
 
 /* ================= Payments ================= */
 function editPayment(id,cust){const bal=balances();

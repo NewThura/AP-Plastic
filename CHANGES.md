@@ -2,6 +2,9 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`) Overview: the sales numbers are replaced by one graph per area
+  (sales, money in, customers owe you, raw material used, production, waste), each with an Open button.
+
 - 2026-11-21, Thura with Claude: new app (`app/`): every tab built the same way, top to bottom: tools (month,
   search, buttons), four numbers, graphs, then the lists with a title. Added the four numbers to Payments,
   Customers, Raw materials and Finished products; removed the last hint lines.
