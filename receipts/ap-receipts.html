@@ -1,0 +1,308 @@
+<title>AP Receipts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;600&display=swap">
+<style>
+/* Layout: form on the left, the customer's receipt (paper) on the right, saved receipts below. Paper is always white: it is what the customer gets. */
+:root{
+  --bg:#EEF2F2; --surface:#FFFFFF; --sunk:#F4F7F7; --ink:#14232A; --muted:#5E6E75; --line:#D7E0E1;
+  --accent:#0E6F79; --accent-ink:#FFFFFF; --accent-soft:#DCEEEF; --gold:#E9B92F;
+  --good:#1E7B4A; --good-soft:#DDF1E5; --warn:#9A5B00; --warn-soft:#FBEBCF; --bad:#B4322A;
+  --f-ui:"Plus Jakarta Sans","Noto Sans Myanmar",system-ui,sans-serif;
+  --f-my:"Noto Sans Myanmar","Plus Jakarta Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1518; --surface:#152126; --sunk:#111B1F; --ink:#E3ECEE; --muted:#93A5AB; --line:#26363C;
+  --accent:#4FBCC5; --accent-ink:#062A2D; --accent-soft:#163A3E; --gold:#E9BC3A;
+  --good:#5CC98C; --good-soft:#143224; --warn:#E5A84A; --warn-soft:#33260F; --bad:#EF7A70; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1518; --surface:#152126; --sunk:#111B1F; --ink:#E3ECEE; --muted:#93A5AB; --line:#26363C;
+  --accent:#4FBCC5; --accent-ink:#062A2D; --accent-soft:#163A3E; --gold:#E9BC3A;
+  --good:#5CC98C; --good-soft:#143224; --warn:#E5A84A; --warn-soft:#33260F; --bad:#EF7A70; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-ui)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+header.top{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:42px;height:42px;border-radius:11px;background:#0E6F79;color:#fff;display:grid;place-items:center;font:800 17px var(--f-ui);letter-spacing:-.5px;position:relative;flex:none}
+.mark::after{content:"";position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:#F6C945}
+.brand h1{margin:0;font:800 21px/1.1 var(--f-ui);letter-spacing:-.3px}
+.brand span{display:block;color:var(--muted);font-size:13px;font-weight:500}
+.today{display:flex;gap:8px;flex-wrap:wrap}
+.pill{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--muted);white-space:nowrap}
+.pill b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card h2{margin:0;font:700 17px var(--f-ui);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card h2 small{font:500 13px var(--f-ui);color:var(--muted)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label,.lbl{font-size:12.5px;font-weight:600;color:var(--muted)}
+.field input,.field select,.field textarea,.ln input,.ln select{border:1px solid var(--line);background:var(--sunk);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
+.field textarea{min-height:44px;resize:vertical}
+.lines{display:flex;flex-direction:column;gap:8px}
+.ln{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,.8fr) minmax(0,1fr) minmax(0,1.1fr) 40px;gap:8px;align-items:center}
+.lnhead{font-size:12px;font-weight:600;color:var(--muted)}
+@media (max-width:560px){.ln{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px}.ln .nm{grid-column:1/-1}.lnhead{display:none}.ln input.qty,.ln select{grid-column:auto}}
+.x{border:1px solid var(--line);background:var(--surface);border-radius:10px;height:40px;cursor:pointer;color:var(--muted)}
+.x:hover{color:var(--bad);border-color:var(--bad)}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 16px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-style:dashed;color:var(--accent);min-height:40px}
+.btn:disabled{opacity:.5;cursor:default}
+.btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions .wide{grid-column:1/-1}
+.msg{font-size:13px;color:var(--muted);min-height:1.3em}
+.msg.bad{color:var(--bad)}
+details.shop summary{cursor:pointer;color:var(--muted);font-size:13px;font-weight:600}
+details.shop[open]{display:flex;flex-direction:column;gap:10px}
+
+/* the paper: fixed colors, it is the customer's copy */
+.paperbox{display:flex;flex-direction:column;gap:12px;position:sticky;top:max(16px,env(safe-area-inset-top,0px))}
+.paper{background:#FFFFFF;color:#14232A;border-radius:18px;padding:26px 24px 22px;box-shadow:0 1px 2px rgba(10,30,35,.06),0 10px 30px rgba(10,30,35,.10);font:14px/1.5 "Plus Jakarta Sans","Noto Sans Myanmar",system-ui,sans-serif;display:flex;flex-direction:column;gap:16px;border:1px solid #E3EAEB}
+.p-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.p-brand{display:flex;gap:10px;align-items:center}
+.p-brand .mark{width:38px;height:38px;font-size:15px}
+.p-brand b{display:block;font:800 17px/1.15 "Plus Jakarta Sans",sans-serif;letter-spacing:-.2px}
+.p-brand span{display:block;font-size:11.5px;color:#5E6E75}
+.p-tag{text-align:right}
+.p-tag .t{font:800 12px "Plus Jakarta Sans",sans-serif;letter-spacing:.14em;color:#0E6F79}
+.p-tag .my{font:600 12px "Noto Sans Myanmar",sans-serif;color:#0E6F79}
+.p-tag .no{font:700 14px "Plus Jakarta Sans",sans-serif;font-variant-numeric:tabular-nums}
+.p-meta{display:grid;grid-template-columns:1fr auto;gap:2px 12px;background:#F3F7F7;border-radius:12px;padding:10px 12px;font-size:13px}
+.p-meta .k{color:#5E6E75;font-size:11.5px}
+.p-meta .v{font-weight:700}
+.p-meta .r{text-align:right}
+.p-items{display:flex;flex-direction:column}
+.p-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:9px 0;border-bottom:1px dashed #D5DEE0}
+.p-item:first-child{padding-top:0}
+.p-item .n{font-weight:600;overflow-wrap:anywhere}
+.p-item .q{color:#5E6E75;font-size:12.5px;font-variant-numeric:tabular-nums}
+.p-item .a{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;grid-row:1/3;grid-column:2;align-self:center}
+.p-empty{color:#93A3A8;font-size:13px;padding:6px 0;border-bottom:1px dashed #D5DEE0}
+.p-tot{display:flex;flex-direction:column;gap:4px;font-variant-numeric:tabular-nums}
+.p-tot div{display:flex;justify-content:space-between;gap:12px;font-size:13.5px}
+.p-tot .k{color:#5E6E75}
+.p-tot .grand{background:#0E6F79;color:#fff;border-radius:12px;padding:10px 14px;margin-top:4px;align-items:center}
+.p-tot .grand .k{color:#D7EEF0;font-weight:600}
+.p-tot .grand b{font:800 20px "Plus Jakarta Sans",sans-serif}
+.p-tot .owe b{color:#B4322A}
+.p-tot .done{color:#1E7B4A;font-weight:700}
+.p-foot{text-align:center;font-size:12px;color:#5E6E75;display:flex;flex-direction:column;gap:2px}
+.p-foot .thanks{font:600 13px "Noto Sans Myanmar","Plus Jakarta Sans",sans-serif;color:#14232A}
+.my{font-family:var(--f-my)}
+
+/* saved receipts */
+.listbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.search{border:1px solid var(--line);background:var(--sunk);border-radius:10px;padding:9px 12px;width:260px;max-width:100%}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:600;background:var(--sunk)}
+td.n,th.n{text-align:right}
+tbody tr{cursor:pointer}
+tbody tr:hover,tbody tr.on{background:var(--accent-soft)}
+tbody tr:last-child td{border-bottom:0}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px}
+.chip.good{background:var(--good-soft);color:var(--good)} .chip.warn{background:var(--warn-soft);color:var(--warn)}
+.empty{padding:26px 12px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:600;z-index:10}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="mark">AP</div><div><h1>AP Receipts</h1><span>Sales department · ပြေစာ</span></div></div>
+    <div class="today" id="today"><span class="pill">Today <b>0</b> receipts</span><span class="pill">Sales <b>0 Ks</b></span></div>
+  </header>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="formTitle">
+      <h2 id="formTitle"><span id="formName">New receipt</span><small id="formNo"></small></h2>
+      <div class="row">
+        <div class="field"><label for="fCustomer">Customer</label><input id="fCustomer" placeholder="Shop or person" autocomplete="off"></div>
+        <div class="field"><label for="fPhone">Phone</label><input id="fPhone" inputmode="tel" placeholder="09 …" autocomplete="off"></div>
+        <div class="field"><label for="fDate">Date</label><input id="fDate" type="date"></div>
+      </div>
+      <div class="field">
+        <span class="lbl">Products</span>
+        <div class="ln lnhead" aria-hidden="true"><span>Product</span><span>Qty</span><span>Unit</span><span>Price (Ks)</span><span></span></div>
+        <div class="lines" id="lines"></div>
+        <button class="btn ghost" id="addLine" type="button">+ Add product</button>
+      </div>
+      <div class="row">
+        <div class="field"><label for="fPaid">Paid now (Ks)</label><input id="fPaid" inputmode="decimal" placeholder="0"></div>
+        <div class="field"><label for="fSales">Salesperson</label><input id="fSales" placeholder="Your name" autocomplete="off"></div>
+      </div>
+      <div class="field"><label for="fNote">Note (shown on the receipt)</label><textarea id="fNote" rows="1" placeholder="Optional"></textarea></div>
+      <details class="shop" id="shopBox">
+        <summary>Shop details on the receipt</summary>
+        <div class="row">
+          <div class="field"><label for="sName">Shop name</label><input id="sName" placeholder="AP Plastic"></div>
+          <div class="field"><label for="sPhone">Shop phone</label><input id="sPhone" placeholder="09 …"></div>
+        </div>
+        <div class="field"><label for="sAddr">Address</label><input id="sAddr" placeholder="Town, street"></div>
+        <div><button class="btn" id="saveShop" type="button">Save shop details</button></div>
+      </details>
+    </section>
+
+    <div class="paperbox">
+      <div class="paper" id="paper" aria-label="Receipt preview"></div>
+      <div class="actions">
+        <button class="btn primary wide" id="saveBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg><span>Save receipt</span></button>
+        <button class="btn" id="picBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg><span>Save picture</span></button>
+        <button class="btn" id="copyBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span>Copy as text</span></button>
+        <button class="btn wide" id="newBtn" type="button">New receipt</button>
+      </div>
+      <div class="msg" id="msg" role="status"></div>
+    </div>
+  </div>
+
+  <section class="card" aria-labelledby="listTitle">
+    <div class="listbar"><h2 id="listTitle">Saved receipts</h2><input class="search" id="q" placeholder="Find receipt no, customer or product" aria-label="Find receipts"></div>
+    <div id="list"><div class="empty"><b>Loading saved receipts…</b></div></div>
+  </section>
+</div>
+<div id="toastRoot"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=v=>{const n=parseFloat(String(v??"").replace(/[၀-၉]/g,d=>String(d.charCodeAt(0)-0x1040)).replace(/[,\s]/g,""));return isFinite(n)?n:0};
+const fmt=n=>Math.round(n||0).toLocaleString("en-US");
+const qtyTxt=n=>(Math.round(n*100)/100).toLocaleString("en-US");
+const pad=n=>String(n).padStart(2,"0");
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+const longDate=s=>{if(!s)return "";const d=new Date(s+"T00:00:00");return isNaN(d)?s:d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})};
+const UNITS={dz:["dozen","ဒါဇင်"],pc:["piece","ခု"],bag:["bag","အိတ်"]};
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function toast(t){const r=$("#toastRoot");r.innerHTML=`<div class="toast">${esc(t)}</div>`;clearTimeout(toast.t);toast.t=setTimeout(()=>r.innerHTML="",2400)}
+function say(t,bad){const m=$("#msg");m.textContent=t||"";m.classList.toggle("bad",!!bad)}
+
+let db=null,downloads=null,canWrite=true,receipts=[],shop={name:"AP Plastic",phone:"",address:""},editingId=null,original=null,q="";
+const blankLine=()=>({name:"",qty:"",unit:"dz",price:""});
+const blank=()=>({no:"",date:today(),customer:"",phone:"",lines:[blankLine()],paid:"",salesperson:ls("apr.sales")||"",note:""});
+let cur=blank();
+
+const cleanLines=ls=>ls.filter(l=>String(l.name).trim()&&num(l.qty)>0).map(l=>({name:String(l.name).trim(),qty:num(l.qty),unit:l.unit||"dz",price:num(l.price)}));
+const lineAmt=l=>num(l.qty)*num(l.price);
+const total=r=>Math.round(r.lines.reduce((a,l)=>a+lineAmt(l),0));
+function nextNo(date){const d=(date||today()).replace(/-/g,"").slice(2);const pre="R"+d+"-";
+  const n=receipts.filter(r=>String(r.no||"").startsWith(pre)).reduce((a,r)=>Math.max(a,parseInt(String(r.no).slice(pre.length),10)||0),0)+1;return pre+pad(n)}
+
+/* ---------- form ---------- */
+function drawLines(){
+  $("#lines").innerHTML=cur.lines.map((l,i)=>`<div class="ln">
+    <input class="nm" data-i="${i}" data-k="name" placeholder="Product name" value="${esc(l.name)}" aria-label="Product ${i+1}" autocomplete="off">
+    <input class="qty" data-i="${i}" data-k="qty" inputmode="decimal" placeholder="Qty" value="${esc(l.qty)}" aria-label="Quantity ${i+1}">
+    <select data-i="${i}" data-k="unit" aria-label="Unit ${i+1}">${Object.entries(UNITS).map(([k,v])=>`<option value="${k}" ${l.unit===k?"selected":""}>${v[0][0].toUpperCase()+v[0].slice(1)}</option>`).join("")}</select>
+    <input data-i="${i}" data-k="price" inputmode="decimal" placeholder="Price" value="${esc(l.price)}" aria-label="Price ${i+1}">
+    <button class="x" type="button" data-rm="${i}" aria-label="Remove product ${i+1}">✕</button></div>`).join("");
+  document.querySelectorAll("#lines [data-k]").forEach(el=>el.oninput=el.onchange=()=>{cur.lines[+el.dataset.i][el.dataset.k]=el.value;drawPaper()});
+  document.querySelectorAll("#lines [data-rm]").forEach(b=>b.onclick=()=>{cur.lines.splice(+b.dataset.rm,1);if(!cur.lines.length)cur.lines.push(blankLine());drawLines();drawPaper()});
+}
+function drawForm(){
+  $("#fCustomer").value=cur.customer;$("#fPhone").value=cur.phone;$("#fDate").value=cur.date;$("#fPaid").value=cur.paid;$("#fSales").value=cur.salesperson;$("#fNote").value=cur.note;
+  $("#formName").textContent=editingId?"Receipt":"New receipt";
+  drawLines();drawPaper();
+}
+[["#fCustomer","customer"],["#fPhone","phone"],["#fDate","date"],["#fPaid","paid"],["#fSales","salesperson"],["#fNote","note"]].forEach(([s,k])=>{$(s).oninput=$(s).onchange=()=>{cur[k]=$(s).value;drawPaper()}});
+$("#addLine").onclick=()=>{cur.lines.push(blankLine());drawLines();const ins=document.querySelectorAll("#lines .nm");ins[ins.length-1].focus()};
+
+/* ---------- the receipt ---------- */
+function paperHTML(r){
+  const ls=cleanLines(r.lines),t=Math.round(ls.reduce((a,l)=>a+lineAmt(l),0)),paid=num(r.paid),owe=t-paid;
+  const no=r.no||nextNo(r.date);
+  return `<div class="p-head"><div class="p-brand"><div class="mark">AP</div><div><b>${esc(shop.name||"AP Plastic")}</b><span>${esc([shop.phone,shop.address].filter(Boolean).join(" · ")||"Plastic packaging")}</span></div></div>
+    <div class="p-tag"><div class="t">RECEIPT</div><div class="my">ပြေစာ</div><div class="no">${esc(no)}</div></div></div>
+  <div class="p-meta"><span class="k">Customer · ဝယ်သူ</span><span class="k r">Date · ရက်စွဲ</span><span class="v">${esc(r.customer||"Walk-in customer")}</span><span class="v r">${esc(longDate(r.date))}</span>${r.phone?`<span class="k" style="grid-column:1/-1">${esc(r.phone)}</span>`:""}</div>
+  <div class="p-items">${ls.length?ls.map(l=>`<div class="p-item"><span class="n">${esc(l.name)}</span><span class="a">${fmt(lineAmt(l))}</span><span class="q">${qtyTxt(l.qty)} ${UNITS[l.unit][0]}${l.qty===1?"":"s"} × ${fmt(l.price)} Ks</span></div>`).join(""):`<div class="p-empty">Products appear here as you type them.</div>`}</div>
+  <div class="p-tot">
+    <div class="grand"><span class="k">Total · စုစုပေါင်း</span><b>${fmt(t)} Ks</b></div>
+    ${paid?`<div><span class="k">Paid · ပေးပြီး</span><span>${fmt(paid)} Ks</span></div>`:""}
+    ${t>0?(owe>0.5?`<div class="owe"><span class="k">Still to pay · ကျန်ငွေ</span><b>${fmt(owe)} Ks</b></div>`:paid?`<div><span class="k">Balance</span><span class="done">Paid in full</span></div>`:""):""}
+  </div>
+  ${r.note?`<div style="font-size:12.5px;color:#5E6E75">${esc(r.note)}</div>`:""}
+  <div class="p-foot"><span class="thanks">ကျေးဇူးတင်ပါသည် · Thank you</span>${r.salesperson?`<span>Served by ${esc(r.salesperson)}</span>`:""}</div>`;
+}
+function drawPaper(){$("#paper").innerHTML=paperHTML(cur);$("#formNo").textContent=cur.no||(editingId?"":"No. "+nextNo(cur.date)+" when saved")}
+
+/* ---------- saving ---------- */
+$("#saveBtn").onclick=async()=>{
+  const ls=cleanLines(cur.lines);
+  if(!ls.length)return say("Add at least one product with a quantity.",true);
+  if(!db)return say("Saving is not available in this view. You can still save the picture.",true);
+  if(!canWrite)return say("You can view receipts but not save them. Ask the owner for Contributor access.",true);
+  const body={no:cur.no||nextNo(cur.date),date:cur.date||today(),customer:String(cur.customer).trim(),phone:String(cur.phone).trim(),lines:ls,paid:num(cur.paid),salesperson:String(cur.salesperson).trim(),note:String(cur.note).trim(),total:total({lines:ls}),createdAt:original?.createdAt||Date.now(),updatedAt:Date.now()};
+  const btn=$("#saveBtn");btn.disabled=true;say("Saving…");
+  try{const ref=editingId?db.collection("receipts").doc(editingId):db.collection("receipts").doc();await ref.set(body);
+    editingId=ref.id;original=body;cur=Object.assign({},cur,{no:body.no});if(body.salesperson)ls_sales(body.salesperson);drawForm();say("Saved as "+body.no+". Send it to the customer with Save picture or Copy as text.");toast("Receipt saved")}
+  catch(e){say(e&&e.code==="quota_exceeded"?"The receipt store is full. Delete old receipts to save new ones.":e&&e.code==="invalid_argument"?"You are not allowed to save receipts here.":"Could not save. Check the internet and try again.",true)}
+  finally{btn.disabled=false}};
+function ls_sales(v){ls("apr.sales",v)}
+$("#newBtn").onclick=()=>{editingId=null;original=null;cur=blank();drawForm();say("");markRow();$("#fCustomer").focus()};
+
+/* ---------- send to the customer ---------- */
+$("#picBtn").onclick=async()=>{
+  if(!cleanLines(cur.lines).length)return say("Add a product first.",true);
+  if(!window.html2canvas)return say("The picture maker did not load. Take a screenshot of the receipt instead.",true);
+  if(!downloads)return say("Saving files is not available here. Take a screenshot of the receipt instead.",true);
+  say("Making the picture…");
+  try{await document.fonts.ready;const c=await html2canvas($("#paper"),{scale:2,backgroundColor:"#EEF2F2",logging:false,useCORS:true});
+    const blob=await new Promise(r=>c.toBlob(r,"image/png"));const name=(cur.no||nextNo(cur.date))+(cur.customer?" "+cur.customer:"")+".png";
+    await downloads.save({filename:name.replace(/[\\/:*?"<>|]/g,""),data:blob});say("Picture saved. Send it to the customer on Viber.");}
+  catch(e){say(e&&e.code==="declined"?"Picture not saved.":e&&e.code==="rate_limited"?"A save is already waiting for your answer.":"Could not make the picture. Take a screenshot instead.",e&&e.code!=="declined")}};
+$("#copyBtn").onclick=async()=>{
+  const ls=cleanLines(cur.lines);if(!ls.length)return say("Add a product first.",true);
+  const t=total({lines:ls}),paid=num(cur.paid);
+  const txt=[`${shop.name||"AP Plastic"} · Receipt ${cur.no||nextNo(cur.date)}`,`${longDate(cur.date)} · ${cur.customer||"Walk-in customer"}`,"",...ls.map(l=>`${l.name}: ${qtyTxt(l.qty)} ${UNITS[l.unit][0]}${l.qty===1?"":"s"} × ${fmt(l.price)} = ${fmt(lineAmt(l))} Ks`),"",`Total: ${fmt(t)} Ks`,...(paid?[`Paid: ${fmt(paid)} Ks`]:[]),...(t-paid>0.5?[`Still to pay: ${fmt(t-paid)} Ks`]:[]),"","ကျေးဇူးတင်ပါသည် · Thank you"].join("\n");
+  try{await navigator.clipboard.writeText(txt);say("Copied. Paste it into Viber or a message.")}catch(e){say("Could not copy here. Use Save picture instead.",true)}};
+
+/* ---------- saved receipts ---------- */
+function owed(r){return Math.max(0,num(r.total)-num(r.paid))}
+function drawToday(){const t=today(),xs=receipts.filter(r=>r.date===t);
+  $("#today").innerHTML=`<span class="pill">Today <b>${xs.length}</b> receipt${xs.length===1?"":"s"}</span><span class="pill">Sales <b>${fmt(xs.reduce((a,r)=>a+num(r.total),0))} Ks</b></span><span class="pill">Still owed <b>${fmt(receipts.reduce((a,r)=>a+owed(r),0))} Ks</b></span>`}
+function drawList(){
+  const s=q.trim().toLowerCase();
+  const xs=receipts.filter(r=>!s||[r.no,r.customer,r.phone,r.salesperson,...(r.lines||[]).map(l=>l.name)].join(" ").toLowerCase().includes(s));
+  if(!db){$("#list").innerHTML=`<div class="empty"><b>Saved receipts show here</b>Saving is not available in this view.</div>`;return}
+  if(!receipts.length){$("#list").innerHTML=`<div class="empty"><b>No receipts yet</b>Fill in the form, then press Save receipt. It appears here for the whole sales team.</div>`;return}
+  if(!xs.length){$("#list").innerHTML=`<div class="empty"><b>No receipt matches</b>Try another receipt number, customer or product.</div>`;return}
+  $("#list").innerHTML=`<div class="tw"><table><thead><tr><th>Receipt</th><th>Date</th><th>Customer</th><th>Products</th><th class="n">Total Ks</th><th class="n">Still owed</th><th>Salesperson</th></tr></thead><tbody>${xs.map(r=>{const o=owed(r);return `<tr data-id="${esc(r.id)}" tabindex="0"><td><b>${esc(r.no)}</b></td><td>${esc(longDate(r.date))}</td><td>${esc(r.customer||"Walk-in")}</td><td>${esc((r.lines||[]).map(l=>l.name).join(", ").slice(0,48))}</td><td class="n">${fmt(r.total)}</td><td class="n">${o>0.5?`<span class="chip warn">${fmt(o)}</span>`:`<span class="chip good">Paid</span>`}</td><td>${esc(r.salesperson||"")}</td></tr>`}).join("")}</tbody></table></div>`;
+  document.querySelectorAll("#list tr[data-id]").forEach(tr=>{const open=()=>openReceipt(tr.dataset.id);tr.onclick=open;tr.onkeydown=e=>{if(e.key==="Enter")open()}});markRow()}
+function markRow(){document.querySelectorAll("#list tr[data-id]").forEach(tr=>tr.classList.toggle("on",tr.dataset.id===editingId))}
+function openReceipt(id){const r=receipts.find(x=>x.id===id);if(!r)return;editingId=id;original=r;
+  cur={no:r.no||"",date:r.date||today(),customer:r.customer||"",phone:r.phone||"",lines:(r.lines||[]).map(l=>({name:l.name,qty:String(l.qty),unit:l.unit||"dz",price:String(l.price)})),paid:r.paid?String(r.paid):"",salesperson:r.salesperson||"",note:r.note||""};
+  if(!cur.lines.length)cur.lines=[blankLine()];drawForm();say("Opened "+r.no+". Change it and press Save receipt, or send it again.");markRow();
+  if(matchMedia("(max-width:900px)").matches)$("#paper").scrollIntoView({behavior:"smooth",block:"start"})}
+$("#q").oninput=()=>{q=$("#q").value;drawList()};
+
+/* ---------- shop details ---------- */
+function drawShop(){$("#sName").value=shop.name||"";$("#sPhone").value=shop.phone||"";$("#sAddr").value=shop.address||""}
+$("#saveShop").onclick=async()=>{const s={name:$("#sName").value.trim()||"AP Plastic",phone:$("#sPhone").value.trim(),address:$("#sAddr").value.trim()};
+  if(!db)return say("Saving is not available in this view.",true);
+  try{await db.doc("settings/shop").set(s);shop=s;drawPaper();toast("Shop details saved")}catch(e){say("Could not save the shop details.",true)}};
+
+/* ---------- start ---------- */
+drawForm();drawToday();drawShop();
+(async()=>{
+  try{db=window.claude?await window.claude.use("db"):null}catch(e){db=null}
+  try{downloads=window.claude?await window.claude.use("downloads"):null}catch(e){downloads=null}
+  try{const user=window.claude?await window.claude.use("user"):null;if(user){const w=await user.can("data.write");if(w===false)canWrite=false}}catch(e){}
+  if(!downloads)$("#picBtn").title="Take a screenshot of the receipt instead";
+  if(!canWrite){$("#saveBtn").disabled=true;$("#saveShop").disabled=true}
+  if(!db){drawList();return}
+  db.collection("receipts").orderBy("createdAt","desc").limit(500).onSnapshot(snap=>{
+    receipts=snap.docs.map(d=>Object.assign({id:d.id},d.data()));drawList();drawToday();if(!editingId)drawPaper()},
+    ()=>{$("#list").innerHTML=`<div class="empty"><b>Saved receipts could not load</b>Reload the page to try again.</div>`});
+  db.doc("settings/shop").onSnapshot(d=>{if(d.exists){shop=Object.assign({name:"AP Plastic"},d.data());drawShop();drawPaper()}},()=>{});
+})();
+</script>

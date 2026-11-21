@@ -2,6 +2,10 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: `receipts/ap-receipts.html`, a simple receipt maker for the sales department
+  (published as the "AP Receipts" artifact): form, modern customer receipt (picture or text for Viber), saved
+  receipts for the team. Product names are typed for now; the product list will be made again later.
+
 - 2026-11-16, Thura with Claude: the app can be installed. "Install app" button at the top (Chrome and Edge
   install it in one click; iPhone, Android and computer steps shown otherwise); sharp new icons at every size;
   `sw.js` so Chrome offers install and the app opens without internet (always loads the newest version first);
