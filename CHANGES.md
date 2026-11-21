@@ -2,6 +2,13 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`): Overview page with notifications and alarms (overdue money per
+  customer, records file problems, backup reminder, unpaid sales, products with no price, customers with no
+  phone); full customer details as in the sales department's list (number, town, phone, address, bank, payment
+  term, agent and commission, usual delivery charge, brands, note) with a details panel; delivery charge on a
+  sale; graphs on the Sales tab (sales each day, last 6 months, top products, top customers). The look is now
+  white with blue touches only (no dark mode), as the owner asked.
+
 - 2026-11-21, Thura with Claude: new app (`app/`) shows the Advanced Packaging logo (menu, phone top bar, browser
   tab icon) and uses the logo's navy as its main colour. `app/logo.png` and `app/icon.png` are cut from the logo.
 
