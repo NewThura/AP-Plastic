@@ -277,7 +277,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","lb":"ပေါင်","viss":"ပိဿာ","kg":"ကီလို","bag":"အိတ်","piece":"ခု","Material":"ကုန်ကြမ်း","Add material":"ကုန်ကြမ်း ထည့်မည်","Stock in":"အဝင်","Stock used":"အသုံးပြု","In store":"လက်ကျန်",
+ "Edit":"ပြင်မည်","Choose folder":"ဖိုင်တွဲ ရွေးမည်","Change folder":"ဖိုင်တွဲ ပြောင်းမည်","Saved each month":"လစဉ် အလိုလို သိမ်းသည်","lb":"ပေါင်","viss":"ပိဿာ","kg":"ကီလို","bag":"အိတ်","piece":"ခု","Material":"ကုန်ကြမ်း","Add material":"ကုန်ကြမ်း ထည့်မည်","Stock in":"အဝင်","Stock used":"အသုံးပြု","In store":"လက်ကျန်",
  "Price per unit (Ks)":"တစ်ယူနစ်ဈေး (ကျပ်)","Minimum in store":"အနည်းဆုံး လက်ကျန်","Amount":"ပမာဏ","Supplier":"ရောင်းသူ","Choose the material":"ကုန်ကြမ်းကို ရွေးပါ","This is used in records, so it is kept":"မှတ်တမ်းထဲတွင် သုံးထား၍ ဖျက်မရပါ",
  "No materials yet":"ကုန်ကြမ်း မရှိသေးပါ","In and out this month":"ဤလ အဝင်အထွက်","In or used":"အဝင် / အသုံး","In":"အဝင်","Used":"အသုံး","Amount Ks":"ငွေ (ကျပ်)",
  "Add production":"ထုတ်လုပ်မှု ထည့်မည်","Made this month":"ဤလ ထုတ်ပြီး","In store at start (dz)":"စစချင်း လက်ကျန် (ဒါဇင်)","Minimum (dz)":"အနည်းဆုံး (ဒါဇင်)","Choose the product":"ကုန်ပစ္စည်းကို ရွေးပါ",
@@ -326,14 +326,20 @@ const COLS=["products","customers","sales","payments","materials","matMoves","ma
 const DB={};COLS.forEach(c=>DB[c]={});
 const Store={
   idb:null,ready:false,
+  /* records are saved into a folder the owner chooses once (for example E:\AP Records):
+     ap-records.json holds everything and is updated after every change; ap-records-YYYY-MM.json is the copy for
+     each month, started by itself when a new month begins, so every month is kept in its own file. */
   file:{handle:null,name:"",state:"none",err:false,timer:null,saving:false,again:false}, // none | need | on | nosupport
+  MAIN:"ap-records.json",monthFile:()=>"ap-records-"+ym(today())+".json",
   open(){return new Promise((ok,bad)=>{const r=indexedDB.open("ap-sales-app",2);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("records"))d.createObjectStore("records",{keyPath:["col","id"]});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta");if(!d.objectStoreNames.contains("backups"))d.createObjectStore("backups",{keyPath:"day"})};r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)})},
   tx(store,mode,fn){return new Promise((ok,bad)=>{const x=this.idb.transaction(store,mode);const req=fn(x.objectStore(store));x.oncomplete=()=>ok(req&&req.result);x.onerror=()=>bad(x.error)})},
   all(){const out=[];for(const c of COLS)for(const [id,data] of Object.entries(DB[c]))out.push({col:c,id,data});return out},
   async replaceAll(recs){await this.tx("records","readwrite",st=>{st.clear();recs.forEach(r=>st.put(r))});COLS.forEach(c=>DB[c]={});recs.forEach(r=>{if(DB[r.col])DB[r.col][r.id]=r.data})},
-  async readFile(h){const txt=await (await h.getFile()).text();if(!txt.trim())return [];const j=JSON.parse(txt);return (j.records||[]).filter(r=>r&&COLS.includes(r.col)&&r.id&&r.data)},
+  async readFile(dir){let h;try{h=await dir.getFileHandle(this.MAIN)}catch(e){return null}
+    const txt=await (await h.getFile()).text();if(!txt.trim())return [];const j=JSON.parse(txt);return (j.records||[]).filter(r=>r&&COLS.includes(r.col)&&r.id&&r.data)},
+  async writeOne(name,body){const h=await this.file.handle.getFileHandle(name,{create:true});const w=await h.createWritable();await w.write(body);await w.close()},
   async writeFile(){const F=this.file;if(F.state!=="on")return;if(F.saving){F.again=true;return}F.saving=true;
-    try{const w=await F.handle.createWritable();await w.write(JSON.stringify({app:"AP Plastic sales",saved:new Date().toISOString(),records:this.all()}));await w.close();if(F.err){F.err=false;render()}}
+    try{const body=JSON.stringify({app:"AP Plastic",saved:new Date().toISOString(),records:this.all()});await this.writeOne(this.MAIN,body);await this.writeOne(this.monthFile(),body);if(F.err){F.err=false;render()}}
     catch(e){if(!F.err){F.err=true;toast(t("Could not save to the records file"));render()}}
     finally{F.saving=false;if(F.again){F.again=false;this.writeFile()}}},
   soon(){clearTimeout(this.file.timer);this.file.timer=setTimeout(()=>{this.writeFile();this.autoBackup()},300)},
@@ -347,15 +353,15 @@ const Store={
     await this.tx("backups","readwrite",st=>st.put({day:today(),saved:new Date().toISOString(),records:recs}));
     const days=(await this.tx("backups","readonly",st=>st.getAllKeys())||[]).sort();
     if(days.length>this.KEEP)await this.tx("backups","readwrite",st=>{days.slice(0,days.length-this.KEEP).forEach(d=>st.delete(d))})}catch(e){}},
-  async link(h){const F=this.file;F.handle=h;F.name=h.name;F.state="on";F.err=false;await this.tx("meta","readwrite",st=>st.put(h,"file"))},
+  async link(h){const F=this.file;F.handle=h;F.name=h.name;F.state="on";F.err=false;await this.tx("meta","readwrite",st=>st.put(h,"folder"))},
   async start(){
     this.idb=await this.open();
     (await this.tx("records","readonly",st=>st.getAll())||[]).forEach(r=>{if(DB[r.col])DB[r.col][r.id]=r.data});
     const F=this.file;
-    if(!window.showOpenFilePicker)F.state="nosupport";
-    else{const h=await this.tx("meta","readonly",st=>st.get("file"));
+    if(!window.showDirectoryPicker)F.state="nosupport";
+    else{const h=await this.tx("meta","readonly",st=>st.get("folder"));
       if(h){F.handle=h;F.name=h.name;let p="prompt";try{p=await h.queryPermission({mode:"readwrite"})}catch(e){}
-        if(p==="granted"){try{await this.replaceAll(await this.readFile(h));F.state="on"}catch(e){F.state="need"}}else F.state="need"}}
+        if(p==="granted"){try{const recs=await this.readFile(h);F.state="on";if(recs)await this.replaceAll(recs);else this.soon()}catch(e){F.state="need"}}else F.state="need"}}
     try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
     this.ready=true;
     this.autoBackup();
@@ -363,10 +369,9 @@ const Store={
   canChange(){return this.ready&&this.file.state!=="need"},
   async put(col,id,data){await this.tx("records","readwrite",st=>st.put({col,id,data}));DB[col][id]=data;this.soon()},
   async del(col,id){await this.tx("records","readwrite",st=>st.delete([col,id]));delete DB[col][id];this.soon()},
-  async reopen(){const F=this.file;const p=await F.handle.requestPermission({mode:"readwrite"});if(p!=="granted")return false;await this.replaceAll(await this.readFile(F.handle));F.state="on";F.err=false;return true},
-  TYPES:[{description:"AP Plastic records",accept:{"application/json":[".json"]}}],
-  async newFile(){const h=await showSaveFilePicker({suggestedName:"ap-sales-records.json",types:this.TYPES});await this.link(h);await this.writeFile()},
-  async openFile(){const [h]=await showOpenFilePicker({types:this.TYPES,multiple:false});await this.replaceAll(await this.readFile(h));await this.link(h)}
+  async reopen(){const F=this.file;const p=await F.handle.requestPermission({mode:"readwrite"});if(p!=="granted")return false;const recs=await this.readFile(F.handle);F.state="on";F.err=false;if(recs)await this.replaceAll(recs);else await this.writeFile();return true},
+  // choose the folder once; if it already holds records they are loaded, otherwise the records here are saved into it
+  async chooseFolder(){const h=await showDirectoryPicker({id:"ap-records",mode:"readwrite"});const recs=await this.readFile(h);if(recs)await this.replaceAll(recs);await this.link(h);await this.writeFile()}
 };
 /* changes to share with other apps (not shown here). Every add, change or removal of a customer or a
    product is written to "outbox" with what it was before and what it is now. When there is a cloud,
@@ -385,7 +390,7 @@ async function save(col,id,data,msg){if(!Store.canChange())return toast(t("Recor
 async function remove(col,id,msg){if(!Store.canChange())return;const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.del(col,id);await logShared(col,id,before,null);if(msg)toast(t(msg));render()}
 async function fileAction(kind){
   try{if(kind==="open"&&Store.file.state==="need"){if(!(await Store.reopen()))return toast(t("The file was not allowed"))}
-    else if(kind==="new")await Store.newFile();else await Store.openFile();
+    else await Store.chooseFolder();
     toast(t("Saved"));render()}
   catch(e){if(e&&e.name==="AbortError")return;toast(t("Could not use the file")+": "+(e&&e.message||e))}}
 
@@ -779,7 +784,7 @@ V.waste.bind=()=>{bindMonth();$("#wAdd").onclick=()=>editWaste(null,"waste");$("
 /* ================= Settings ================= */
 V.settings=()=>{const F=Store.file;
   const fileBox=F.state==="nosupport"?`<div class="muted">${T("Use Chrome or Edge to save to a file.")}</div>`
-   :`    <div style="display:flex;gap:8px;flex-wrap:wrap">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open")}</button>`:""}<button class="btn" data-file="new">${T("New file")}</button><button class="btn" data-file="pick">${T("Choose file")}</button></div>`;
+   :`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open")}</button>`:""}<button class="btn ${F.state==="none"?"primary":""}" data-file="pick">${T(F.state==="none"?"Choose folder":"Change folder")}</button>${F.state==="on"?`<span class="chip good">${T("Saved each month")}</span>`:""}</div>`;
   return `<div class="panel"><h2>${T("Records file")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:12px">${fileBox}</div></div>
    <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
 V.settings.bind=()=>{bindLang()};
@@ -802,8 +807,8 @@ function bindLang(){$$("[data-lang]").forEach(b=>b.onclick=()=>{UI.lang=b.datase
 function go(p){p=OLD[p]||p;const d=deptOf(p);if(d.id===p&&d.tabs)p=ls("ap2.tab."+d.id)||d.tabs[0][0];if(d.tabs)ls("ap2.tab."+d.id,p);UI.page=p;UI.q="";ls("ap2.page",p);render();window.scrollTo(0,0)}
 function fileBanner(){const F=Store.file;if(!Store.ready)return "";
   if(F.state==="need")return `<div class="banner"><span>${T("Records file is closed")}</span><button class="btn sm primary" data-file="open">${T("Open")}</button></div>`;
-  if(F.state==="none")return `<div class="banner"><span>${T("No records file yet")}</span><span class="btns"><button class="btn sm primary" data-file="new">${T("New file")}</button><button class="btn sm" data-file="pick">${T("Choose file")}</button></span></div>`;
-  if(F.state==="on"&&F.err)return `<div class="banner bad"><span>${T("Could not save to the records file")}</span><button class="btn sm" data-file="pick">${T("Choose file")}</button></div>`;
+  if(F.state==="none")return `<div class="banner"><span>${T("No records file yet")}</span><button class="btn sm primary" data-file="pick">${T("Choose folder")}</button></div>`;
+  if(F.state==="on"&&F.err)return `<div class="banner bad"><span>${T("Could not save to the records file")}</span><button class="btn sm" data-file="pick">${T("Choose folder")}</button></div>`;
   return ""}
 function syncText(){const F=Store.file;if(!Store.ready)return ["",t("Loading…")];
   if(F.state==="on")return F.err?["bad",t("Not saved")]:["on",t("Saved")];

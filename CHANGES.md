@@ -2,6 +2,10 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`) saves into a folder chosen once in Settings instead of a single
+  file: `ap-records.json` (everything, updated after each change) and `ap-records-YYYY-MM.json` (one per month,
+  started by itself each new month). Settings has one button: Choose folder / Change folder.
+
 - 2026-11-21, Thura with Claude: new app (`app/`) Production department. Raw materials: material list (unit, price,
   minimum), stock in (price updates the material), stock used, what is in store. Finished products: stock at
   start, minimum, production made (dozens or bags), in store = made minus sold on receipts. Waste products: waste

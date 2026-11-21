@@ -34,8 +34,10 @@ Write your name, the part, and the date. Remove your line when you are done.
 
 ## The new app (`app/`, started 2026-11-21)
 A new, simpler app is being built step by step in `app/index.html` (one file, readable code). It only collects
-data and shows it to the CEO. Step 1: sales (products, customers, sales, payments). Records are kept in a records
-file on the office computer's drive (Chrome or Edge), with a copy in the browser; nothing is sent anywhere.
+data and shows it to the CEO. Departments: Sales (receipts, payments, customers) and Production (raw materials,
+finished products, waste). Records are saved into a folder on the office computer's drive, chosen once in
+Settings (Chrome or Edge): `ap-records.json` holds everything, `ap-records-YYYY-MM.json` is kept for each month;
+a copy is also kept in the browser. Nothing is sent anywhere. These files are private (blocked in `.gitignore`).
 Words: `MY` (English → Myanmar) at the top of its script; wrap fixed text in `t()` / `T()`. Test it with
 `python -m http.server 8770 --directory .` from the project folder, then open http://127.0.0.1:8770/app/ .
 The old app below stays live until the new one replaces it.
