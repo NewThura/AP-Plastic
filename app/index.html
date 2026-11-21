@@ -88,7 +88,7 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--sunk)}
 tfoot td{font-weight:600;background:var(--sunk)}
 .small{font-size:12px} .muted{color:var(--muted)}
 .chip{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:10px;white-space:nowrap}
-.chip.good{background:var(--good-soft);color:var(--good)} .chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.mute{background:var(--sunk);color:var(--muted)}
+.chip.good{background:var(--good-soft);color:var(--good)} .chip.bad{background:var(--bad-soft);color:var(--bad)} .chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.mute{background:var(--sunk);color:var(--muted)}
 .empty{padding:36px 16px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:10px;align-items:center}
 .empty b{color:var(--ink);font-size:16px}
 /* cards instead of tables on phones */
@@ -277,7 +277,15 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","Production":"ထုတ်လုပ်ရေး","Receipts":"ပြေစာများ","Receipt":"ပြေစာ","New receipt":"ပြေစာအသစ်","Receipt saved":"ပြေစာ သိမ်းပြီး","No receipts this month":"ဤလ ပြေစာ မရှိပါ",
+ "Edit":"ပြင်မည်","lb":"ပေါင်","viss":"ပိဿာ","kg":"ကီလို","bag":"အိတ်","piece":"ခု","Material":"ကုန်ကြမ်း","Add material":"ကုန်ကြမ်း ထည့်မည်","Stock in":"အဝင်","Stock used":"အသုံးပြု","In store":"လက်ကျန်",
+ "Price per unit (Ks)":"တစ်ယူနစ်ဈေး (ကျပ်)","Minimum in store":"အနည်းဆုံး လက်ကျန်","Amount":"ပမာဏ","Supplier":"ရောင်းသူ","Choose the material":"ကုန်ကြမ်းကို ရွေးပါ","This is used in records, so it is kept":"မှတ်တမ်းထဲတွင် သုံးထား၍ ဖျက်မရပါ",
+ "No materials yet":"ကုန်ကြမ်း မရှိသေးပါ","In and out this month":"ဤလ အဝင်အထွက်","In or used":"အဝင် / အသုံး","In":"အဝင်","Used":"အသုံး","Amount Ks":"ငွေ (ကျပ်)",
+ "Add production":"ထုတ်လုပ်မှု ထည့်မည်","Made this month":"ဤလ ထုတ်ပြီး","In store at start (dz)":"စစချင်း လက်ကျန် (ဒါဇင်)","Minimum (dz)":"အနည်းဆုံး (ဒါဇင်)","Choose the product":"ကုန်ပစ္စည်းကို ရွေးပါ",
+ "Set dozens in one bag for this product first":"ဤကုန်ပစ္စည်းအတွက် တစ်အိတ်ရှိ ဒါဇင်ကို အရင် ထည့်ပါ",
+ "Waste":"အပျက်","Regrind":"ပြန်ကြိတ်","Sold":"ရောင်းပြီး","Add waste":"အပျက် ထည့်မည်","Regrind made":"ပြန်ကြိတ်ပြီး","Waste sold":"အပျက် ရောင်းပြီး","Waste this month":"ဤလ အပျက်","Waste in store":"အပျက် လက်ကျန်",
+ "of material used":"သုံးသည့်ကုန်ကြမ်း၏","Weight (lb)":"အလေးချိန် (ပေါင်)","Product or machine":"ကုန်ပစ္စည်း သို့မဟုတ် စက်","Reason":"အကြောင်းရင်း","Broken":"ကွဲ/ပျက်","Wrong colour":"အရောင် မမှန်","Machine start-up":"စက်စဖွင့်ချိန်","Short or thin":"တို / ပါး",
+ "Add to raw material":"ကုန်ကြမ်းထဲ ပေါင်းထည့်မည်","Do not add to raw materials":"ကုန်ကြမ်းထဲ မထည့်ပါ","Price per lb (Ks)":"တစ်ပေါင်ဈေး (ကျပ်)","Buyer":"ဝယ်သူ","Enter the weight":"အလေးချိန် ထည့်ပါ",
+ "Kind":"အမျိုးအစား","Details":"အသေးစိတ်","Added to":"ပေါင်းထည့်ပြီး -","Low":"နည်းနေသည်","minimum":"အနည်းဆုံး","More sold than made":"ထုတ်သည်ထက် ပိုရောင်းထားသည်","Waste is high":"အပျက် များနေသည်","Production":"ထုတ်လုပ်ရေး","Receipts":"ပြေစာများ","Receipt":"ပြေစာ","New receipt":"ပြေစာအသစ်","Receipt saved":"ပြေစာ သိမ်းပြီး","No receipts this month":"ဤလ ပြေစာ မရှိပါ",
  "Raw materials":"ကုန်ကြမ်း","Finished products":"ကုန်ချော","Waste products":"အပျက်ပစ္စည်း","Coming next":"နောက်တွင် ထည့်မည်","Not saved":"မသိမ်းရသေး","New file":"ဖိုင်အသစ်","Choose file":"ဖိုင် ရွေးမည်","Records file is closed":"မှတ်တမ်းဖိုင် ပိတ်ထားသည်","No records file yet":"မှတ်တမ်းဖိုင် မရှိသေးပါ","Use Chrome or Edge to save to a file.":"ဖိုင်ထဲ သိမ်းရန် Chrome သို့မဟုတ် Edge ကို သုံးပါ။","Products":"ကုန်ပစ္စည်းများ"
 };
 const MON_EN=["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -314,7 +322,7 @@ const svg=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
    Main copy: a records file on this computer's drive (Chrome / Edge, File System Access).
    Working copy: the browser (IndexedDB), so the app opens fast and still works without the file.
    File format: {app, saved, records:[{col,id,data}]} */
-const COLS=["products","customers","sales","payments","outbox"];
+const COLS=["products","customers","sales","payments","materials","matMoves","made","waste","outbox"];
 const DB={};COLS.forEach(c=>DB[c]={});
 const Store={
   idb:null,ready:false,
@@ -436,7 +444,8 @@ function editProduct(id){const p=id?DB.products[id]:{active:"1",perBag:""};
   openForm({title:id?prodName(p):"New product",data:Object.assign({},p,{active:p.active===false?"":"1"}),fields:[
     {k:"my",label:"Myanmar name",half:1},{k:"en",label:"English name",half:1},
     {k:"priceDz",label:"Price per dozen (Ks)",type:"num",half:1},{k:"priceBag",label:"Price per bag (Ks)",type:"num",half:1},
-    {k:"perBag",label:"Dozens in one bag",type:"num",half:1},{k:"active",label:"Still sold?",type:"select",opts:[["1",t("Yes")],["",t("No, hide it")]],half:1}],
+    {k:"perBag",label:"Dozens in one bag",type:"num",half:1},{k:"active",label:"Still sold?",type:"select",opts:[["1",t("Yes")],["",t("No, hide it")]],half:1},
+    {k:"openDz",label:"In store at start (dz)",type:"num",half:1},{k:"minDz",label:"Minimum (dz)",type:"num",half:1}],
    collect:d=>{d.active=!!d.active;d.my=String(d.my||"").trim();d.en=String(d.en||"").trim()},
    check:d=>!d.my&&!d.en?"Enter a name":null,
    onSave:d=>save("products",id||uid("p"),d,"Product saved"),
@@ -626,6 +635,12 @@ function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
   if(notDue.length)out.push({sev:"warn",area:"Sales",go:()=>go("receipts"),txt:`${notDue.length} ${t("sales not paid yet, not overdue")} (${fmt(notDue.reduce((a,s)=>a+saleOwed(s),0))}${K})`});
   const noPrice=list("products").filter(p=>p.active!==false&&!num(p.priceDz)&&!num(p.priceBag));
   if(noPrice.length)out.push({sev:"warn",area:"Finished products",go:()=>go("finished"),txt:`${t("No price set")}: ${noPrice.map(prodName).join(", ")}`});
+  // production
+  const ms=matStock();list("materials").forEach(m=>{if(num(m.min)&&ms[m.id]<num(m.min))out.push({sev:"warn",area:"Raw materials",head:m.name,go:()=>go("raw"),txt:`${t("Low")}: ${fmt(ms[m.id],1)} ${t(m.unit||"lb")} (${t("minimum")} ${fmt(m.min)})`})});
+  const fs=fgStock();list("products").forEach(p=>{if(p.active===false)return;const v=fs[p.id]||0;
+    if(v<0)out.push({sev:"bad",area:"Finished products",head:prodName(p),go:()=>go("finished"),txt:`${t("More sold than made")}: ${fmt(v,1)} ${t("dz")}`});
+    else if(num(p.minDz)&&v<num(p.minDz))out.push({sev:"warn",area:"Finished products",head:prodName(p),go:()=>go("finished"),txt:`${t("Low")}: ${fmt(v,1)} ${t("dz")} (${t("minimum")} ${fmt(p.minDz)})`})});
+  const wp=wastePct(ym(td));if(wp!=null&&wp>WASTE_LIMIT)out.push({sev:"warn",area:"Waste products",go:()=>go("waste"),txt:`${t("Waste is high")}: ${fmt(wp,1)}% ${t("of material used")}`});
   const tdS=list("sales").filter(s=>s.date===td);
   out.push({sev:"info",area:"Sales",go:()=>go("receipts"),txt:tdS.length?`${t("Today")}: ${tdS.length} ${t(tdS.length===1?"sale":"sales")}, ${fmt(tdS.reduce((a,s)=>a+saleTotal(s),0))}${K}`:t("No sales written today yet.")});
   const noPhone=list("customers").filter(c=>!c.phone);
@@ -635,7 +650,7 @@ function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
 const SEV=[["bad","Urgent"],["warn","To do"],["info","For information"]];
 let ALERTS=[];
 V.overview=()=>{const al=ALERTS=alerts();const cnt=k=>al.filter(a=>a.sev===k).length;
-  const icon={Settings:"settings",Customers:"customers",Sales:"sales","Finished products":"products",Payments:"payments"};
+  const icon={Settings:"settings",Customers:"customers",Sales:"sales","Finished products":"products","Raw materials":"production","Waste products":"production",Payments:"payments"};
   const item=(a,i)=>`<button class="nitem ${a.sev}" data-al="${i}"><span class="nic">${svg(icon[a.area]||"sales")}</span><span class="nbody"><span class="narea">${T(a.area)}${a.head?` · <b class="notr">${esc(a.head)}</b>`:""}</span><span class="ntext notr">${esc(a.txt)}</span></span><span class="ngo">${T("Open")}</span></button>`;
   const groups=SEV.map(([k,l])=>{const xs=al.map((a,i)=>[a,i]).filter(([a])=>a.sev===k);return xs.length?`<section class="ngroup ${k}"><h3><i></i><span>${T(l)}</span><span class="notr ncount">${xs.length}</span></h3><div class="nlist">${xs.map(([a,i])=>item(a,i)).join("")}</div></section>`:""}).join("");
   return salesKpis(ym(today()))+`<div class="nsum">${SEV.map(([k,l])=>`<span class="nchip ${k}"><b class="notr">${cnt(k)}</b> <span>${T(l)}</span></span>`).join("")}</div>${groups}`};
@@ -662,9 +677,104 @@ V.payments=()=>{const m=UI.month;const ps=list("payments").filter(p=>ym(p.date)=
 V.payments.bind=()=>{bindMonth();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editPayment(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editPayment(r.dataset.edit))};
 
 /* tab names */
-V.receipts=V.sales;V.finished=V.products;
-V.raw=()=>empty("Coming next","",null);
-V.waste=()=>empty("Coming next","",null);
+V.receipts=V.sales;
+/* ================= Production: raw materials, finished products, waste ================= */
+const UNITS=["lb","viss","kg","bag","piece"];
+const REASONS=["Broken","Wrong colour","Machine start-up","Short or thin","Other"];
+const mName=id=>DB.materials[id]?.name||"?";
+const byDateNew=(a,b)=>(b.date||"").localeCompare(a.date||"")||(b.t||0)-(a.t||0);
+// a list that is a table on a computer and cards on a phone
+function grid(head,rows,attr,foot){
+  if(!rows.length)return `<div class="empty">${T("Nothing yet.")}</div>`;
+  return `<div class="tw"><table><thead><tr>${head.map(h=>`<th class="${h.n?"n":""}">${T(h.l)}</th>`).join("")}</tr></thead><tbody>
+   ${rows.map(r=>`<tr class="click" data-${attr}="${r.id}">${r.cells.map((c,i)=>`<td class="${head[i].n?"n":""} ${head[i].tr?"":"notr"}">${c}</td>`).join("")}</tr>`).join("")}</tbody>${foot?`<tfoot><tr>${foot.map((c,i)=>`<td class="${head[i].n?"n":""}">${c}</td>`).join("")}</tr></tfoot>`:""}</table></div>
+   <div class="cards">${rows.map(r=>`<button class="card" data-${attr}="${r.id}"><span class="r1"><span>${r.cells[0]}</span><span class="n">${r.cells[r.cells.length-1]}</span></span><span class="r2"><span>${r.cells.slice(1,-1).map((c,i)=>c&&c!=="–"?(head[i+1].n?`${T(head[i+1].l)}: ${c}`:c):"").filter(Boolean).join(" · ")}</span></span></button>`).join("")}</div>`}
+
+/* ---- raw materials ---- */
+function matStock(){const b={};list("materials").forEach(m=>b[m.id]=0);
+  list("matMoves").forEach(x=>{b[x.mat]=(b[x.mat]||0)+(x.kind==="in"?1:-1)*num(x.qty)});
+  list("waste").forEach(w=>{if(w.kind==="regrind"&&w.mat)b[w.mat]=(b[w.mat]||0)+num(w.qty)});return b}
+function editMaterial(id){const m=id?DB.materials[id]:{unit:"lb"};
+  openForm({title:id?m.name:"Add material",data:m,fields:[{k:"name",label:"Name",half:1},{k:"unit",label:"Unit",type:"select",opts:UNITS.map(u=>[u,t(u)]),half:1},
+    {k:"price",label:"Price per unit (Ks)",type:"num",half:1},{k:"min",label:"Minimum in store",type:"num",half:1}],
+   collect:d=>{d.name=String(d.name||"").trim()},check:d=>!d.name?"Enter a name":null,
+   onSave:d=>save("materials",id||uid("m"),d,"Saved"),
+   onDelete:id?()=>{if(list("matMoves").some(x=>x.mat===id)||list("waste").some(w=>w.mat===id))return toast(t("This is used in records, so it is kept"));remove("materials",id,"Deleted")}:null})}
+function editMove(id,kind){const x=id?DB.matMoves[id]:{date:today(),kind:kind||"in",mat:""};const k=x.kind;
+  const matOpts=[["",t("— choose —")]].concat(list("materials").sort(byName).map(m=>[m.id,m.name+" ("+t(m.unit||"lb")+")"]));
+  openForm({title:k==="in"?"Stock in":"Stock used",data:Object.assign({},x),fields:[{k:"date",label:"Date",type:"date",half:1},{k:"mat",label:"Material",type:"select",opts:matOpts,half:1},
+    {k:"qty",label:"Amount",type:"num",half:1}].concat(k==="in"?[{k:"price",label:"Price per unit (Ks)",type:"num",half:1},{k:"supplier",label:"Supplier",half:1}]:[]).concat([{k:"note",label:"Note",half:k==="in"?1:0}]),
+   bind:()=>{const s=$("#f_mat"),pr=$("#f_price");if(s&&pr)s.onchange=()=>{if(!pr.value&&num(DB.materials[s.value]?.price))pr.value=num(DB.materials[s.value].price)}},
+   check:d=>!d.mat?"Choose the material":!num(d.qty)?"Enter the amount":null,
+   onSave:d=>{d.kind=k;d.qty=num(d.qty);if(k==="in"){d.price=num(d.price);const m=DB.materials[d.mat];if(m&&d.price&&num(m.price)!==d.price)save("materials",d.mat,Object.assign({},m,{price:d.price}))}d.t=d.t||Date.now();save("matMoves",id||uid("x"),d,"Saved")},
+   onDelete:id?()=>remove("matMoves",id,"Deleted"):null})}
+V.raw=()=>{const m=UI.month,st=matStock();
+  const ms=list("materials").sort((a,b)=>((st[b.id]<num(b.min))-(st[a.id]<num(a.min)))||byName(a,b));
+  const low=x=>num(x.min)&&st[x.id]<num(x.min);
+  const bar=`<div class="bar"><div class="left">${monthPicker()}</div><div class="left"><button class="btn" id="addMat">${T("Add material")}</button><button class="btn" id="useMat" ${ms.length?"":"disabled"}>${T("Stock used")}</button><button class="btn primary" id="inMat" ${ms.length?"":"disabled"}>${T("Stock in")}</button></div></div>`;
+  if(!ms.length)return bar+empty("No materials yet","","Add material","addMat2");
+  const mv=list("matMoves").filter(x=>ym(x.date)===m).sort(byDateNew);
+  const inKs=mv.filter(x=>x.kind==="in").reduce((a,x)=>a+num(x.qty)*num(x.price),0);
+  return bar+`<div class="panel"><h2>${T("In store")}</h2>${grid([{l:"Material"},{l:"Unit",tr:1},{l:"Price per unit (Ks)",n:1},{l:"Minimum in store",n:1},{l:"In store",n:1}],
+     ms.map(x=>({id:x.id,cells:[esc(x.name),T(x.unit||"lb"),x.price?fmt(x.price):"–",x.min?fmt(x.min):"–",`<span class="${low(x)?"chip warn":""}">${fmt(st[x.id],1)} ${esc(t(x.unit||"lb"))}</span>`]})),"mat")}</div>
+   <div class="panel"><h2>${T("In and out this month")}</h2>${grid([{l:"Date"},{l:"Material"},{l:"In or used",tr:1},{l:"Supplier"},{l:"Amount Ks",n:1},{l:"Amount",n:1}],
+     mv.map(x=>({id:x.id,cells:[esc(x.date),esc(mName(x.mat)),`<span class="chip ${x.kind==="in"?"good":"mute"}">${T(x.kind==="in"?"In":"Used")}</span>`,esc(x.supplier||x.note||""),x.kind==="in"&&x.price?fmt(num(x.qty)*num(x.price)):"",`${x.kind==="in"?"+":"−"}${fmt(x.qty,1)} ${esc(t(DB.materials[x.mat]?.unit||"lb"))}`]})),"mv",
+     mv.length?[T("Total"),"","","",fmt(inKs),""]:null)}</div>`};
+V.raw.bind=()=>{bindMonth();["#addMat","#addMat2"].forEach(s=>$(s)&&($(s).onclick=()=>editMaterial(null)));$("#inMat")&&($("#inMat").onclick=()=>editMove(null,"in"));$("#useMat")&&($("#useMat").onclick=()=>editMove(null,"out"));
+  $$("[data-mat]").forEach(r=>r.onclick=()=>editMaterial(r.dataset.mat));$$("[data-mv]").forEach(r=>r.onclick=()=>editMove(r.dataset.mv))};
+
+/* ---- finished products: made in, sold out on receipts ---- */
+const dzOf=(p,unit,qty)=>unit==="bag"?num(qty)*num(p?.perBag):num(qty);
+function fgStock(){const st={};list("products").forEach(p=>st[p.id]=num(p.openDz));
+  list("made").forEach(x=>{st[x.p]=(st[x.p]||0)+dzOf(DB.products[x.p],x.unit,x.qty)});
+  list("sales").forEach(s=>(s.lines||[]).forEach(l=>{st[l.p]=(st[l.p]||0)-dzOf(DB.products[l.p],l.unit,l.qty)}));return st}
+function editMade(id){const x=id?DB.made[id]:{date:today(),unit:"dz"};
+  openForm({title:"Add production",data:x,fields:[{k:"date",label:"Date",type:"date",half:1},{k:"p",label:"Product",type:"select",opts:prodOpts(x.p),half:1},
+    {k:"unit",label:"Unit",type:"select",opts:[["dz",t("Dozen")],["bag",t("Bag")]],half:1},{k:"qty",label:"Qty",type:"num",half:1},{k:"note",label:"Note"}],
+   check:d=>!d.p?"Choose the product":!num(d.qty)?"Enter the amount":(d.unit==="bag"&&!num(DB.products[d.p]?.perBag))?"Set dozens in one bag for this product first":null,
+   onSave:d=>{d.qty=num(d.qty);d.t=d.t||Date.now();save("made",id||uid("f"),d,"Saved")},onDelete:id?()=>remove("made",id,"Deleted"):null})}
+V.finished=()=>{const m=UI.month,q=UI.q.toLowerCase(),st=fgStock();
+  const ps=list("products").filter(p=>!q||[p.my,p.en].join(" ").toLowerCase().includes(q)).sort((a,b)=>(b.active!==false)-(a.active!==false)||prodName(a).localeCompare(prodName(b)));
+  const bar=`<div class="bar"><div class="left">${monthPicker()}<input class="search" id="q" placeholder="${T("Find product")}" value="${esc(UI.q)}"></div><div class="left"><button class="btn" id="add">${T("Add product")}</button><button class="btn primary" id="made" ${ps.length?"":"disabled"}>${T("Add production")}</button></div></div>`;
+  if(!list("products").length)return bar+empty("No products yet","","Add product","add2");
+  const stock=p=>{const v=st[p.id]||0;const cls=v<0?"chip bad":num(p.minDz)&&v<num(p.minDz)?"chip warn":"";return `<span class="${cls}">${fmt(v,1)} ${esc(t("dz"))}</span>`};
+  const mm=list("made").filter(x=>ym(x.date)===m).sort(byDateNew);const madeDz=mm.reduce((a,x)=>a+dzOf(DB.products[x.p],x.unit,x.qty),0);
+  return bar+`<div class="panel"><h2>${T("Finished products")}</h2>${grid([{l:"Product"},{l:"Per dozen",n:1},{l:"Per bag",n:1},{l:"Dozens in one bag",n:1},{l:"Minimum (dz)",n:1},{l:"In store",n:1}],
+     ps.map(p=>({id:p.id,cells:[esc(prodName(p))+(p.active===false?` <span class="chip mute">${T("Not sold now")}</span>`:""),p.priceDz?fmt(p.priceDz):"–",p.priceBag?fmt(p.priceBag):"–",p.perBag?fmt(p.perBag,1):"–",p.minDz?fmt(p.minDz):"–",stock(p)]})),"edit")}</div>
+   <div class="panel"><h2>${T("Made this month")}</h2>${grid([{l:"Date"},{l:"Product"},{l:"Note"},{l:"Qty",n:1}],
+     mm.map(x=>({id:x.id,cells:[esc(x.date),esc(prodName(DB.products[x.p])),esc(x.note||""),`${fmt(x.qty,1)} ${esc(unitWord(x.unit,x.qty))}`]})),"md",
+     mm.length?[T("Total"),"","",`${fmt(madeDz,1)} ${esc(t("dz"))}`]:null)}</div>`};
+V.finished.bind=()=>{bindSearch();bindMonth();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editProduct(null)));$("#made")&&($("#made").onclick=()=>editMade(null));
+  $$("[data-edit]").forEach(r=>r.onclick=()=>editProduct(r.dataset.edit));$$("[data-md]").forEach(r=>r.onclick=()=>editMade(r.dataset.md))};
+
+/* ---- waste: waste each day, regrind made, waste sold (weights in lb) ---- */
+function wasteStore(){return list("waste").reduce((a,w)=>a+(w.kind==="waste"?1:-1)*num(w.qty),0)}
+function editWaste(id,kind){const x=id?DB.waste[id]:{date:today(),kind:kind||"waste",reason:"Broken"};const k=x.kind;
+  const matOpts=[["",t("Do not add to raw materials")]].concat(list("materials").sort(byName).map(m=>[m.id,m.name]));
+  const f=[{k:"date",label:"Date",type:"date",half:1},{k:"qty",label:"Weight (lb)",type:"num",half:1}];
+  if(k==="waste")f.push({k:"from",label:"Product or machine",half:1},{k:"reason",label:"Reason",type:"select",opts:REASONS.map(r=>[r,t(r)]),half:1});
+  if(k==="regrind")f.push({k:"mat",label:"Add to raw material",type:"select",opts:matOpts});
+  if(k==="sold")f.push({k:"price",label:"Price per lb (Ks)",type:"num",half:1},{k:"buyer",label:"Buyer",half:1});
+  f.push({k:"note",label:"Note"});
+  openForm({title:k==="waste"?"Add waste":k==="regrind"?"Regrind made":"Waste sold",data:Object.assign({},x),fields:f,
+   check:d=>!num(d.qty)?"Enter the weight":null,
+   onSave:d=>{d.kind=k;d.qty=num(d.qty);if(k==="sold")d.price=num(d.price);d.t=d.t||Date.now();save("waste",id||uid("w"),d,"Saved")},onDelete:id?()=>remove("waste",id,"Deleted"):null})}
+function wastePct(m){const used=list("matMoves").filter(x=>x.kind==="out"&&ym(x.date)===m&&(DB.materials[x.mat]?.unit||"lb")==="lb").reduce((a,x)=>a+num(x.qty),0);
+  const w=list("waste").filter(x=>x.kind==="waste"&&ym(x.date)===m).reduce((a,x)=>a+num(x.qty),0);return used?w/used*100:null}
+const WASTE_LIMIT=5;
+V.waste=()=>{const m=UI.month,ws=list("waste").filter(x=>ym(x.date)===m).sort(byDateNew);
+  const sum=k=>ws.filter(x=>x.kind===k).reduce((a,x)=>a+num(x.qty),0);const soldKs=ws.filter(x=>x.kind==="sold").reduce((a,x)=>a+num(x.qty)*num(x.price),0);
+  const pct=wastePct(m);
+  const kpi=(l,v,d,cls="")=>`<div class="kpi"><span class="l">${T(l)}</span><span class="v notr ${cls}">${v}</span><span class="d">${d}</span></div>`;
+  const kinds={waste:["Waste","warn"],regrind:["Regrind","good"],sold:["Sold","mute"]};
+  return `<div class="kpis">${kpi("Waste this month",fmt(sum("waste"),1),pct==null?T("lb"):`<span class="notr">${fmt(pct,1)}%</span> ${T("of material used")}`,pct!=null&&pct>WASTE_LIMIT?"warn":"")}${kpi("Regrind made",fmt(sum("regrind"),1),T("lb"))}${kpi("Waste sold",fmt(sum("sold"),1),`<span class="notr">${fmt(soldKs)}</span> ${T("Kyat")}`)}${kpi("Waste in store",fmt(wasteStore(),1),T("lb"))}</div>
+   <div class="bar"><div class="left">${monthPicker()}</div><div class="left"><button class="btn" id="wSold">${T("Waste sold")}</button><button class="btn" id="wRe">${T("Regrind made")}</button><button class="btn primary" id="wAdd">${T("Add waste")}</button></div></div>
+   <div class="panel">${grid([{l:"Date"},{l:"Kind",tr:1},{l:"Details"},{l:"Amount Ks",n:1},{l:"Weight (lb)",n:1}],
+     ws.map(x=>({id:x.id,cells:[esc(x.date),`<span class="chip ${kinds[x.kind][1]}">${T(kinds[x.kind][0])}</span>`,
+       esc(x.kind==="waste"?[x.from,t(x.reason||"")].filter(Boolean).join(" · "):x.kind==="regrind"?(x.mat?t("Added to")+" "+mName(x.mat):""):[x.buyer,x.price?fmt(x.price)+" / lb":""].filter(Boolean).join(" · ")),
+       x.kind==="sold"&&x.price?fmt(num(x.qty)*num(x.price)):"",fmt(x.qty,1)]})),"ws")}</div>`};
+V.waste.bind=()=>{bindMonth();$("#wAdd").onclick=()=>editWaste(null,"waste");$("#wRe").onclick=()=>editWaste(null,"regrind");$("#wSold").onclick=()=>editWaste(null,"sold");$$("[data-ws]").forEach(r=>r.onclick=()=>editWaste(r.dataset.ws))};
+
 
 /* ================= Settings ================= */
 V.settings=()=>{const F=Store.file;

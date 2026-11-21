@@ -2,6 +2,12 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`) Production department. Raw materials: material list (unit, price,
+  minimum), stock in (price updates the material), stock used, what is in store. Finished products: stock at
+  start, minimum, production made (dozens or bags), in store = made minus sold on receipts. Waste products: waste
+  each day (product or machine, weight in lb, reason), regrind made (can add to a raw material), waste sold.
+  Overview alarms: material below minimum, product low or more sold than made, waste over 5% of material used.
+
 - 2026-11-21, Thura with Claude: new app (`app/`) is split into departments with tabs: Sales (Receipts, Payments,
   Customers) and Production (Raw materials, Finished products, Waste products), plus Overview and Settings. Sales
   are now called receipts. Raw materials and Waste products are empty for now (next step).
