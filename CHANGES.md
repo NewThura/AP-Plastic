@@ -2,6 +2,9 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`) shows the Advanced Packaging logo (menu, phone top bar, browser
+  tab icon) and uses the logo's navy as its main colour. `app/logo.png` and `app/icon.png` are cut from the logo.
+
 - 2026-11-21, Thura with Claude: start of a new, simpler app in `app/` for collecting data and showing it to
   the CEO, built step by step. Step 1 is sales: product list (price per dozen and per bag), customer list,
   sales with several products in dozens or bags, paid now, later payments, and what each customer still owes.

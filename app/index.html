@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AP Plastic</title>
-<meta name="theme-color" content="#0B6E78">
-<link rel="icon" href="../icon-192.png">
+<title>Advanced Packaging</title>
+<meta name="theme-color" content="#041B44">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Myanmar:wght@400;600&display=swap">
 <style>
@@ -16,8 +17,9 @@
    the browser. Nothing is sent anywhere.
    ========================================================= */
 :root{
-  --bg:#F4F5F2; --surface:#FFFFFF; --sunk:#ECEEEA; --line:#DCDFD8; --ink:#1B2226; --muted:#5F6B70;
-  --accent:#0B6E78; --accent-ink:#FFFFFF; --accent-soft:#DDEFF0;
+  /* navy from the Advanced Packaging logo */
+  --bg:#F3F5F8; --surface:#FFFFFF; --sunk:#EBEEF3; --line:#D9DEE7; --ink:#141C2B; --muted:#5B6578;
+  --accent:#041B44; --accent-ink:#FFFFFF; --accent-soft:#E2E8F3;
   --good:#1E7B4A; --good-soft:#DDF1E5; --warn:#A46200; --warn-soft:#FBEBCF; --bad:#B4322A; --bad-soft:#F8DEDB;
   --f-display:"Archivo","Noto Sans Myanmar",system-ui,sans-serif;
   --f-body:"IBM Plex Sans","Noto Sans Myanmar",system-ui,sans-serif;
@@ -25,8 +27,8 @@
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#101416; --surface:#181E21; --sunk:#12171A; --line:#2A3337; --ink:#E6ECEE; --muted:#93A1A6;
-  --accent:#4FBFC8; --accent-ink:#06282B; --accent-soft:#16363B;
+  --bg:#0D1220; --surface:#151C2D; --sunk:#10172A; --line:#283147; --ink:#E6EAF2; --muted:#98A2B8;
+  --accent:#9DB4E6; --accent-ink:#041B44; --accent-soft:#1E2A47;
   --good:#5CC98C; --good-soft:#143224; --warn:#E5A84A; --warn-soft:#33260F; --bad:#EF7A70; --bad-soft:#3A1916;
   color-scheme:dark}}
 *{box-sizing:border-box}
@@ -36,8 +38,11 @@ html[lang="my"] body{line-height:1.75}
 button,input,select,textarea{font:inherit;color:inherit}
 .app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
 .side{background:var(--surface);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh}
-.brand b{display:block;font:800 20px var(--f-display);letter-spacing:-.01em}
-.brand span{font-size:12px;color:var(--muted)}
+.brand{display:flex;flex-direction:column;gap:6px}
+.logo{background:#fff;border-radius:10px;padding:8px 10px;display:block;line-height:0}
+.logo img{width:100%;height:auto;display:block}
+.brand span{font-size:12px;color:var(--muted);padding-left:2px}
+.mhead{display:none}
 .nav{display:flex;flex-direction:column;gap:2px}
 .nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--muted);font-weight:500}
 .nav button svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8}
@@ -124,10 +129,12 @@ tfoot td{font-weight:600;background:var(--sunk)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600;z-index:30;max-width:90vw}
 .bnav{display:none}
 @media (max-width:760px){
-  .app{grid-template-columns:minmax(0,1fr)}
+  .app{grid-template-columns:minmax(0,1fr);align-content:start}
   .side{display:none}
   .main{padding:16px 16px 96px}
   .top h1{font-size:22px}
+  .mhead{display:flex;align-items:center;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+  .mhead .logo{padding:5px 8px;border-radius:8px} .mhead .logo img{width:auto;height:30px}
   .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);z-index:10;padding-bottom:env(safe-area-inset-bottom)}
   .bnav button{all:unset;cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;font-size:11px;color:var(--muted);text-align:center}
   .bnav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8}
@@ -147,10 +154,11 @@ tfoot td{font-weight:600;background:var(--sunk)}
 <body>
 <div class="app">
   <aside class="side">
-    <div class="brand"><b>AP Plastic</b><span data-t>Sales records</span></div>
+    <div class="brand"><span class="logo"><img src="logo.png" alt="Advanced Packaging" width="720" height="227"></span><span data-t>Sales records</span></div>
     <nav class="nav" id="nav"></nav>
     <div class="foot"><div><span class="dot" id="dot"></span><span id="sync"></span></div><div class="notr" id="fileName"></div></div>
   </aside>
+  <header class="mhead"><span class="logo"><img src="logo.png" alt="Advanced Packaging" width="720" height="227"></span></header>
   <main class="main" id="main"></main>
 </div>
 <nav class="bnav" id="bnav"></nav>
