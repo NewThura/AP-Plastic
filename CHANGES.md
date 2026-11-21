@@ -2,6 +2,8 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`): removed the "Sales records" line under the logo.
+
 - 2026-11-21, Thura with Claude: wrote down the cloud plan for the new app in `CLAUDE.md`: records on both the
   cloud and the office computer, and the cloud keeps at least a year (a copy per month). Not built yet.
 
