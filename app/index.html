@@ -260,12 +260,12 @@ const MY={
  "This computer":"ဤကွန်ပျူတာ","Loading…":"ဖွင့်နေသည်…","Walk-in":"လမ်းသွားဝယ်သူ","Remove":"ဖယ်မည်","Payment history":"ငွေပေးချေမှု မှတ်တမ်း","History":"မှတ်တမ်း",
  "Sold":"ရောင်းငွေ","Balance":"ကျန်ငွေ","Nothing yet.":"မရှိသေးပါ။","Pay":"ငွေလက်ခံ","Customer pays":"ဖောက်သည် ပေးငွေ","owes":"ပေးရန်ကျန်",
  "Products sold this month":"ဤလ ရောင်းသည့် ကုန်ပစ္စည်း","Usual price":"ပုံမှန်ဈေး","Overview":"အကျဉ်းချုပ်","Notifications, alarms and today's numbers":"အသိပေးချက်၊ သတိပေးချက်နှင့် ယနေ့ ကိန်းဂဏန်းများ",
- "Urgent":"အရေးကြီး","To do":"လုပ်ရန်","For information":"သိထားရန်","Open":"ဖွင့်မည်","Overdue":"ကြာနေပြီ","oldest sale":"အဟောင်းဆုံး အရောင်း","days":"ရက်",
+ "Urgent":"အရေးကြီး","To do":"လုပ်ရန်","For information":"သိထားရန်","Open":"ဖွင့်မည်","Overdue":"အချိန်ကျော်ပြီ","oldest sale":"ယခင် အရောင်း","days":"ရက်",
  "The records file is not open. Nothing can be changed until it is open.":"မှတ်တမ်းဖိုင် မဖွင့်ရသေးပါ။ မဖွင့်မချင်း ဘာမှ ပြင်၍ မရပါ။",
  "Records are only in this browser. Make a records file on your drive.":"မှတ်တမ်းများ ဤ browser တွင်သာ ရှိသည်။ drive ပေါ်တွင် မှတ်တမ်းဖိုင် လုပ်ပါ။",
  "No backup saved for":"အရန်ဖိုင် မသိမ်းရသည်မှာ","Save one now.":"ယခု သိမ်းပါ။","No backup saved yet. Save one now.":"အရန်ဖိုင် မသိမ်းရသေးပါ။ ယခု သိမ်းပါ။",
  "sales not paid yet, not overdue":"ကြိမ် ငွေမချေရသေး (မကျော်လွန်သေး)","No price set":"ဈေး မသတ်မှတ်ရသေး","Today":"ယနေ့","No sales written today yet.":"ယနေ့ အရောင်း မရေးရသေးပါ။","No phone number":"ဖုန်းနံပါတ် မရှိ",
- "A notification goes away by itself when the problem is fixed. Money is overdue when a month-end customer's month is over, or after 30 days for everyone else.":"ပြဿနာ ပြေလည်လျှင် အသိပေးချက် အလိုလို ပျောက်မည်။ လကုန်ချေ ဖောက်သည်အတွက် လကုန်လျှင်၊ အခြားသူများအတွက် ရက် ၃၀ ကျော်လျှင် ငွေကြာနေပြီ ဟု သတ်မှတ်သည်။",
+ "A notification goes away by itself when the problem is fixed. Money is overdue when a month-end customer's month is over, or after 30 days for everyone else.":"ပြဿနာ ပြေလည်လျှင် အသိပေးချက် အလိုလို ပျောက်မည်။ လကုန်ချေ ဖောက်သည်အတွက် လကုန်လျှင်၊ အခြားသူများအတွက် ရက် ၃၀ ကျော်လျှင် အချိန်ကျော်ပြီ ဟု သတ်မှတ်သည်။",
  "Customer number":"ဖောက်သည် နံပါတ်","Town / area":"မြို့ / ရပ်ကွက်","Bank (KBZ, AYA, CB, KBZPay…)":"ဘဏ် (KBZ, AYA, CB, KBZPay…)","Payment term":"ငွေချေမည့်ပုံ",
  "On delivery":"ပစ္စည်းရောက် ငွေချေ","On invoice":"ဘောက်ချာဖြင့် ချေ","Month-end":"လကုန် ချေ","Agent (if any)":"ကိုယ်စားလှယ် (ရှိလျှင်)","Agent commission %":"ကိုယ်စားလှယ် ကော်မရှင် %",
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
@@ -310,7 +310,7 @@ const DB={};COLS.forEach(c=>DB[c]={});
 const Store={
   idb:null,ready:false,
   file:{handle:null,name:"",state:"none",err:false,timer:null,saving:false,again:false}, // none | need | on | nosupport
-  open(){return new Promise((ok,bad)=>{const r=indexedDB.open("ap-sales-app",1);r.onupgradeneeded=()=>{r.result.createObjectStore("records",{keyPath:["col","id"]});r.result.createObjectStore("meta")};r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)})},
+  open(){return new Promise((ok,bad)=>{const r=indexedDB.open("ap-sales-app",2);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("records"))d.createObjectStore("records",{keyPath:["col","id"]});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta");if(!d.objectStoreNames.contains("backups"))d.createObjectStore("backups",{keyPath:"day"})};r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)})},
   tx(store,mode,fn){return new Promise((ok,bad)=>{const x=this.idb.transaction(store,mode);const req=fn(x.objectStore(store));x.oncomplete=()=>ok(req&&req.result);x.onerror=()=>bad(x.error)})},
   all(){const out=[];for(const c of COLS)for(const [id,data] of Object.entries(DB[c]))out.push({col:c,id,data});return out},
   async replaceAll(recs){await this.tx("records","readwrite",st=>{st.clear();recs.forEach(r=>st.put(r))});COLS.forEach(c=>DB[c]={});recs.forEach(r=>{if(DB[r.col])DB[r.col][r.id]=r.data})},
@@ -319,7 +319,17 @@ const Store={
     try{const w=await F.handle.createWritable();await w.write(JSON.stringify({app:"AP Plastic sales",saved:new Date().toISOString(),records:this.all()}));await w.close();if(F.err){F.err=false;render()}}
     catch(e){if(!F.err){F.err=true;toast(t("Could not save to the records file"));render()}}
     finally{F.saving=false;if(F.again){F.again=false;this.writeFile()}}},
-  soon(){clearTimeout(this.file.timer);this.file.timer=setTimeout(()=>this.writeFile(),300)},
+  soon(){clearTimeout(this.file.timer);this.file.timer=setTimeout(()=>{this.writeFile();this.autoBackup()},300)},
+  /* automatic backup, not shown in the app: one copy of all records per day, taken the first time
+     the app is used that day (so a mistake made today can be undone back to the start of the day),
+     the last 30 days kept, in this browser next to the records file.
+     To bring one back, open the browser console: apBackups() lists the days, apRestore("2026-11-21") restores one. */
+  KEEP:30,
+  async autoBackup(){try{const recs=this.all();if(!recs.length)return;
+    if(await this.tx("backups","readonly",st=>st.getKey(today())))return;
+    await this.tx("backups","readwrite",st=>st.put({day:today(),saved:new Date().toISOString(),records:recs}));
+    const days=(await this.tx("backups","readonly",st=>st.getAllKeys())||[]).sort();
+    if(days.length>this.KEEP)await this.tx("backups","readwrite",st=>{days.slice(0,days.length-this.KEEP).forEach(d=>st.delete(d))})}catch(e){}},
   async link(h){const F=this.file;F.handle=h;F.name=h.name;F.state="on";F.err=false;await this.tx("meta","readwrite",st=>st.put(h,"file"))},
   async start(){
     this.idb=await this.open();
@@ -331,6 +341,7 @@ const Store={
         if(p==="granted"){try{await this.replaceAll(await this.readFile(h));F.state="on"}catch(e){F.state="need"}}else F.state="need"}}
     try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
     this.ready=true;
+    this.autoBackup();
   },
   canChange(){return this.ready&&this.file.state!=="need"},
   async put(col,id,data){await this.tx("records","readwrite",st=>st.put({col,id,data}));DB[col][id]=data;this.soon()},
@@ -347,6 +358,10 @@ async function fileAction(kind){
     else if(kind==="new")await Store.newFile();else await Store.openFile();
     toast(t("Records file")+": "+Store.file.name);render()}
   catch(e){if(e&&e.name==="AbortError")return;toast(t("Could not use the file")+": "+(e&&e.message||e))}}
+
+window.apBackups=async()=>(await Store.tx("backups","readonly",st=>st.getAll())||[]).map(b=>({day:b.day,saved:b.saved,records:b.records.length}));
+window.apRestore=async day=>{const b=await Store.tx("backups","readonly",st=>st.get(day));if(!b)return "No copy for "+day;if(!Store.canChange())return "Open the records file first";
+  await Store.replaceAll(b.records);Store.soon();render();return "Restored "+b.records.length+" records from "+day};
 
 /* ================= reading the records ================= */
 const list=c=>Object.entries(DB[c]).map(([id,d])=>Object.assign({id},d));
@@ -585,8 +600,6 @@ function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
   Object.entries(over).sort((a,b)=>b[1].amt-a[1].amt).forEach(([c,x])=>out.push({sev:"bad",area:"Customers",head:custName(c),go:()=>openCustomer(c),
     txt:`${t("Overdue")}: ${fmt(x.amt)}${K} · ${t("oldest sale")} ${x.oldest} (${daysBetween(x.oldest,td)} ${t("days")})`}));
   if(F.state==="none")out.push({sev:"warn",area:"Settings",go:()=>go("settings"),txt:t("Records are only in this browser. Make a records file on your drive.")});
-  const n=Store.all().length,lb=ls("ap2.lastBackup");
-  if(n&&(!lb||daysBetween(lb,td)>=7))out.push({sev:"warn",area:"Settings",go:()=>go("settings"),txt:lb?`${t("No backup saved for")} ${daysBetween(lb,td)} ${t("days")}. ${t("Save one now.")}`:t("No backup saved yet. Save one now.")});
   const notDue=list("sales").filter(s=>saleOwed(s)>0.5&&dueDate(s)>=td);
   if(notDue.length)out.push({sev:"warn",area:"Sales",go:()=>go("sales"),txt:`${notDue.length} ${t("sales not paid yet, not overdue")} (${fmt(notDue.reduce((a,s)=>a+saleOwed(s),0))}${K})`});
   const noPrice=list("products").filter(p=>p.active!==false&&!num(p.priceDz)&&!num(p.priceBag));
@@ -634,16 +647,8 @@ V.settings=()=>{const F=Store.file;
     <div style="display:flex;gap:8px;flex-wrap:wrap">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open records file")}</button>`:""}<button class="btn ${F.state==="none"?"primary":""}" data-file="new">${T("Make a new records file")}</button><button class="btn" data-file="pick">${T("Open a records file")}</button></div>
     <div class="small muted">${T("Keep the file anywhere on your drive, for example E:\\AP Records. Never put it inside the AP-Plastic project folder: that folder is public on GitHub.")}</div>`;
   return `<div class="panel"><h2>${T("Records file")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:12px">${fileBox}</div></div>
-   <div class="panel"><h2>${T("Backup")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:10px"><div class="muted">${T("Save a backup file every week and keep it somewhere safe, such as a USB stick.")}</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bkSave">${T("Save a backup file")}</button><label class="btn" for="bkLoad">${T("Load a backup file")}</label><input type="file" id="bkLoad" accept=".json,application/json" hidden></div>
-    <div class="small muted">${T("Loading a backup replaces all records in the app with the ones in the file.")}</div></div></div>
    <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
-V.settings.bind=()=>{bindLang();
-  $("#bkSave").onclick=()=>{const recs=Store.all();const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({app:"AP Plastic sales",backup:true,saved:new Date().toISOString(),records:recs})],{type:"application/json"}));
-    a.download="ap-sales-backup-"+today()+".json";ls("ap2.lastBackup",today());document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast(t("Saved")+": "+recs.length+" "+t("records"))};
-  $("#bkLoad").onchange=async e=>{const f=e.target.files[0];if(!f)return;if(!Store.canChange())return toast(t("Records file not open"));
-    try{const j=JSON.parse(await f.text());const recs=(j.records||[]).filter(r=>r&&COLS.includes(r.col)&&r.id&&r.data);if(!recs.length)return toast(t("This is not a backup file"));
-      await Store.replaceAll(recs);Store.soon();toast(t("Backup loaded")+": "+recs.length+" "+t("records"));render()}catch(x){toast(t("This is not a backup file"))}}};
+V.settings.bind=()=>{bindLang()};
 
 /* ================= page frame ================= */
 const PAGES=[["overview","Overview","Notifications, alarms and today's numbers"],["sales","Sales","Every sale, by month"],["payments","Payments","Money customers pay after the sale"],["customers","Customers","Who buys, and what they owe"],["products","Products","What you sell, and the usual price"],["settings","Settings","Records file, backup and language"]];

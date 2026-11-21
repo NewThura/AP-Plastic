@@ -2,6 +2,11 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`): better Myanmar words for overdue money (past the time) and the
+  past sale. Backup is now automatic and not shown: one copy of all records per day, taken the first time the
+  app is used that day, last 30 days kept in the browser. The Backup box and the backup reminder are gone.
+  To restore, `apRestore("YYYY-MM-DD")` in the browser console (`apBackups()` lists the days).
+
 - 2026-11-21, Thura with Claude: new app (`app/`): Overview page with notifications and alarms (overdue money per
   customer, records file problems, backup reminder, unpaid sales, products with no price, customers with no
   phone); full customer details as in the sales department's list (number, town, phone, address, bank, payment
