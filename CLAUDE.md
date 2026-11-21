@@ -29,7 +29,7 @@ Write your name, the part, and the date. Remove your line when you are done.
 
 | Who | Part | Since |
 |---|---|---|
-| Thura (Main App Chat) | Home (notifications) and Overview redesign, branch `home-overview` | 2026-11-21 |
+| | | |
 
 ## How the code is laid out
 Everything is in `index.html` (one file, no build step): styles at the top, then the page, then one script.
