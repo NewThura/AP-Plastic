@@ -381,6 +381,7 @@ const COLS=["suggestions","settings","products","materials","recipes","stock","s
 const S={}; COLS.forEach(c=>S[c]={});
 const loaded=new Set();
 let db=null, dbState="connecting", canWrite=true, canSystem=true;
+const DEVICE=(window.AP_CONFIG||{}).mode==="device"||!(window.AP_CONFIG||{}).url;
 const sysDis=()=>canWrite&&canSystem?"":"disabled";
 const DEFAULT_SETTINGS={gPerLb:453.59,gPerViss:1600,bigBagExtra:800,cleanDays:30,workDays:26,includePieceLabour:true,
   staffMode:"fixed",staffPc:16.933,elecMode:"fixed",elecPc:21,maintPc:20,deliveryPc:10,deprPc:0,wastePct:0,riskPct:3,profitPct:10,
@@ -1031,7 +1032,7 @@ V.settings=()=>{const st=set_();const lock=canWrite&&!canSystem?`<div class="ban
   <div class="field"><label for="st_em">Electricity per piece</label><select id="st_em" data-k="elecMode" ${sysDis()}><option value="fixed" ${st.elecMode!=="auto"?"selected":""}>Fixed rate below</option><option value="auto" ${st.elecMode==="auto"?"selected":""}>Work out from each month's bills</option></select></div>
   ${f("elecPc","Fixed electricity (Ks per piece)","Your costing sheet uses 21")}
   ${f("maintPc","Maintenance (Ks per piece)")}${f("deliveryPc","Delivery (Ks per piece)")}${f("deprPc","Depreciation of molds and machines (Ks per piece)","Not set on your sheet yet")}${f("wastePct","Waste (% of material)","Not set on your sheet yet")}${f("riskPct","Risk allowance (%)")}${f("profitPct","Target profit (%)")}
-  </div></section>${canSystem?usersPanel()+importPanel()+suggestionsPanel():""}`};
+  </div></section>${canSystem?(DEVICE?backupPanel():usersPanel())+importPanel()+suggestionsPanel():""}`};
 let USERS=null;
 async function loadUsers(){if(!SB||!canSystem)return;const {data}=await SB.from("app_users").select("user_id,email,username,role");USERS=data||[];if(UI.page==="settings")render()}
 function usersPanel(){if(USERS===null){loadUsers();return `<section class="panel"><h3>Users</h3><div class="pb muted">Loading…</div></section>`}
@@ -1054,15 +1055,22 @@ async function addUser(){const un=$("#nuName").value.trim(),pw=$("#nuPass").valu
     if(r.error){m.textContent=r.error.message;return}
     toast((my?"ထည့်ပြီး - ":"Added: ")+un);$("#nuName").value="";$("#nuPass").value="";USERS=null;loadUsers();
   }finally{$("#nuAdd").disabled=false}}
+function backupPanel(){return `<section class="panel"><h3>Backup</h3><div class="pb" style="display:flex;flex-direction:column;gap:10px">
+ <div class="banner" style="margin:0">Records are kept on this device only, not in the cloud. If the browser's data is cleared or the device breaks, they are lost.</div>
+ <div class="muted">Save a backup file every week. Keep it somewhere safe, such as a USB stick. Never put it in the GitHub project. To bring records back, or to move them to another computer, load the file below in Import records.</div>
+ <div><button class="btn primary" id="bkSave">Save a backup file</button></div></div></section>`}
+function saveBackup(){const recs=db&&db.all?db.all():[];const blob=new Blob([JSON.stringify({backup:true,app:"AP Plastic ERP",saved:new Date().toISOString(),records:recs})],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ap-erp-backup-"+today()+".json";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+ toast((UI.lang==="my"?"သိမ်းပြီး - မှတ်တမ်း ":"Saved: ")+recs.length+(UI.lang==="my"?" ခု":" records"))}
 function importPanel(){return `<section class="panel"><h3>Import records</h3><div class="pb" style="display:flex;flex-direction:column;gap:8px"><div class="muted">Load a records file prepared for you (.json). Records with the same ID are replaced; nothing else is deleted.</div><div><input type="file" id="impFile" accept=".json,application/json"></div><div id="impMsg" class="small"></div></div></section>`}
 async function runImport(file){const m=$("#impMsg");const say=t=>{m.textContent=t};
-  try{const j=JSON.parse(await file.text());const recs=(j.records||[]).filter(r=>r&&r.col&&r.id&&r.data&&COLS.includes(r.col)&&r.col!=="settings");if(!recs.length)return say(UI.lang==="my"?"ဖိုင်ထဲတွင် မှတ်တမ်း မရှိပါ။":"No records found in this file.");
+  try{const j=JSON.parse(await file.text());const recs=(j.records||[]).filter(r=>r&&r.col&&r.id&&r.data&&COLS.includes(r.col)&&(j.backup||r.col!=="settings"));if(!recs.length)return say(UI.lang==="my"?"ဖိုင်ထဲတွင် မှတ်တမ်း မရှိပါ။":"No records found in this file.");
     const rows=recs.map(r=>({col:r.col,id:r.id,data:r.merge?Object.assign({},S[r.col]?.[r.id]||{},r.data):r.data}));
-    let done=0;for(let i=0;i<rows.length;i+=200){const part=rows.slice(i,i+200);const {error}=await SB.from("records").upsert(part);if(error)throw error;part.forEach(r=>{S[r.col][r.id]=r.data});done+=part.length;say((UI.lang==="my"?"တင်နေသည် ":"Importing ")+done+" / "+rows.length)}
+    let done=0;for(let i=0;i<rows.length;i+=200){const part=rows.slice(i,i+200);for(const r of part){await db.collection(r.col).doc(r.id).set(r.data);S[r.col][r.id]=r.data}done+=part.length;say((UI.lang==="my"?"တင်နေသည် ":"Importing ")+done+" / "+rows.length)}
     const by={};rows.forEach(r=>by[r.col]=(by[r.col]||0)+1);say((UI.lang==="my"?"ပြီးပါပြီ: ":"Done: ")+Object.entries(by).map(([k,v])=>v+" "+k).join(", "));toast(UI.lang==="my"?"တင်ပြီးပါပြီ":"Import finished")}
   catch(e){say((UI.lang==="my"?"မအောင်မြင်ပါ: ":"Import failed: ")+(e.message||e))}}
 function suggestionsPanel(){const xs=list("suggestions").sort((a,b)=>(b.date||"").localeCompare(a.date||""));return `<section class="panel"><h3>Suggestions</h3><div class="pb">${xs.length?`<div class="alerts">${xs.map(x=>`<div class="alert"><span class="sev info"></span><span><span class="notr">${esc(x.text)}</span><br><span class="small muted">${esc(x.by||"")} · ${esc(x.date||"")} · ${esc(x.page||"")}</span></span><button class="btn sm go" data-sgdel="${x.id}">Done</button></div>`).join("")}</div>`:`<div class="muted">No suggestions yet.</div>`}</div></section>`}
-V.settings.bind=()=>{const imf=$("#impFile");if(imf)imf.onchange=()=>{if(imf.files[0])runImport(imf.files[0])};const na=$("#nuAdd");if(na)na.onclick=addUser;document.querySelectorAll("[data-urole]").forEach(el=>el.onchange=async()=>{const r=await SB.from("app_users").update({role:el.value}).eq("user_id",el.dataset.urole);toast(r.error?r.error.message:"Saved");USERS=null;loadUsers()});document.querySelectorAll("[data-udel]").forEach(b=>b.onclick=async()=>{if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent=UI.lang==="my"?"ထပ်နှိပ်ပါ":"Tap again to remove";return}const r=await SB.from("app_users").delete().eq("user_id",b.dataset.udel);toast(r.error?r.error.message:"Removed");USERS=null;loadUsers()});document.querySelectorAll("[data-sgdel]").forEach(b=>b.onclick=()=>remove("suggestions",b.dataset.sgdel,"Removed"));document.querySelectorAll("#view .cell").forEach(el=>el.onchange=()=>{const st=JSON.parse(JSON.stringify(set_()));st[el.dataset.col]=num(el.value);save("settings","main",st,"Saved")});document.querySelectorAll("#view select[data-k]").forEach(s=>s.onchange=()=>{const st=JSON.parse(JSON.stringify(set_()));st[s.dataset.k]=s.dataset.k==="includePieceLabour"?!!s.value:s.value;save("settings","main",st,"Saved")})};
+V.settings.bind=()=>{const bk=$("#bkSave");if(bk)bk.onclick=saveBackup;const imf=$("#impFile");if(imf)imf.onchange=()=>{if(imf.files[0])runImport(imf.files[0])};const na=$("#nuAdd");if(na)na.onclick=addUser;document.querySelectorAll("[data-urole]").forEach(el=>el.onchange=async()=>{const r=await SB.from("app_users").update({role:el.value}).eq("user_id",el.dataset.urole);toast(r.error?r.error.message:"Saved");USERS=null;loadUsers()});document.querySelectorAll("[data-udel]").forEach(b=>b.onclick=async()=>{if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent=UI.lang==="my"?"ထပ်နှိပ်ပါ":"Tap again to remove";return}const r=await SB.from("app_users").delete().eq("user_id",b.dataset.udel);toast(r.error?r.error.message:"Removed");USERS=null;loadUsers()});document.querySelectorAll("[data-sgdel]").forEach(b=>b.onclick=()=>remove("suggestions",b.dataset.sgdel,"Removed"));document.querySelectorAll("#view .cell").forEach(el=>el.onchange=()=>{const st=JSON.parse(JSON.stringify(set_()));st[el.dataset.col]=num(el.value);save("settings","main",st,"Saved")});document.querySelectorAll("#view select[data-k]").forEach(s=>s.onchange=()=>{const st=JSON.parse(JSON.stringify(set_()));st[s.dataset.k]=s.dataset.k==="includePieceLabour"?!!s.value:s.value;save("settings","main",st,"Saved")})};
 
 /* ---------------- trend charts ---------------- */
 UI.trend={};UI.trendN=+(ls("ap.trendN")||6);UI.rMeasure=ls("ap.rMeasure")||"sold";UI.mMeasure=ls("ap.mMeasure")||"use";UI.mGroup=ls("ap.mGroup")||"Resin";
@@ -1882,6 +1890,10 @@ V.overview=()=>loadingOr(["products","production","sales","payments","customers"
 });
 V.overview.bind=()=>{};
 
+Object.assign(DICT,{"Saved on this device":"ဤစက်တွင် သိမ်းထားသည်","This device":"ဤစက်","Backup":"အရန်ကူးယူ",
+ "Records are kept on this device only, not in the cloud. If the browser's data is cleared or the device breaks, they are lost.":"မှတ်တမ်းများကို ဤစက်တွင်သာ သိမ်းထားပြီး cloud တွင် မသိမ်းပါ။ browser ဒေတာ ဖျက်မိလျှင် သို့မဟုတ် စက်ပျက်လျှင် ပျောက်သွားမည်။",
+ "Save a backup file every week. Keep it somewhere safe, such as a USB stick. Never put it in the GitHub project. To bring records back, or to move them to another computer, load the file below in Import records.":"အပတ်တိုင်း အရန်ဖိုင် သိမ်းပါ။ USB ကဲ့သို့ လုံခြုံသောနေရာတွင် ထားပါ။ GitHub project ထဲ ဘယ်တော့မှ မထည့်ပါနှင့်။ မှတ်တမ်းများ ပြန်ယူရန် သို့မဟုတ် အခြားကွန်ပျူတာသို့ ရွှေ့ရန် အောက်ပါ မှတ်တမ်းတင်သွင်းရန် တွင် ဖိုင်ကို ဖွင့်ပါ။",
+ "Save a backup file":"အရန်ဖိုင် သိမ်းမည်"});
 Object.assign(DICT,{
  "Notifications and alarms: everything that needs a look":"အသိပေးချက်နှင့် သတိပေးချက်များ - ကြည့်ရန်လိုသည့် အရာအားလုံး",
  "All the numbers for the month, area by area":"လအတွက် ကိန်းဂဏန်းအားလုံး၊ ဌာနအလိုက်",
@@ -1964,7 +1976,7 @@ function render(){
   if(fn.bind)fn.bind();
   $("#view").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const [p,tb]=b.dataset.go.split(":");go(p,tb)});
   $("#view").querySelectorAll("[data-bill]").forEach(b=>{b.onclick=e=>{e.stopPropagation();showBill(b.dataset.bill)};b.ondblclick=e=>e.stopPropagation()});
-  $("#syncDot").className="dot"+(dbState==="on"?" on":"");$("#syncTxt").textContent=dbState==="on"?"Saved to shared records":dbState==="off"?"Not connected":"Connecting…";
+  $("#syncDot").className="dot"+(dbState==="on"?" on":"");$("#syncTxt").textContent=dbState==="on"?(DEVICE?"Saved on this device":"Saved to shared records"):dbState==="off"?"Not connected":"Connecting…";
 }
 function pickMonth(){const ms=Object.keys(S.production).filter(k=>monthBags(k)).sort();return ms[ms.length-1]||ym(today())}
 $("#mPrev").onclick=()=>{UI.month=addMonth(UI.month,-1);render()};
@@ -1999,6 +2011,30 @@ function makeDb(){
         async delete(){const {error}=await SB.from("records").delete().eq("col",col).eq("id",id);if(error)throw err(error);cache[col]&&cache[col].delete(id)}}}}}
   };
 }
+/* records kept on this device (IndexedDB) while there is no cloud database */
+function makeDeviceDb(){
+  const subs={},cache={};let started=false,idb=null;
+  const emit=col=>{const m=cache[col]||new Map();const docs=[...m.entries()].map(([id,data])=>({id,exists:true,data:()=>data}));(subs[col]||[]).forEach(f=>f({docs}))};
+  const open=()=>new Promise((ok,bad)=>{const r=indexedDB.open("ap-erp",1);r.onupgradeneeded=()=>r.result.createObjectStore("records",{keyPath:["col","id"]});r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)});
+  const tx=(mode,fn)=>new Promise((ok,bad)=>{const t=idb.transaction("records",mode);const st=t.objectStore("records");const out=fn(st);t.oncomplete=()=>ok(out&&out.result);t.onerror=()=>bad(t.error)});
+  return {
+    async start(){idb=await open();const rows=await tx("readonly",st=>st.getAll());
+      (rows||[]).forEach(r=>(cache[r.col]||(cache[r.col]=new Map())).set(r.id,r.data));started=true;Object.keys(subs).forEach(emit);
+      try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}},
+    all(){const out=[];for(const [col,m] of Object.entries(cache))for(const [id,data] of m)out.push({col,id,data});return out},
+    collection(col){return {
+      onSnapshot(next){(subs[col]||(subs[col]=[])).push(next);if(started)emit(col);return ()=>{}},
+      doc(id){return {
+        async set(data){await tx("readwrite",st=>st.put({col,id,data}));(cache[col]||(cache[col]=new Map())).set(id,data);emit(col)},
+        async delete(){await tx("readwrite",st=>st.delete([col,id]));cache[col]&&cache[col].delete(id);emit(col)}}}}}
+  };
+}
+function startDevice(){
+  SESSION.role="owner";canWrite=true;canSystem=true;$("#login").hidden=true;
+  $("#whoTxt").textContent=UI.lang==="my"?"ဤစက်":"This device";
+  if(!window.indexedDB){dbState="off";render();return}
+  startRecords(makeDeviceDb());
+}
 const USER_DOMAIN="ap-plastic.app";
 const toEmail=u=>{u=String(u||"").trim().toLowerCase();return u.includes("@")?u:u.replace(/[^a-z0-9._-]/g,"")+"@"+USER_DOMAIN};
 const toName=e=>String(e||"").endsWith("@"+USER_DOMAIN)?String(e).split("@")[0]:String(e||"");
@@ -2017,7 +2053,10 @@ async function afterLogin(user){
   SESSION.role=me.role;canWrite=me.role==="owner"||me.role==="editor";canSystem=me.role==="owner";
   $("#whoTxt").textContent=toName(SESSION.email)+" · "+(me.role==="owner"?"Owner":me.role==="editor"?"Editor":"Viewer");$("#signOut").hidden=false;
   if(!canWrite)$("#cmtBtn").hidden=true;
-  db=makeDb();let monthPicked=false;
+  startRecords(makeDb());
+}
+async function startRecords(theDb){
+  db=theDb;let monthPicked=false;
   COLS.forEach(c=>db.collection(c).onSnapshot(snap=>{const o={};snap.docs.forEach(d=>{if(d.exists)o[d.id]=d.data()});S[c]=o;loaded.add(c);
     if(c==="production"&&!monthPicked){monthPicked=true;UI.month=pickMonth()}scheduleRender()}));
   try{await db.start();dbState="on"}catch(e){dbState="off";toast((e&&e.message)||"Could not load records")}
@@ -2044,6 +2083,7 @@ $("#loginForm").addEventListener("submit",async e=>{e.preventDefault();const un=
   }finally{$("#lgBtn").disabled=false}});
 $("#signOut").onclick=async()=>{await SB.auth.signOut();location.reload()};
 (async()=>{
+  if(DEVICE)return startDevice();
   if(!window.supabase||!CFG.url||!CFG.key||/PASTE/.test(CFG.key)){dbState="off";render();$("#syncTxt").textContent="Not set up";$("#bannerArea").innerHTML=`<div class="banner bad">${UI.lang==="my"?"Supabase နှင့် မချိတ်ရသေးပါ။ config.js တွင် anon key ထည့်ရန် လိုသည်။":"Not connected to Supabase yet: the anon key is missing in config.js."}</div>`;return}
   SB=window.supabase.createClient(CFG.url,CFG.key,{auth:{persistSession:true,autoRefreshToken:true}});
   const {data}=await SB.auth.getSession();

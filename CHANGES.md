@@ -2,6 +2,11 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: the app no longer uses Supabase. Each device keeps its own records in the
+  browser, starting empty, with no sign-in (`config.js` mode "device"). Settings has a Backup box with "Save a
+  backup file"; Import records loads a backup back. The cloud code stays so a cloud can be connected again later.
+  `test/run_test.py --device` tests this way. The owner is not renting the cloud for now.
+
 - 2026-11-21, Thura with Claude: Home is now one list of notifications and alarms (Urgent, To do, For
   information), each with an Open button; the quick buttons stay on top. New alarms: not enough finished stock
   for orders, orders due tomorrow, customers owing for more than 30 days, money owed to suppliers. Overview now

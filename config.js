@@ -1,7 +1,12 @@
 // AP Plastic ERP connection settings.
-// url: your Supabase project address. key: the publishable (anon / public) key from Supabase > Project Settings > API.
-// The anon key is safe to publish; Supabase security rules protect the data. Never put the service_role key here.
+// mode "device": records are kept in the browser of each computer or phone (no cloud, no sign-in).
+// Save a backup file often (Settings > Backup).
+//
+// To use a cloud database again later: remove the mode line and put the Supabase address and the
+// publishable (anon / public) key here, like this:
+//   url: "https://<project>.supabase.co",
+//   key: "sb_publishable_..."
+// The publishable key is safe to publish. Never put the service_role (secret) key here.
 window.AP_CONFIG = {
-  url: "https://hueqyovjsmwwlmbfxeug.supabase.co",
-  key: "sb_publishable_jg-bF65HXJncWJKFpioosg_NZLL_KY9"
+  mode: "device"
 };

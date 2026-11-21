@@ -7,8 +7,13 @@ their own Claude, each on their own computer. This GitHub project is the one sha
 A factory and office app for AP Plastic, a plastic packaging company: production, raw materials, staff pay,
 molds, electricity, sales, customers, orders, bills, buying and suppliers. Myanmar and English.
 - Live app: https://newthura.github.io/AP-Plastic/ (GitHub Pages serves `index.html` from `main`).
-- Records live in Supabase (one table `records`: `col` = record type, `id`, `data` JSON; access in `app_users`
-  with roles owner / editor / viewer). The database is not in this project.
+- **For now (since 2026-11-21) there is no cloud database.** `config.js` has `mode: "device"`: each computer or
+  phone keeps its own records in the browser (IndexedDB), with no sign-in. Records are not shared between devices.
+  Settings > Backup saves a backup file; Settings > Import records loads it back. Backup files are private:
+  never put one in this project.
+- The cloud code is kept for later: put a Supabase address and publishable key in `config.js` (and remove the
+  `mode` line) to go back to shared records with sign-in (one table `records`: `col` = record type, `id`,
+  `data` JSON; access in `app_users` with roles owner / editor / viewer).
 
 ## The golden rules
 1. **Before starting: `git pull`.** The other person may have changed things since yesterday.
@@ -40,15 +45,17 @@ Everything is in `index.html` (one file, no build step): styles at the top, then
   (the block "Myanmar words for the new parts" near the end is the easiest place to add them).
   Text that must not be translated (names, numbers) goes inside an element with class `notr`.
 - The block "New parts (2026-11-16): Home, Orders, Bills, Buying" holds the Home page, Orders, Bills and Buying.
-- `config.js`: Supabase address and the public (publishable) key. Never put a secret key in this project.
+- `config.js`: `mode: "device"` for now, or later the cloud address and public (publishable) key. Never put a
+  secret key in this project. `makeDeviceDb()` (records on the device) and `makeDb()` (cloud) do the same job.
 - Installing: `manifest.webmanifest` (name, icons), `sw.js` (needed for the Install button; it loads the newest
   version first and keeps a copy for no-internet; when you add a new file the app needs offline, nothing else is
   required), the "Install as an app" block in `index.html`, and `install/` (Windows setup for computers without
   Chrome or Edge). The icons are `icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`.
 
 ## Testing
-- `python test/run_test.py`, then open http://127.0.0.1:8765/ . It runs the app with a pretend database and
-  made-up records (`test/fake-supabase.js`), signed in as owner. Nothing reaches the real database.
+- `python test/run_test.py`, then open http://127.0.0.1:8765/ . It runs the app with a pretend cloud database and
+  made-up records (`test/fake-supabase.js`), signed in as owner. Nothing reaches a real database.
+  `python test/run_test.py --device` runs it the way the live app works now: records in the browser, starting empty.
   In the browser console, `fakeReset()` starts the test records again.
 - Check every page you changed in **English and Myanmar**, at **computer and phone width**, and look for errors
   in the browser console.

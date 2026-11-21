@@ -1,6 +1,7 @@
 """Runs the app on this computer with a pretend database and made-up records.
 
     python test/run_test.py          then open http://127.0.0.1:8765/
+    python test/run_test.py --device the same, but records kept in the browser and starting empty
 
 Nothing is sent to Supabase: test/fake-supabase.js stands in for it and keeps
 records in the browser (run  fakeReset()  in the browser console to start again).
@@ -60,7 +61,13 @@ def main():
     if page.count(CDN) != 1:
         sys.exit("run_test: the Supabase script line in index.html changed; update CDN in this file")
     (OUT / "index.html").write_text(page.replace(CDN, '<script src="fake-supabase.js"></script>'), encoding="utf-8")
-    for f in ["config.js", "manifest.webmanifest", "sw.js", "icon.png", "icon-192.png", "icon-512.png",
+    # The test uses the pretend cloud database unless started with  --device  (records kept in the browser,
+    # starting empty, the same as the live app while it has no cloud).
+    if "--device" in sys.argv:
+        shutil.copy(ROOT / "config.js", OUT / "config.js")
+    else:
+        (OUT / "config.js").write_text('window.AP_CONFIG = {url: "https://fake.test", key: "fake"};\n', encoding="utf-8")
+    for f in ["manifest.webmanifest", "sw.js", "icon.png", "icon-192.png", "icon-512.png",
               "icon-maskable-512.png", "apple-touch-icon.png"]:
         shutil.copy(ROOT / f, OUT / f)
     shutil.copy(ROOT / "test" / "fake-supabase.js", OUT / "fake-supabase.js")
