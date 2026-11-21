@@ -2,6 +2,9 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: wrote down the cloud plan for the new app in `CLAUDE.md`: records on both the
+  cloud and the office computer, and the cloud keeps at least a year (a copy per month). Not built yet.
+
 - 2026-11-21, Thura with Claude: new app (`app/`) saves into a folder chosen once in Settings instead of a single
   file: `ap-records.json` (everything, updated after each change) and `ap-records-YYYY-MM.json` (one per month,
   started by itself each new month). Settings has one button: Choose folder / Change folder.
