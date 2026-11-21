@@ -1,172 +1,246 @@
+<meta charset="utf-8">
 <title>AP Receipts</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: form on the left, the customer's receipt (paper) on the right, saved receipts below. Paper is always white: it is what the customer gets. */
+/* Layout: one header, three summary tiles, then the form (left) beside the customer's receipt (right), saved receipts below.
+   Spacing keeps to one scale (4 8 12 16 24 32). The paper is always white: it is what the customer gets. */
 :root{
-  --bg:#EEF2F2; --surface:#FFFFFF; --sunk:#F4F7F7; --ink:#14232A; --muted:#5E6E75; --line:#D7E0E1;
-  --accent:#0E6F79; --accent-ink:#FFFFFF; --accent-soft:#DCEEEF; --gold:#E9B92F;
+  --bg:#EEF2F2; --surface:#FFFFFF; --sunk:#F5F8F8; --ink:#14232A; --muted:#5E6E75; --faint:#8A9AA0; --line:#DCE4E5;
+  --accent:#0E6F79; --accent-ink:#FFFFFF; --accent-soft:#E0F0F1;
   --good:#1E7B4A; --good-soft:#DDF1E5; --warn:#9A5B00; --warn-soft:#FBEBCF; --bad:#B4322A;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --r:12px;
   --f-ui:"Plus Jakarta Sans","Noto Sans Myanmar",system-ui,sans-serif;
   --f-my:"Noto Sans Myanmar","Plus Jakarta Sans",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0D1518; --surface:#152126; --sunk:#111B1F; --ink:#E3ECEE; --muted:#93A5AB; --line:#26363C;
-  --accent:#4FBCC5; --accent-ink:#062A2D; --accent-soft:#163A3E; --gold:#E9BC3A;
+  --bg:#0D1518; --surface:#152126; --sunk:#111B1F; --ink:#E3ECEE; --muted:#93A5AB; --faint:#6F8288; --line:#26363C;
+  --accent:#4FBCC5; --accent-ink:#062A2D; --accent-soft:#163A3E;
   --good:#5CC98C; --good-soft:#143224; --warn:#E5A84A; --warn-soft:#33260F; --bad:#EF7A70; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0D1518; --surface:#152126; --sunk:#111B1F; --ink:#E3ECEE; --muted:#93A5AB; --line:#26363C;
-  --accent:#4FBCC5; --accent-ink:#062A2D; --accent-soft:#163A3E; --gold:#E9BC3A;
+  --bg:#0D1518; --surface:#152126; --sunk:#111B1F; --ink:#E3ECEE; --muted:#93A5AB; --faint:#6F8288; --line:#26363C;
+  --accent:#4FBCC5; --accent-ink:#062A2D; --accent-soft:#163A3E;
   --good:#5CC98C; --good-soft:#143224; --warn:#E5A84A; --warn-soft:#33260F; --bad:#EF7A70; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-ui)}
+html[lang="my"] body{font-family:var(--f-my);line-height:1.7}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.wrap{max-width:1180px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
-header.top{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:12px}
-.mark{width:42px;height:42px;border-radius:11px;background:#0E6F79;color:#fff;display:grid;place-items:center;font:800 17px var(--f-ui);letter-spacing:-.5px;position:relative;flex:none}
-.mark::after{content:"";position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:#F6C945}
-.brand h1{margin:0;font:800 21px/1.1 var(--f-ui);letter-spacing:-.3px}
-.brand span{display:block;color:var(--muted);font-size:13px;font-weight:500}
-.today{display:flex;gap:8px;flex-wrap:wrap}
-.pill{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--muted);white-space:nowrap}
-.pill b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:20px;align-items:start}
-@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
-.card h2{margin:0;font:700 17px var(--f-ui);display:flex;align-items:center;justify-content:space-between;gap:8px}
-.card h2 small{font:500 13px var(--f-ui);color:var(--muted)}
-.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-.field{display:flex;flex-direction:column;gap:5px;min-width:0}
-.field label,.lbl{font-size:12.5px;font-weight:600;color:var(--muted)}
-.field input,.field select,.field textarea,.ln input,.ln select{border:1px solid var(--line);background:var(--sunk);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
-.field textarea{min-height:44px;resize:vertical}
-.lines{display:flex;flex-direction:column;gap:8px}
-.ln{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,.8fr) minmax(0,1fr) minmax(0,1.1fr) 40px;gap:8px;align-items:center}
-.lnhead{font-size:12px;font-weight:600;color:var(--muted)}
-@media (max-width:560px){.ln{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px}.ln .nm{grid-column:1/-1}.lnhead{display:none}.ln input.qty,.ln select{grid-column:auto}}
-.x{border:1px solid var(--line);background:var(--surface);border-radius:10px;height:40px;cursor:pointer;color:var(--muted)}
+.wrap{max-width:1160px;margin:0 auto;padding-block:var(--s5) var(--s6);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:var(--s5)}
+
+/* header */
+header.top{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s4);align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:var(--s3)}
+.mark{width:44px;height:44px;border-radius:12px;background:#0E6F79;color:#fff;display:grid;place-items:center;font:800 17px "Plus Jakarta Sans",sans-serif;letter-spacing:-.5px;position:relative;flex:none}
+.mark::after{content:"";position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:#F6C945}
+.brand h1{margin:0;font:800 21px/1.2 var(--f-ui);letter-spacing:-.2px}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+.lang{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.lang button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:var(--s2);padding:6px 14px;border-radius:999px;font-size:13.5px;font-weight:600;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.lang button:focus-visible{outline:2px solid var(--accent)}
+.lang svg{border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.12);flex:none}
+.lang .my{font-family:var(--f-my)}
+
+/* summary tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s3)}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:var(--s3) var(--s4);display:flex;flex-direction:column;gap:2px;min-width:0}
+.tile .k{font-size:12.5px;color:var(--muted);font-weight:600}
+.tile .v{font:700 22px/1.25 "Plus Jakarta Sans",sans-serif;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tile .v small{font-size:13px;font-weight:600;color:var(--muted)}
+.tile .v.warn{color:var(--warn)}
+@media (max-width:560px){.tiles{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tile:last-child{grid-column:1/-1}}
+
+/* main */
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,400px);gap:var(--s5);align-items:start}
+@media (max-width:920px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:var(--s5);display:flex;flex-direction:column;gap:var(--s5);min-width:0}
+@media (max-width:560px){.card{padding:var(--s4)}}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);flex-wrap:wrap}
+.card-head h2{margin:0;font:700 18px var(--f-ui)}
+.card-head .sub{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sec{display:flex;flex-direction:column;gap:var(--s3)}
+.sec+.sec{border-top:1px solid var(--line);padding-top:var(--s5)}
+.sec-t{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+html[lang="my"] .sec-t{letter-spacing:0;text-transform:none;font-size:13px}
+.row{display:grid;gap:var(--s3)}
+.row.c3{grid-template-columns:minmax(0,1.3fr) minmax(0,1.15fr) minmax(0,1.1fr)}
+.row.c2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media (max-width:620px){.row.c3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.row.c3>:first-child{grid-column:1/-1}}
+@media (max-width:420px){.row.c2,.row.c3{grid-template-columns:minmax(0,1fr)}}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label,.lbl{font-size:13px;font-weight:600;color:var(--muted)}
+.hint{font-size:12.5px;color:var(--faint)}
+input,select,textarea{border:1px solid var(--line);background:var(--sunk);border-radius:10px;padding:10px 12px;width:100%;min-width:0;min-height:44px}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);background:var(--surface);outline:none}
+textarea{resize:vertical;min-height:44px}
+
+/* product lines */
+.lines{display:flex;flex-direction:column;gap:var(--s2)}
+.ln{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,.75fr) minmax(0,1.15fr) minmax(0,1fr) 44px;gap:var(--s2);align-items:center}
+.lnhead{font-size:12.5px;font-weight:600;color:var(--faint);padding-inline:2px}
+.lnhead span:nth-child(2),.lnhead span:nth-child(4){text-align:right}
+.ln input.qty,.ln input.price{text-align:right;font-variant-numeric:tabular-nums}
+@media (max-width:620px){.ln{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr) 44px}.ln .nm{grid-column:1/-1}.lnhead{display:none}.ln{padding-bottom:var(--s2);border-bottom:1px dashed var(--line)}}
+.x{border:1px solid var(--line);background:var(--surface);border-radius:10px;height:44px;cursor:pointer;color:var(--faint)}
 .x:hover{color:var(--bad);border-color:var(--bad)}
-.btn{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 16px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
+.addln{align-self:flex-start}
+.sums{background:var(--sunk);border-radius:var(--r);padding:var(--s3) var(--s4);display:flex;flex-direction:column;gap:var(--s1);font-variant-numeric:tabular-nums}
+.sums div{display:flex;justify-content:space-between;gap:var(--s3);font-size:14px}
+.sums .k{color:var(--muted)}
+.sums .pay{border-top:1px solid var(--line);margin-top:var(--s1);padding-top:var(--s2);font-weight:700;font-size:15px}
+.sums .pay .k{color:var(--ink)}
+.tag{font-size:11.5px;font-weight:700;color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:1px 8px;margin-left:var(--s2)}
+
+/* buttons */
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 16px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);min-height:46px}
 .btn:hover{border-color:var(--accent)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.ghost{border-style:dashed;color:var(--accent);min-height:40px}
+.btn.ghost{border-style:dashed;color:var(--accent);min-height:42px}
+.btn.link{border:0;background:none;color:var(--accent);min-height:40px;padding:8px}
 .btn:disabled{opacity:.5;cursor:default}
-.btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.actions .wide{grid-column:1/-1}
-.msg{font-size:13px;color:var(--muted);min-height:1.3em}
-.msg.bad{color:var(--bad)}
-details.shop summary{cursor:pointer;color:var(--muted);font-size:13px;font-weight:600}
-details.shop[open]{display:flex;flex-direction:column;gap:10px}
+.btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;flex:none}
+details.shop>summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);list-style:none;display:flex;align-items:center;gap:var(--s2)}
+details.shop>summary::before{content:"›";display:inline-block;transition:transform .15s;font-size:16px}
+details.shop[open]>summary::before{transform:rotate(90deg)}
+details.shop[open]>summary{margin-bottom:var(--s3)}
+.shopbox{display:flex;flex-direction:column;gap:var(--s3)}
 
-/* the paper: fixed colors, it is the customer's copy */
-.paperbox{display:flex;flex-direction:column;gap:12px;position:sticky;top:max(16px,env(safe-area-inset-top,0px))}
-.paper{background:#FFFFFF;color:#14232A;border-radius:18px;padding:26px 24px 22px;box-shadow:0 1px 2px rgba(10,30,35,.06),0 10px 30px rgba(10,30,35,.10);font:14px/1.5 "Plus Jakarta Sans","Noto Sans Myanmar",system-ui,sans-serif;display:flex;flex-direction:column;gap:16px;border:1px solid #E3EAEB}
-.p-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.p-brand{display:flex;gap:10px;align-items:center}
-.p-brand .mark{width:38px;height:38px;font-size:15px}
-.p-brand b{display:block;font:800 17px/1.15 "Plus Jakarta Sans",sans-serif;letter-spacing:-.2px}
-.p-brand span{display:block;font-size:11.5px;color:#5E6E75}
-.p-tag{text-align:right}
-.p-tag .t{font:800 12px "Plus Jakarta Sans",sans-serif;letter-spacing:.14em;color:#0E6F79}
-.p-tag .my{font:600 12px "Noto Sans Myanmar",sans-serif;color:#0E6F79}
-.p-tag .no{font:700 14px "Plus Jakarta Sans",sans-serif;font-variant-numeric:tabular-nums}
-.p-meta{display:grid;grid-template-columns:1fr auto;gap:2px 12px;background:#F3F7F7;border-radius:12px;padding:10px 12px;font-size:13px}
-.p-meta .k{color:#5E6E75;font-size:11.5px}
-.p-meta .v{font-weight:700}
+/* receipt side */
+.side{display:flex;flex-direction:column;gap:var(--s3);position:sticky;top:max(16px,env(safe-area-inset-top,0px))}
+@media (max-width:920px){.side{position:static}}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.actions .wide{grid-column:1/-1}
+.msg{font-size:13px;color:var(--muted);min-height:1.4em;text-align:center}
+.msg.bad{color:var(--bad)}
+
+/* the paper (customer's copy): fixed colors */
+.paper{background:#FFFFFF;color:#14232A;border-radius:18px;padding:28px 26px 24px;border:1px solid #E3EAEB;box-shadow:0 1px 2px rgba(10,30,35,.05),0 12px 32px rgba(10,30,35,.09);display:flex;flex-direction:column;gap:20px;font:14px/1.55 "Plus Jakarta Sans","Noto Sans Myanmar",sans-serif}
+.paper.my{font-family:"Noto Sans Myanmar","Plus Jakarta Sans",sans-serif;line-height:1.75}
+.p-head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s3)}
+.p-brand{display:flex;gap:var(--s3);align-items:center;min-width:0}
+.p-brand .mark{width:40px;height:40px;font-size:15px}
+.p-brand b{display:block;font:800 17px/1.2 "Plus Jakarta Sans","Noto Sans Myanmar",sans-serif}
+.p-brand span{display:block;font-size:11.5px;color:#6A7B81}
+.p-tag{text-align:right;flex:none}
+.p-tag .t{font-size:11.5px;font-weight:800;letter-spacing:.16em;color:#0E6F79}
+.paper.my .p-tag .t{letter-spacing:0;font-size:13px}
+.p-tag .no{font:700 14px "Plus Jakarta Sans",sans-serif;font-variant-numeric:tabular-nums;margin-top:2px}
+.p-meta{display:grid;grid-template-columns:1fr auto;gap:2px var(--s4);padding:12px 14px;background:#F3F7F7;border-radius:12px}
+.p-meta .k{color:#6A7B81;font-size:11.5px}
+.p-meta .v{font-weight:700;overflow-wrap:anywhere}
 .p-meta .r{text-align:right}
 .p-items{display:flex;flex-direction:column}
-.p-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:9px 0;border-bottom:1px dashed #D5DEE0}
+.p-item{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:var(--s4);padding:10px 0;border-bottom:1px dashed #D5DEE0}
 .p-item:first-child{padding-top:0}
 .p-item .n{font-weight:600;overflow-wrap:anywhere}
-.p-item .q{color:#5E6E75;font-size:12.5px;font-variant-numeric:tabular-nums}
+.p-item .q{color:#6A7B81;font-size:12.5px;font-variant-numeric:tabular-nums}
 .p-item .a{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;grid-row:1/3;grid-column:2;align-self:center}
-.p-empty{color:#93A3A8;font-size:13px;padding:6px 0;border-bottom:1px dashed #D5DEE0}
-.p-tot{display:flex;flex-direction:column;gap:4px;font-variant-numeric:tabular-nums}
-.p-tot div{display:flex;justify-content:space-between;gap:12px;font-size:13.5px}
-.p-tot .k{color:#5E6E75}
-.p-tot .grand{background:#0E6F79;color:#fff;border-radius:12px;padding:10px 14px;margin-top:4px;align-items:center}
-.p-tot .grand .k{color:#D7EEF0;font-weight:600}
-.p-tot .grand b{font:800 20px "Plus Jakarta Sans",sans-serif}
+.p-empty{color:#98A7AC;font-size:13px;padding:4px 0 10px;border-bottom:1px dashed #D5DEE0}
+.p-tot{display:flex;flex-direction:column;gap:6px;font-variant-numeric:tabular-nums}
+.p-tot .line{display:flex;justify-content:space-between;gap:var(--s3);font-size:13.5px;padding-inline:4px}
+.p-tot .k{color:#6A7B81}
+.p-tot .grand{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);background:#0E6F79;color:#fff;border-radius:12px;padding:12px 16px}
+.p-tot .grand .k{color:#D4ECEE;font-weight:600}
+.p-tot .grand b{font:800 20px "Plus Jakarta Sans",sans-serif;white-space:nowrap}
 .p-tot .owe b{color:#B4322A}
 .p-tot .done{color:#1E7B4A;font-weight:700}
-.p-foot{text-align:center;font-size:12px;color:#5E6E75;display:flex;flex-direction:column;gap:2px}
-.p-foot .thanks{font:600 13px "Noto Sans Myanmar","Plus Jakarta Sans",sans-serif;color:#14232A}
-.my{font-family:var(--f-my)}
+.p-note{font-size:12.5px;color:#6A7B81;border-left:3px solid #E3EAEB;padding-left:10px}
+.p-foot{text-align:center;font-size:12px;color:#6A7B81;display:flex;flex-direction:column;gap:2px;padding-top:4px}
+.p-foot .thanks{font-weight:700;font-size:13.5px;color:#14232A}
 
 /* saved receipts */
-.listbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
-.search{border:1px solid var(--line);background:var(--sunk);border-radius:10px;padding:9px 12px;width:260px;max-width:100%}
-.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.listbar{display:flex;flex-wrap:wrap;gap:var(--s3);align-items:center;justify-content:space-between}
+.search{width:280px;max-width:100%}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
 table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}
-th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
-th{font-size:12px;color:var(--muted);font-weight:600;background:var(--sunk)}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-size:12.5px;color:var(--muted);font-weight:600;background:var(--sunk)}
 td.n,th.n{text-align:right}
+td.prod{max-width:240px;overflow:hidden;text-overflow:ellipsis}
 tbody tr{cursor:pointer}
 tbody tr:hover,tbody tr.on{background:var(--accent-soft)}
 tbody tr:last-child td{border-bottom:0}
 .chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px}
 .chip.good{background:var(--good-soft);color:var(--good)} .chip.warn{background:var(--warn-soft);color:var(--warn)}
-.empty{padding:26px 12px;text-align:center;color:var(--muted)}
-.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:600;z-index:10}
+.empty{padding:var(--s6) var(--s3);text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:var(--s1)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:var(--r);font-weight:600;z-index:10}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><div class="mark">AP</div><div><h1>AP Receipts</h1><span>Sales department · ပြေစာ</span></div></div>
-    <div class="today" id="today"><span class="pill">Today <b>0</b> receipts</span><span class="pill">Sales <b>0 Ks</b></span></div>
+    <div class="brand"><div class="mark">AP</div><div><h1 data-t="appName">AP Receipts</h1><p data-t="appSub">Sales department</p></div></div>
+    <div class="lang" role="group" aria-label="Language" id="lang"></div>
   </header>
 
+  <div class="tiles" id="tiles"></div>
+
   <div class="grid">
-    <section class="card" aria-labelledby="formTitle">
-      <h2 id="formTitle"><span id="formName">New receipt</span><small id="formNo"></small></h2>
-      <div class="row">
-        <div class="field"><label for="fCustomer">Customer</label><input id="fCustomer" placeholder="Shop or person" autocomplete="off"></div>
-        <div class="field"><label for="fPhone">Phone</label><input id="fPhone" inputmode="tel" placeholder="09 …" autocomplete="off"></div>
-        <div class="field"><label for="fDate">Date</label><input id="fDate" type="date"></div>
-      </div>
-      <div class="field">
-        <span class="lbl">Products</span>
-        <div class="ln lnhead" aria-hidden="true"><span>Product</span><span>Qty</span><span>Unit</span><span>Price (Ks)</span><span></span></div>
-        <div class="lines" id="lines"></div>
-        <button class="btn ghost" id="addLine" type="button">+ Add product</button>
-      </div>
-      <div class="row">
-        <div class="field"><label for="fPaid">Paid now (Ks)</label><input id="fPaid" inputmode="decimal" placeholder="0"></div>
-        <div class="field"><label for="fSales">Salesperson</label><input id="fSales" placeholder="Your name" autocomplete="off"></div>
-      </div>
-      <div class="field"><label for="fNote">Note (shown on the receipt)</label><textarea id="fNote" rows="1" placeholder="Optional"></textarea></div>
-      <details class="shop" id="shopBox">
-        <summary>Shop details on the receipt</summary>
-        <div class="row">
-          <div class="field"><label for="sName">Shop name</label><input id="sName" placeholder="AP Plastic"></div>
-          <div class="field"><label for="sPhone">Shop phone</label><input id="sPhone" placeholder="09 …"></div>
+    <section class="card" aria-labelledby="formName">
+      <div class="card-head"><h2 id="formName">New receipt</h2><span class="sub" id="formNo"></span></div>
+
+      <div class="sec">
+        <div class="sec-t" data-t="secCustomer">Customer</div>
+        <div class="row c3">
+          <div class="field"><label for="fCustomer" data-t="customer">Customer</label><input id="fCustomer" data-tp="customerPh" autocomplete="off"></div>
+          <div class="field"><label for="fPhone" data-t="phone">Phone</label><input id="fPhone" inputmode="tel" placeholder="09 …" autocomplete="off"></div>
+          <div class="field"><label for="fDate" data-t="date">Date</label><input id="fDate" type="date"></div>
         </div>
-        <div class="field"><label for="sAddr">Address</label><input id="sAddr" placeholder="Town, street"></div>
-        <div><button class="btn" id="saveShop" type="button">Save shop details</button></div>
-      </details>
+      </div>
+
+      <div class="sec">
+        <div class="sec-t" data-t="secProducts">Products</div>
+        <div class="ln lnhead" aria-hidden="true"><span data-t="product">Product</span><span data-t="qty">Qty</span><span data-t="unit">Unit</span><span data-t="price">Price (Ks)</span><span></span></div>
+        <div class="lines" id="lines"></div>
+        <button class="btn ghost addln" id="addLine" type="button" data-t="addProduct">+ Add product</button>
+      </div>
+
+      <div class="sec">
+        <div class="sec-t" data-t="secPayment">Payment</div>
+        <div class="row c2">
+          <div class="field"><label for="fDelivery" data-t="delivery">Delivery fee (Ks)</label><input id="fDelivery" inputmode="decimal" placeholder="0"><span class="hint" data-t="deliveryHint">Not shown to the customer. It is added into the product prices.</span></div>
+          <div class="field"><label for="fPaid" data-t="paid">Paid now (Ks)</label><input id="fPaid" inputmode="decimal" placeholder="0"></div>
+        </div>
+        <div class="sums" id="sums"></div>
+        <div class="row c2">
+          <div class="field"><label for="fSales" data-t="salesperson">Salesperson</label><input id="fSales" data-tp="salesPh" autocomplete="off"></div>
+          <div class="field"><label for="fNote" data-t="note">Note on the receipt</label><input id="fNote" data-tp="optional"></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <details class="shop" id="shopBox">
+          <summary data-t="shopTitle">Shop details on the receipt</summary>
+          <div class="shopbox">
+            <div class="row c2">
+              <div class="field"><label for="sName" data-t="shopName">Shop name</label><input id="sName" placeholder="AP Plastic"></div>
+              <div class="field"><label for="sPhone" data-t="shopPhone">Shop phone</label><input id="sPhone" placeholder="09 …"></div>
+            </div>
+            <div class="field"><label for="sAddr" data-t="address">Address</label><input id="sAddr"></div>
+            <div><button class="btn" id="saveShop" type="button" data-t="saveShop">Save shop details</button></div>
+          </div>
+        </details>
+      </div>
     </section>
 
-    <div class="paperbox">
+    <div class="side">
       <div class="paper" id="paper" aria-label="Receipt preview"></div>
       <div class="actions">
-        <button class="btn primary wide" id="saveBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg><span>Save receipt</span></button>
-        <button class="btn" id="picBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg><span>Save picture</span></button>
-        <button class="btn" id="copyBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span>Copy as text</span></button>
-        <button class="btn wide" id="newBtn" type="button">New receipt</button>
+        <button class="btn primary wide" id="saveBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg><span data-t="save">Save receipt</span></button>
+        <button class="btn" id="picBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg><span data-t="picture">Save picture</span></button>
+        <button class="btn" id="copyBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span data-t="copy">Copy as text</span></button>
+        <button class="btn link wide" id="newBtn" type="button" data-t="newReceipt">Start a new receipt</button>
       </div>
       <div class="msg" id="msg" role="status"></div>
     </div>
   </div>
 
   <section class="card" aria-labelledby="listTitle">
-    <div class="listbar"><h2 id="listTitle">Saved receipts</h2><input class="search" id="q" placeholder="Find receipt no, customer or product" aria-label="Find receipts"></div>
-    <div id="list"><div class="empty"><b>Loading saved receipts…</b></div></div>
+    <div class="listbar"><h2 id="listTitle" style="margin:0;font:700 18px var(--f-ui)" data-t="saved">Saved receipts</h2><input class="search" id="q" data-tp="searchPh" aria-label="Find receipts"></div>
+    <div id="list"></div>
   </section>
 </div>
 <div id="toastRoot"></div>
@@ -181,128 +255,206 @@ const fmt=n=>Math.round(n||0).toLocaleString("en-US");
 const qtyTxt=n=>(Math.round(n*100)/100).toLocaleString("en-US");
 const pad=n=>String(n).padStart(2,"0");
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
-const longDate=s=>{if(!s)return "";const d=new Date(s+"T00:00:00");return isNaN(d)?s:d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})};
-const UNITS={dz:["dozen","ဒါဇင်"],pc:["piece","ခု"],bag:["bag","အိတ်"]};
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
-function toast(t){const r=$("#toastRoot");r.innerHTML=`<div class="toast">${esc(t)}</div>`;clearTimeout(toast.t);toast.t=setTimeout(()=>r.innerHTML="",2400)}
-function say(t,bad){const m=$("#msg");m.textContent=t||"";m.classList.toggle("bad",!!bad)}
 
-let db=null,downloads=null,canWrite=true,receipts=[],shop={name:"AP Plastic",phone:"",address:""},editingId=null,original=null,q="";
+/* ---------- language ---------- */
+const FLAG_MM=`<svg viewBox="0 0 18 12" width="22" height="15" aria-hidden="true"><rect width="18" height="4" fill="#FECB00"/><rect y="4" width="18" height="4" fill="#34B233"/><rect y="8" width="18" height="4" fill="#EA2839"/><polygon fill="#fff" points="9.00,2.90 9.81,5.38 12.42,5.39 10.31,6.93 11.12,9.41 9.00,7.88 6.88,9.41 7.69,6.93 5.58,5.39 8.19,5.38"/></svg>`;
+const FLAG_GB=`<svg viewBox="0 0 60 30" width="22" height="15" aria-hidden="true"><clipPath id="gbc"><path d="M30,15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath><path d="M0,0v30h60v-30z" fill="#012169"/><path d="M0,0L60,30M60,0L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0L60,30M60,0L0,30" clip-path="url(#gbc)" stroke="#C8102E" stroke-width="4"/><path d="M30,0v30M0,15h60" stroke="#fff" stroke-width="10"/><path d="M30,0v30M0,15h60" stroke="#C8102E" stroke-width="6"/></svg>`;
+const MY_MON=["ဇန်နဝါရီ","ဖေဖော်ဝါရီ","မတ်","ဧပြီ","မေ","ဇွန်","ဇူလိုင်","ဩဂုတ်","စက်တင်ဘာ","အောက်တိုဘာ","နိုဝင်ဘာ","ဒီဇင်ဘာ"];
+const T={
+ en:{appName:"AP Receipts",appSub:"Sales department",secCustomer:"Customer",customer:"Customer",customerPh:"Shop or person",phone:"Phone",date:"Date",
+  secProducts:"Products",product:"Product",qty:"Qty",unit:"Unit",price:"Price (Ks)",addProduct:"+ Add product",productPh:"Product name",
+  secPayment:"Payment",delivery:"Delivery fee (Ks)",deliveryHint:"Not shown to the customer. It is added into the product prices.",paid:"Paid now (Ks)",
+  salesperson:"Salesperson",salesPh:"Your name",note:"Note on the receipt",optional:"Optional",
+  goods:"Products",deliveryIn:"Delivery (hidden)",custPays:"Customer pays",stillOwe:"Still to pay",
+  shopTitle:"Shop details on the receipt",shopName:"Shop name",shopPhone:"Shop phone",address:"Address",saveShop:"Save shop details",
+  save:"Save receipt",picture:"Save picture",copy:"Copy as text",newReceipt:"Start a new receipt",saved:"Saved receipts",searchPh:"Find receipt no, customer or product",
+  newTitle:"New receipt",receiptTitle:"Receipt",noWhenSaved:n=>"Will be "+n,
+  tToday:"Receipts today",tSales:"Sales today",tOwed:"Still owed (all)",
+  dozen:"dozen",dozens:"dozens",piece:"piece",pieces:"pieces",bag:"bag",bags:"bags",ks:"Ks",
+  pReceipt:"RECEIPT",pCustomer:"Customer",pDate:"Date",walkIn:"Walk-in customer",pTotal:"Total",pPaid:"Paid",pOwe:"Still to pay",pDone:"Paid in full",pBalance:"Balance",
+  pThanks:"Thank you for your order",pServed:n=>"Served by "+n,pEmpty:"Products appear here as you type them.",pSub:"Plastic packaging",
+  hNo:"Receipt",hDate:"Date",hCust:"Customer",hProd:"Products",hTotal:"Total Ks",hDel:"Delivery",hOwed:"Still owed",hSales:"Salesperson",paidChip:"Paid",
+  emptyLoading:"Loading saved receipts…",emptyNone:"No receipts yet",emptyNoneTxt:"Fill in the form, then press Save receipt. It appears here for the whole sales team.",
+  emptyNoMatch:"No receipt matches",emptyNoMatchTxt:"Try another receipt number, customer or product.",emptyOff:"Saved receipts show here",emptyOffTxt:"Saving is not available in this view.",emptyErr:"Saved receipts could not load",emptyErrTxt:"Reload the page to try again.",
+  mNeedProduct:"Add at least one product with a quantity.",mNoSave:"Saving is not available in this view. You can still save the picture.",mNoRight:"You can view receipts but not save them. Ask the owner for Contributor access.",
+  mSaving:"Saving…",mSaved:n=>"Saved as "+n+". Send it to the customer with Save picture or Copy as text.",tSaved:"Receipt saved",mFull:"The receipt store is full. Delete old receipts to save new ones.",mNotAllowed:"You are not allowed to save receipts here.",mFail:"Could not save. Check the internet and try again.",
+  mAddFirst:"Add a product first.",mNoPicLib:"The picture maker did not load. Take a screenshot of the receipt instead.",mNoFiles:"Saving files is not available here. Take a screenshot of the receipt instead.",mMaking:"Making the picture…",mPicSaved:"Picture saved. Send it to the customer on Viber.",mPicNo:"Picture not saved.",mPicWait:"A save is already waiting for your answer.",mPicFail:"Could not make the picture. Take a screenshot instead.",
+  mCopied:"Copied. Paste it into Viber or a message.",mCopyFail:"Could not copy here. Use Save picture instead.",mOpened:n=>"Opened "+n+". Change it and press Save receipt, or send it again.",tShop:"Shop details saved",mShopFail:"Could not save the shop details."},
+ my:{appName:"AP ပြေစာ",appSub:"အရောင်းဌာန",secCustomer:"ဝယ်သူ",customer:"ဝယ်သူ",customerPh:"ဆိုင် သို့မဟုတ် လူအမည်",phone:"ဖုန်း",date:"ရက်စွဲ",
+  secProducts:"ကုန်ပစ္စည်း",product:"ကုန်ပစ္စည်း",qty:"အရေအတွက်",unit:"ယူနစ်",price:"ဈေး (ကျပ်)",addProduct:"+ ကုန်ပစ္စည်း ထည့်မည်",productPh:"ကုန်ပစ္စည်းအမည်",
+  secPayment:"ငွေပေးချေမှု",delivery:"ပို့ခ (ကျပ်)",deliveryHint:"ဝယ်သူကို မပြပါ။ ကုန်ပစ္စည်းဈေးထဲသို့ ပေါင်းထည့်ပေးမည်။",paid:"ယခု ပေးငွေ (ကျပ်)",
+  salesperson:"အရောင်းဝန်ထမ်း",salesPh:"သင့်အမည်",note:"ပြေစာပေါ်ရှိ မှတ်ချက်",optional:"မဖြစ်မနေ မဟုတ်ပါ",
+  goods:"ကုန်ပစ္စည်း",deliveryIn:"ပို့ခ (မပြ)",custPays:"ဝယ်သူ ပေးရမည်",stillOwe:"ကျန်ငွေ",
+  shopTitle:"ပြေစာပေါ်ရှိ ဆိုင်အချက်အလက်",shopName:"ဆိုင်အမည်",shopPhone:"ဆိုင်ဖုန်း",address:"လိပ်စာ",saveShop:"ဆိုင်အချက်အလက် သိမ်းမည်",
+  save:"ပြေစာ သိမ်းမည်",picture:"ပုံ သိမ်းမည်",copy:"စာသား ကူးမည်",newReceipt:"ပြေစာအသစ် စမည်",saved:"သိမ်းထားသော ပြေစာများ",searchPh:"ပြေစာနံပါတ်၊ ဝယ်သူ သို့မဟုတ် ကုန်ပစ္စည်း ရှာရန်",
+  newTitle:"ပြေစာအသစ်",receiptTitle:"ပြေစာ",noWhenSaved:n=>"နံပါတ် "+n,
+  tToday:"ယနေ့ ပြေစာ",tSales:"ယနေ့ အရောင်း",tOwed:"ကျန်ငွေ (အားလုံး)",
+  dozen:"ဒါဇင်",dozens:"ဒါဇင်",piece:"ခု",pieces:"ခု",bag:"အိတ်",bags:"အိတ်",ks:"ကျပ်",
+  pReceipt:"ပြေစာ",pCustomer:"ဝယ်သူ",pDate:"ရက်စွဲ",walkIn:"လာဝယ်သူ",pTotal:"စုစုပေါင်း",pPaid:"ပေးပြီး",pOwe:"ကျန်ငွေ",pDone:"အပြည့် ပေးပြီး",pBalance:"လက်ကျန်",
+  pThanks:"ဝယ်ယူအားပေးမှုအတွက် ကျေးဇူးတင်ပါသည်",pServed:n=>"ရောင်းသူ "+n,pEmpty:"ရိုက်ထည့်သလို ကုန်ပစ္စည်းများ ဒီမှာ ပေါ်မည်။",pSub:"ပလတ်စတစ် ထုပ်ပိုးပစ္စည်း",
+  hNo:"ပြေစာ",hDate:"ရက်စွဲ",hCust:"ဝယ်သူ",hProd:"ကုန်ပစ္စည်း",hTotal:"စုစုပေါင်း",hDel:"ပို့ခ",hOwed:"ကျန်ငွေ",hSales:"ရောင်းသူ",paidChip:"ပေးပြီး",
+  emptyLoading:"သိမ်းထားသော ပြေစာများ ဖွင့်နေသည်…",emptyNone:"ပြေစာ မရှိသေးပါ",emptyNoneTxt:"ဖောင်ကို ဖြည့်ပြီး ပြေစာ သိမ်းမည် ကို နှိပ်ပါ။ အရောင်းအဖွဲ့ အားလုံးအတွက် ဒီမှာ ပေါ်မည်။",
+  emptyNoMatch:"ကိုက်ညီသော ပြေစာ မရှိပါ",emptyNoMatchTxt:"အခြား ပြေစာနံပါတ်၊ ဝယ်သူ သို့မဟုတ် ကုန်ပစ္စည်းဖြင့် ရှာပါ။",emptyOff:"သိမ်းထားသော ပြေစာများ ဒီမှာ ပေါ်မည်",emptyOffTxt:"ဤနေရာတွင် သိမ်း၍ မရပါ။",emptyErr:"ပြေစာများ ဖွင့်၍ မရပါ",emptyErrTxt:"စာမျက်နှာကို ပြန်ဖွင့်ပါ။",
+  mNeedProduct:"အရေအတွက်နှင့် ကုန်ပစ္စည်း အနည်းဆုံး တစ်ခု ထည့်ပါ။",mNoSave:"ဤနေရာတွင် သိမ်း၍ မရပါ။ ပုံကိုတော့ သိမ်းနိုင်သည်။",mNoRight:"ပြေစာများကို ကြည့်နိုင်သော်လည်း သိမ်း၍ မရပါ။ ပိုင်ရှင်ထံ Contributor ခွင့် တောင်းပါ။",
+  mSaving:"သိမ်းနေသည်…",mSaved:n=>n+" အဖြစ် သိမ်းပြီး။ ပုံ သိမ်းမည် သို့မဟုတ် စာသား ကူးမည် ဖြင့် ဝယ်သူထံ ပို့ပါ။",tSaved:"ပြေစာ သိမ်းပြီး",mFull:"သိမ်းစရာနေရာ ပြည့်နေသည်။ ပြေစာဟောင်းများ ဖျက်ပါ။",mNotAllowed:"ဤနေရာတွင် ပြေစာ သိမ်းခွင့် မရှိပါ။",mFail:"သိမ်း၍ မရပါ။ အင်တာနက် စစ်ပြီး ထပ်ကြိုးစားပါ။",
+  mAddFirst:"ကုန်ပစ္စည်း အရင် ထည့်ပါ။",mNoPicLib:"ပုံထုတ်စနစ် မတက်ပါ။ ပြေစာကို screenshot ရိုက်ပါ။",mNoFiles:"ဤနေရာတွင် ဖိုင် သိမ်း၍ မရပါ။ ပြေစာကို screenshot ရိုက်ပါ။",mMaking:"ပုံ ထုတ်နေသည်…",mPicSaved:"ပုံ သိမ်းပြီး။ Viber ဖြင့် ဝယ်သူထံ ပို့ပါ။",mPicNo:"ပုံ မသိမ်းပါ။",mPicWait:"သိမ်းရန် အဖြေ စောင့်နေသည်။",mPicFail:"ပုံ ထုတ်၍ မရပါ။ screenshot ရိုက်ပါ။",
+  mCopied:"ကူးပြီး။ Viber သို့မဟုတ် စာထဲတွင် paste လုပ်ပါ။",mCopyFail:"ဤနေရာတွင် ကူး၍ မရပါ။ ပုံ သိမ်းမည် ကို သုံးပါ။",mOpened:n=>n+" ကို ဖွင့်ထားသည်။ ပြင်ပြီး ပြေစာ သိမ်းမည် ကို နှိပ်ပါ၊ သို့မဟုတ် ထပ်ပို့ပါ။",tShop:"ဆိုင်အချက်အလက် သိမ်းပြီး",mShopFail:"ဆိုင်အချက်အလက် သိမ်း၍ မရပါ။"}};
+let LANG=ls("apr.lang")==="my"?"my":"en";
+const t=(k,...a)=>{const v=T[LANG][k]??T.en[k];return typeof v==="function"?v(...a):v};
+const longDate=s=>{if(!s)return "";const d=new Date(s+"T00:00:00");if(isNaN(d))return s;return LANG==="my"?d.getDate()+" "+MY_MON[d.getMonth()]+" "+d.getFullYear():d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})};
+const UNITS={dz:["dozen","dozens"],pc:["piece","pieces"],bag:["bag","bags"]};
+const unitTxt=(u,q)=>t(UNITS[u]?.[q===1?0:1]||"dozens");
+function drawLang(){
+  $("#lang").innerHTML=`<button type="button" data-lang="en" aria-pressed="${LANG==="en"}">${FLAG_GB}<span>English</span></button><button type="button" data-lang="my" aria-pressed="${LANG==="my"}">${FLAG_MM}<span class="my">မြန်မာ</span></button>`;
+  document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;ls("apr.lang",LANG);applyLang()});
+}
+function applyLang(){
+  document.documentElement.lang=LANG==="my"?"my":"en";
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+  document.querySelectorAll("[data-tp]").forEach(el=>el.placeholder=t(el.dataset.tp));
+  drawLang();drawLines();drawAll();
+}
+
+/* ---------- state and sums ---------- */
+function toast(m){const r=$("#toastRoot");r.innerHTML=`<div class="toast">${esc(m)}</div>`;clearTimeout(toast.h);toast.h=setTimeout(()=>r.innerHTML="",2400)}
+function say(m,bad){const e=$("#msg");e.textContent=m||"";e.classList.toggle("bad",!!bad)}
+let db=null,downloads=null,canWrite=true,receipts=[],loaded=false,loadErr=false,shop={name:"AP Plastic",phone:"",address:""},editingId=null,original=null,q="";
 const blankLine=()=>({name:"",qty:"",unit:"dz",price:""});
-const blank=()=>({no:"",date:today(),customer:"",phone:"",lines:[blankLine()],paid:"",salesperson:ls("apr.sales")||"",note:""});
+const blank=()=>({no:"",date:today(),customer:"",phone:"",lines:[blankLine()],delivery:"",paid:"",salesperson:ls("apr.sales")||"",note:""});
 let cur=blank();
-
-const cleanLines=ls=>ls.filter(l=>String(l.name).trim()&&num(l.qty)>0).map(l=>({name:String(l.name).trim(),qty:num(l.qty),unit:l.unit||"dz",price:num(l.price)}));
-const lineAmt=l=>num(l.qty)*num(l.price);
-const total=r=>Math.round(r.lines.reduce((a,l)=>a+lineAmt(l),0));
+const cleanLines=xs=>xs.filter(l=>String(l.name).trim()&&num(l.qty)>0).map(l=>({name:String(l.name).trim(),qty:num(l.qty),unit:l.unit||"dz",price:num(l.price)}));
+/* The delivery fee is spread over the products in proportion to their amount: each price grows by the same share,
+   rounded to whole kyat, so the customer's receipt adds up line by line and shows no delivery line. */
+function priced(r){
+  const xs=cleanLines(r.lines),goods=xs.reduce((a,l)=>a+l.qty*l.price,0),fee=Math.max(0,num(r.delivery));
+  const f=goods>0?fee/goods:0;
+  const lines=xs.map(l=>{const p=Math.round(l.price*(1+f));return Object.assign({},l,{shownPrice:p,amount:Math.round(l.qty*p)})});
+  const total=lines.reduce((a,l)=>a+l.amount,0),paid=num(r.paid);
+  return {lines,goods:Math.round(goods),fee,total,paid,owe:total-paid};
+}
 function nextNo(date){const d=(date||today()).replace(/-/g,"").slice(2);const pre="R"+d+"-";
   const n=receipts.filter(r=>String(r.no||"").startsWith(pre)).reduce((a,r)=>Math.max(a,parseInt(String(r.no).slice(pre.length),10)||0),0)+1;return pre+pad(n)}
 
 /* ---------- form ---------- */
 function drawLines(){
   $("#lines").innerHTML=cur.lines.map((l,i)=>`<div class="ln">
-    <input class="nm" data-i="${i}" data-k="name" placeholder="Product name" value="${esc(l.name)}" aria-label="Product ${i+1}" autocomplete="off">
-    <input class="qty" data-i="${i}" data-k="qty" inputmode="decimal" placeholder="Qty" value="${esc(l.qty)}" aria-label="Quantity ${i+1}">
-    <select data-i="${i}" data-k="unit" aria-label="Unit ${i+1}">${Object.entries(UNITS).map(([k,v])=>`<option value="${k}" ${l.unit===k?"selected":""}>${v[0][0].toUpperCase()+v[0].slice(1)}</option>`).join("")}</select>
-    <input data-i="${i}" data-k="price" inputmode="decimal" placeholder="Price" value="${esc(l.price)}" aria-label="Price ${i+1}">
-    <button class="x" type="button" data-rm="${i}" aria-label="Remove product ${i+1}">✕</button></div>`).join("");
-  document.querySelectorAll("#lines [data-k]").forEach(el=>el.oninput=el.onchange=()=>{cur.lines[+el.dataset.i][el.dataset.k]=el.value;drawPaper()});
-  document.querySelectorAll("#lines [data-rm]").forEach(b=>b.onclick=()=>{cur.lines.splice(+b.dataset.rm,1);if(!cur.lines.length)cur.lines.push(blankLine());drawLines();drawPaper()});
+    <input class="nm" data-i="${i}" data-k="name" placeholder="${esc(t("productPh"))}" value="${esc(l.name)}" aria-label="${esc(t("product"))} ${i+1}" autocomplete="off">
+    <input class="qty" data-i="${i}" data-k="qty" inputmode="decimal" placeholder="${esc(t("qty"))}" value="${esc(l.qty)}" aria-label="${esc(t("qty"))} ${i+1}">
+    <select data-i="${i}" data-k="unit" aria-label="${esc(t("unit"))} ${i+1}">${Object.keys(UNITS).map(k=>`<option value="${k}" ${l.unit===k?"selected":""}>${esc(cap(t(UNITS[k][0])))}</option>`).join("")}</select>
+    <input class="price" data-i="${i}" data-k="price" inputmode="decimal" placeholder="0" value="${esc(l.price)}" aria-label="${esc(t("price"))} ${i+1}">
+    <button class="x" type="button" data-rm="${i}" aria-label="Remove ${i+1}">✕</button></div>`).join("");
+  document.querySelectorAll("#lines [data-k]").forEach(el=>el.oninput=el.onchange=()=>{cur.lines[+el.dataset.i][el.dataset.k]=el.value;drawAll()});
+  document.querySelectorAll("#lines [data-rm]").forEach(b=>b.onclick=()=>{cur.lines.splice(+b.dataset.rm,1);if(!cur.lines.length)cur.lines.push(blankLine());drawLines();drawAll()});
 }
-function drawForm(){
-  $("#fCustomer").value=cur.customer;$("#fPhone").value=cur.phone;$("#fDate").value=cur.date;$("#fPaid").value=cur.paid;$("#fSales").value=cur.salesperson;$("#fNote").value=cur.note;
-  $("#formName").textContent=editingId?"Receipt":"New receipt";
-  drawLines();drawPaper();
+const cap=s=>LANG==="en"?s.charAt(0).toUpperCase()+s.slice(1):s;
+function fillForm(){
+  $("#fCustomer").value=cur.customer;$("#fPhone").value=cur.phone;$("#fDate").value=cur.date;$("#fDelivery").value=cur.delivery;$("#fPaid").value=cur.paid;$("#fSales").value=cur.salesperson;$("#fNote").value=cur.note;
+  drawLines();drawAll();
 }
-[["#fCustomer","customer"],["#fPhone","phone"],["#fDate","date"],["#fPaid","paid"],["#fSales","salesperson"],["#fNote","note"]].forEach(([s,k])=>{$(s).oninput=$(s).onchange=()=>{cur[k]=$(s).value;drawPaper()}});
+[["#fCustomer","customer"],["#fPhone","phone"],["#fDate","date"],["#fDelivery","delivery"],["#fPaid","paid"],["#fSales","salesperson"],["#fNote","note"]].forEach(([s,k])=>{$(s).oninput=$(s).onchange=()=>{cur[k]=$(s).value;drawAll()}});
 $("#addLine").onclick=()=>{cur.lines.push(blankLine());drawLines();const ins=document.querySelectorAll("#lines .nm");ins[ins.length-1].focus()};
+function drawSums(){const p=priced(cur);
+  $("#sums").innerHTML=`<div><span class="k">${esc(t("goods"))}</span><span>${fmt(p.goods)} ${esc(t("ks"))}</span></div>
+   ${p.fee?`<div><span class="k">${esc(t("deliveryIn"))}</span><span>+ ${fmt(p.fee)} ${esc(t("ks"))}</span></div>`:""}
+   <div class="pay"><span class="k">${esc(t("custPays"))}</span><span>${fmt(p.total)} ${esc(t("ks"))}</span></div>
+   ${p.total&&p.owe>0.5?`<div><span class="k">${esc(t("stillOwe"))}</span><span>${fmt(p.owe)} ${esc(t("ks"))}</span></div>`:""}`}
+function drawHead(){$("#formName").textContent=editingId?t("receiptTitle"):t("newTitle");$("#formNo").textContent=cur.no||t("noWhenSaved",nextNo(cur.date))}
 
 /* ---------- the receipt ---------- */
 function paperHTML(r){
-  const ls=cleanLines(r.lines),t=Math.round(ls.reduce((a,l)=>a+lineAmt(l),0)),paid=num(r.paid),owe=t-paid;
-  const no=r.no||nextNo(r.date);
-  return `<div class="p-head"><div class="p-brand"><div class="mark">AP</div><div><b>${esc(shop.name||"AP Plastic")}</b><span>${esc([shop.phone,shop.address].filter(Boolean).join(" · ")||"Plastic packaging")}</span></div></div>
-    <div class="p-tag"><div class="t">RECEIPT</div><div class="my">ပြေစာ</div><div class="no">${esc(no)}</div></div></div>
-  <div class="p-meta"><span class="k">Customer · ဝယ်သူ</span><span class="k r">Date · ရက်စွဲ</span><span class="v">${esc(r.customer||"Walk-in customer")}</span><span class="v r">${esc(longDate(r.date))}</span>${r.phone?`<span class="k" style="grid-column:1/-1">${esc(r.phone)}</span>`:""}</div>
-  <div class="p-items">${ls.length?ls.map(l=>`<div class="p-item"><span class="n">${esc(l.name)}</span><span class="a">${fmt(lineAmt(l))}</span><span class="q">${qtyTxt(l.qty)} ${UNITS[l.unit][0]}${l.qty===1?"":"s"} × ${fmt(l.price)} Ks</span></div>`).join(""):`<div class="p-empty">Products appear here as you type them.</div>`}</div>
+  const p=priced(r),no=r.no||nextNo(r.date);
+  return `<div class="p-head"><div class="p-brand"><div class="mark">AP</div><div><b>${esc(shop.name||"AP Plastic")}</b><span>${esc([shop.phone,shop.address].filter(Boolean).join(" · ")||t("pSub"))}</span></div></div>
+    <div class="p-tag"><div class="t">${esc(t("pReceipt"))}</div><div class="no">${esc(no)}</div></div></div>
+  <div class="p-meta"><span class="k">${esc(t("pCustomer"))}</span><span class="k r">${esc(t("pDate"))}</span><span class="v">${esc(r.customer||t("walkIn"))}</span><span class="v r">${esc(longDate(r.date))}</span>${r.phone?`<span class="k" style="grid-column:1/-1">${esc(r.phone)}</span>`:""}</div>
+  <div class="p-items">${p.lines.length?p.lines.map(l=>`<div class="p-item"><span class="n">${esc(l.name)}</span><span class="a">${fmt(l.amount)}</span><span class="q">${qtyTxt(l.qty)} ${esc(unitTxt(l.unit,l.qty))} × ${fmt(l.shownPrice)}</span></div>`).join(""):`<div class="p-empty">${esc(t("pEmpty"))}</div>`}</div>
   <div class="p-tot">
-    <div class="grand"><span class="k">Total · စုစုပေါင်း</span><b>${fmt(t)} Ks</b></div>
-    ${paid?`<div><span class="k">Paid · ပေးပြီး</span><span>${fmt(paid)} Ks</span></div>`:""}
-    ${t>0?(owe>0.5?`<div class="owe"><span class="k">Still to pay · ကျန်ငွေ</span><b>${fmt(owe)} Ks</b></div>`:paid?`<div><span class="k">Balance</span><span class="done">Paid in full</span></div>`:""):""}
+    <div class="grand"><span class="k">${esc(t("pTotal"))}</span><b>${fmt(p.total)} ${esc(t("ks"))}</b></div>
+    ${p.paid?`<div class="line"><span class="k">${esc(t("pPaid"))}</span><span>${fmt(p.paid)} ${esc(t("ks"))}</span></div>`:""}
+    ${p.total>0?(p.owe>0.5?`<div class="line owe"><span class="k">${esc(t("pOwe"))}</span><b>${fmt(p.owe)} ${esc(t("ks"))}</b></div>`:p.paid?`<div class="line"><span class="k">${esc(t("pBalance"))}</span><span class="done">${esc(t("pDone"))}</span></div>`:""):""}
   </div>
-  ${r.note?`<div style="font-size:12.5px;color:#5E6E75">${esc(r.note)}</div>`:""}
-  <div class="p-foot"><span class="thanks">ကျေးဇူးတင်ပါသည် · Thank you</span>${r.salesperson?`<span>Served by ${esc(r.salesperson)}</span>`:""}</div>`;
+  ${r.note?`<div class="p-note">${esc(r.note)}</div>`:""}
+  <div class="p-foot"><span class="thanks">${esc(t("pThanks"))}</span>${r.salesperson?`<span>${esc(t("pServed",r.salesperson))}</span>`:""}</div>`;
 }
-function drawPaper(){$("#paper").innerHTML=paperHTML(cur);$("#formNo").textContent=cur.no||(editingId?"":"No. "+nextNo(cur.date)+" when saved")}
+function drawPaper(){const pe=$("#paper");pe.classList.toggle("my",LANG==="my");pe.innerHTML=paperHTML(cur)}
+function drawAll(){drawHead();drawSums();drawPaper();drawTiles();drawList()}
 
 /* ---------- saving ---------- */
 $("#saveBtn").onclick=async()=>{
-  const ls=cleanLines(cur.lines);
-  if(!ls.length)return say("Add at least one product with a quantity.",true);
-  if(!db)return say("Saving is not available in this view. You can still save the picture.",true);
-  if(!canWrite)return say("You can view receipts but not save them. Ask the owner for Contributor access.",true);
-  const body={no:cur.no||nextNo(cur.date),date:cur.date||today(),customer:String(cur.customer).trim(),phone:String(cur.phone).trim(),lines:ls,paid:num(cur.paid),salesperson:String(cur.salesperson).trim(),note:String(cur.note).trim(),total:total({lines:ls}),createdAt:original?.createdAt||Date.now(),updatedAt:Date.now()};
-  const btn=$("#saveBtn");btn.disabled=true;say("Saving…");
+  const p=priced(cur);
+  if(!p.lines.length)return say(t("mNeedProduct"),true);
+  if(!db)return say(t("mNoSave"),true);
+  if(!canWrite)return say(t("mNoRight"),true);
+  const body={no:cur.no||nextNo(cur.date),date:cur.date||today(),customer:String(cur.customer).trim(),phone:String(cur.phone).trim(),
+    lines:p.lines.map(l=>({name:l.name,qty:l.qty,unit:l.unit,price:l.price,shownPrice:l.shownPrice,amount:l.amount})),
+    goods:p.goods,delivery:p.fee,total:p.total,paid:p.paid,salesperson:String(cur.salesperson).trim(),note:String(cur.note).trim(),
+    createdAt:original?.createdAt||Date.now(),updatedAt:Date.now()};
+  const btn=$("#saveBtn");btn.disabled=true;say(t("mSaving"));
   try{const ref=editingId?db.collection("receipts").doc(editingId):db.collection("receipts").doc();await ref.set(body);
-    editingId=ref.id;original=body;cur=Object.assign({},cur,{no:body.no});if(body.salesperson)ls_sales(body.salesperson);drawForm();say("Saved as "+body.no+". Send it to the customer with Save picture or Copy as text.");toast("Receipt saved")}
-  catch(e){say(e&&e.code==="quota_exceeded"?"The receipt store is full. Delete old receipts to save new ones.":e&&e.code==="invalid_argument"?"You are not allowed to save receipts here.":"Could not save. Check the internet and try again.",true)}
-  finally{btn.disabled=false}};
-function ls_sales(v){ls("apr.sales",v)}
-$("#newBtn").onclick=()=>{editingId=null;original=null;cur=blank();drawForm();say("");markRow();$("#fCustomer").focus()};
+    editingId=ref.id;original=body;cur.no=body.no;if(body.salesperson)ls("apr.sales",body.salesperson);drawAll();say(t("mSaved",body.no));toast(t("tSaved"))}
+  catch(e){say(e&&e.code==="quota_exceeded"?t("mFull"):e&&e.code==="invalid_argument"?t("mNotAllowed"):t("mFail"),true)}
+  finally{btn.disabled=!canWrite}};
+$("#newBtn").onclick=()=>{editingId=null;original=null;cur=blank();fillForm();say("");$("#fCustomer").focus()};
 
 /* ---------- send to the customer ---------- */
 $("#picBtn").onclick=async()=>{
-  if(!cleanLines(cur.lines).length)return say("Add a product first.",true);
-  if(!window.html2canvas)return say("The picture maker did not load. Take a screenshot of the receipt instead.",true);
-  if(!downloads)return say("Saving files is not available here. Take a screenshot of the receipt instead.",true);
-  say("Making the picture…");
+  if(!priced(cur).lines.length)return say(t("mAddFirst"),true);
+  if(!window.html2canvas)return say(t("mNoPicLib"),true);
+  if(!downloads)return say(t("mNoFiles"),true);
+  say(t("mMaking"));
   try{await document.fonts.ready;const c=await html2canvas($("#paper"),{scale:2,backgroundColor:"#EEF2F2",logging:false,useCORS:true});
     const blob=await new Promise(r=>c.toBlob(r,"image/png"));const name=(cur.no||nextNo(cur.date))+(cur.customer?" "+cur.customer:"")+".png";
-    await downloads.save({filename:name.replace(/[\\/:*?"<>|]/g,""),data:blob});say("Picture saved. Send it to the customer on Viber.");}
-  catch(e){say(e&&e.code==="declined"?"Picture not saved.":e&&e.code==="rate_limited"?"A save is already waiting for your answer.":"Could not make the picture. Take a screenshot instead.",e&&e.code!=="declined")}};
+    await downloads.save({filename:name.replace(/[\\/:*?"<>|]/g,""),data:blob});say(t("mPicSaved"))}
+  catch(e){const c=e&&e.code;say(c==="declined"?t("mPicNo"):c==="rate_limited"?t("mPicWait"):t("mPicFail"),c!=="declined")}};
 $("#copyBtn").onclick=async()=>{
-  const ls=cleanLines(cur.lines);if(!ls.length)return say("Add a product first.",true);
-  const t=total({lines:ls}),paid=num(cur.paid);
-  const txt=[`${shop.name||"AP Plastic"} · Receipt ${cur.no||nextNo(cur.date)}`,`${longDate(cur.date)} · ${cur.customer||"Walk-in customer"}`,"",...ls.map(l=>`${l.name}: ${qtyTxt(l.qty)} ${UNITS[l.unit][0]}${l.qty===1?"":"s"} × ${fmt(l.price)} = ${fmt(lineAmt(l))} Ks`),"",`Total: ${fmt(t)} Ks`,...(paid?[`Paid: ${fmt(paid)} Ks`]:[]),...(t-paid>0.5?[`Still to pay: ${fmt(t-paid)} Ks`]:[]),"","ကျေးဇူးတင်ပါသည် · Thank you"].join("\n");
-  try{await navigator.clipboard.writeText(txt);say("Copied. Paste it into Viber or a message.")}catch(e){say("Could not copy here. Use Save picture instead.",true)}};
+  const p=priced(cur);if(!p.lines.length)return say(t("mAddFirst"),true);const K=t("ks");
+  const txt=[`${shop.name||"AP Plastic"} · ${t("pReceipt")} ${cur.no||nextNo(cur.date)}`,`${longDate(cur.date)} · ${cur.customer||t("walkIn")}`,"",
+    ...p.lines.map(l=>`${l.name}: ${qtyTxt(l.qty)} ${unitTxt(l.unit,l.qty)} × ${fmt(l.shownPrice)} = ${fmt(l.amount)} ${K}`),"",
+    `${t("pTotal")}: ${fmt(p.total)} ${K}`,...(p.paid?[`${t("pPaid")}: ${fmt(p.paid)} ${K}`]:[]),...(p.owe>0.5?[`${t("pOwe")}: ${fmt(p.owe)} ${K}`]:[]),"",t("pThanks")].join("\n");
+  try{await navigator.clipboard.writeText(txt);say(t("mCopied"))}catch(e){say(t("mCopyFail"),true)}};
 
-/* ---------- saved receipts ---------- */
-function owed(r){return Math.max(0,num(r.total)-num(r.paid))}
-function drawToday(){const t=today(),xs=receipts.filter(r=>r.date===t);
-  $("#today").innerHTML=`<span class="pill">Today <b>${xs.length}</b> receipt${xs.length===1?"":"s"}</span><span class="pill">Sales <b>${fmt(xs.reduce((a,r)=>a+num(r.total),0))} Ks</b></span><span class="pill">Still owed <b>${fmt(receipts.reduce((a,r)=>a+owed(r),0))} Ks</b></span>`}
+/* ---------- summary tiles and saved receipts ---------- */
+const owed=r=>Math.max(0,num(r.total)-num(r.paid));
+function drawTiles(){const d=today(),xs=receipts.filter(r=>r.date===d),ow=receipts.reduce((a,r)=>a+owed(r),0);
+  $("#tiles").innerHTML=`<div class="tile"><span class="k">${esc(t("tToday"))}</span><span class="v">${xs.length}</span></div>
+   <div class="tile"><span class="k">${esc(t("tSales"))}</span><span class="v">${fmt(xs.reduce((a,r)=>a+num(r.total),0))} <small>${esc(t("ks"))}</small></span></div>
+   <div class="tile"><span class="k">${esc(t("tOwed"))}</span><span class="v ${ow>0.5?"warn":""}">${fmt(ow)} <small>${esc(t("ks"))}</small></span></div>`}
+function emptyBox(a,b){return `<div class="empty"><b>${esc(t(a))}</b>${b?esc(t(b)):""}</div>`}
 function drawList(){
+  const box=$("#list");
+  if(!db&&loaded)return box.innerHTML=emptyBox("emptyOff","emptyOffTxt");
+  if(loadErr)return box.innerHTML=emptyBox("emptyErr","emptyErrTxt");
+  if(!loaded)return box.innerHTML=emptyBox("emptyLoading");
+  if(!receipts.length)return box.innerHTML=emptyBox("emptyNone","emptyNoneTxt");
   const s=q.trim().toLowerCase();
   const xs=receipts.filter(r=>!s||[r.no,r.customer,r.phone,r.salesperson,...(r.lines||[]).map(l=>l.name)].join(" ").toLowerCase().includes(s));
-  if(!db){$("#list").innerHTML=`<div class="empty"><b>Saved receipts show here</b>Saving is not available in this view.</div>`;return}
-  if(!receipts.length){$("#list").innerHTML=`<div class="empty"><b>No receipts yet</b>Fill in the form, then press Save receipt. It appears here for the whole sales team.</div>`;return}
-  if(!xs.length){$("#list").innerHTML=`<div class="empty"><b>No receipt matches</b>Try another receipt number, customer or product.</div>`;return}
-  $("#list").innerHTML=`<div class="tw"><table><thead><tr><th>Receipt</th><th>Date</th><th>Customer</th><th>Products</th><th class="n">Total Ks</th><th class="n">Still owed</th><th>Salesperson</th></tr></thead><tbody>${xs.map(r=>{const o=owed(r);return `<tr data-id="${esc(r.id)}" tabindex="0"><td><b>${esc(r.no)}</b></td><td>${esc(longDate(r.date))}</td><td>${esc(r.customer||"Walk-in")}</td><td>${esc((r.lines||[]).map(l=>l.name).join(", ").slice(0,48))}</td><td class="n">${fmt(r.total)}</td><td class="n">${o>0.5?`<span class="chip warn">${fmt(o)}</span>`:`<span class="chip good">Paid</span>`}</td><td>${esc(r.salesperson||"")}</td></tr>`}).join("")}</tbody></table></div>`;
-  document.querySelectorAll("#list tr[data-id]").forEach(tr=>{const open=()=>openReceipt(tr.dataset.id);tr.onclick=open;tr.onkeydown=e=>{if(e.key==="Enter")open()}});markRow()}
-function markRow(){document.querySelectorAll("#list tr[data-id]").forEach(tr=>tr.classList.toggle("on",tr.dataset.id===editingId))}
+  if(!xs.length)return box.innerHTML=emptyBox("emptyNoMatch","emptyNoMatchTxt");
+  box.innerHTML=`<div class="tw"><table><thead><tr><th>${esc(t("hNo"))}</th><th>${esc(t("hDate"))}</th><th>${esc(t("hCust"))}</th><th>${esc(t("hProd"))}</th><th class="n">${esc(t("hTotal"))}</th><th class="n">${esc(t("hDel"))}</th><th class="n">${esc(t("hOwed"))}</th><th>${esc(t("hSales"))}</th></tr></thead><tbody>${xs.map(r=>{const o=owed(r);return `<tr data-id="${esc(r.id)}" tabindex="0" class="${r.id===editingId?"on":""}"><td><b>${esc(r.no)}</b></td><td>${esc(longDate(r.date))}</td><td>${esc(r.customer||t("walkIn"))}</td><td class="prod">${esc((r.lines||[]).map(l=>l.name).join(", "))}</td><td class="n">${fmt(r.total)}</td><td class="n">${num(r.delivery)?fmt(r.delivery):"–"}</td><td class="n">${o>0.5?`<span class="chip warn">${fmt(o)}</span>`:`<span class="chip good">${esc(t("paidChip"))}</span>`}</td><td>${esc(r.salesperson||"")}</td></tr>`}).join("")}</tbody></table></div>`;
+  box.querySelectorAll("tr[data-id]").forEach(tr=>{const open=()=>openReceipt(tr.dataset.id);tr.onclick=open;tr.onkeydown=e=>{if(e.key==="Enter")open()}})}
 function openReceipt(id){const r=receipts.find(x=>x.id===id);if(!r)return;editingId=id;original=r;
-  cur={no:r.no||"",date:r.date||today(),customer:r.customer||"",phone:r.phone||"",lines:(r.lines||[]).map(l=>({name:l.name,qty:String(l.qty),unit:l.unit||"dz",price:String(l.price)})),paid:r.paid?String(r.paid):"",salesperson:r.salesperson||"",note:r.note||""};
-  if(!cur.lines.length)cur.lines=[blankLine()];drawForm();say("Opened "+r.no+". Change it and press Save receipt, or send it again.");markRow();
-  if(matchMedia("(max-width:900px)").matches)$("#paper").scrollIntoView({behavior:"smooth",block:"start"})}
+  cur={no:r.no||"",date:r.date||today(),customer:r.customer||"",phone:r.phone||"",lines:(r.lines||[]).map(l=>({name:l.name,qty:String(l.qty),unit:l.unit||"dz",price:String(l.price)})),
+    delivery:num(r.delivery)?String(r.delivery):"",paid:num(r.paid)?String(r.paid):"",salesperson:r.salesperson||"",note:r.note||""};
+  if(!cur.lines.length)cur.lines=[blankLine()];fillForm();say(t("mOpened",r.no));
+  if(matchMedia("(max-width:920px)").matches)$("#paper").scrollIntoView({behavior:"smooth",block:"start"})}
 $("#q").oninput=()=>{q=$("#q").value;drawList()};
 
 /* ---------- shop details ---------- */
-function drawShop(){$("#sName").value=shop.name||"";$("#sPhone").value=shop.phone||"";$("#sAddr").value=shop.address||""}
+function fillShop(){$("#sName").value=shop.name||"";$("#sPhone").value=shop.phone||"";$("#sAddr").value=shop.address||""}
 $("#saveShop").onclick=async()=>{const s={name:$("#sName").value.trim()||"AP Plastic",phone:$("#sPhone").value.trim(),address:$("#sAddr").value.trim()};
-  if(!db)return say("Saving is not available in this view.",true);
-  try{await db.doc("settings/shop").set(s);shop=s;drawPaper();toast("Shop details saved")}catch(e){say("Could not save the shop details.",true)}};
+  if(!db)return say(t("mNoSave"),true);
+  try{await db.doc("settings/shop").set(s);shop=s;drawPaper();toast(t("tShop"))}catch(e){say(t("mShopFail"),true)}};
 
 /* ---------- start ---------- */
-drawForm();drawToday();drawShop();
+applyLang();fillForm();fillShop();
 (async()=>{
   try{db=window.claude?await window.claude.use("db"):null}catch(e){db=null}
   try{downloads=window.claude?await window.claude.use("downloads"):null}catch(e){downloads=null}
-  try{const user=window.claude?await window.claude.use("user"):null;if(user){const w=await user.can("data.write");if(w===false)canWrite=false}}catch(e){}
-  if(!downloads)$("#picBtn").title="Take a screenshot of the receipt instead";
+  try{const user=window.claude?await window.claude.use("user"):null;if(user&&await user.can("data.write")===false)canWrite=false}catch(e){}
   if(!canWrite){$("#saveBtn").disabled=true;$("#saveShop").disabled=true}
-  if(!db){drawList();return}
+  if(!db){loaded=true;drawList();return}
   db.collection("receipts").orderBy("createdAt","desc").limit(500).onSnapshot(snap=>{
-    receipts=snap.docs.map(d=>Object.assign({id:d.id},d.data()));drawList();drawToday();if(!editingId)drawPaper()},
-    ()=>{$("#list").innerHTML=`<div class="empty"><b>Saved receipts could not load</b>Reload the page to try again.</div>`});
-  db.doc("settings/shop").onSnapshot(d=>{if(d.exists){shop=Object.assign({name:"AP Plastic"},d.data());drawShop();drawPaper()}},()=>{});
+    receipts=snap.docs.map(d=>Object.assign({id:d.id},d.data()));loaded=true;drawAll()},
+    ()=>{loadErr=true;loaded=true;drawList()});
+  db.doc("settings/shop").onSnapshot(d=>{if(d.exists){shop=Object.assign({name:"AP Plastic"},d.data());fillShop();drawPaper()}},()=>{});
 })();
 </script>
