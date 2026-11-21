@@ -282,6 +282,49 @@ html[lang="my"] .qbtn{font-family:var(--f-my);line-height:1.7}
   body.billopen .paperbill{box-shadow:none;width:auto;padding:0;border-radius:0}
   @page{margin:14mm}
 }
+/* ---- Home notifications and Overview boxes ---- */
+.quick.compact{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.ovchart svg{max-height:170px}
+.quick.compact .qbtn{min-height:46px;padding:10px 12px;font-size:14px}
+.quick.compact .qbtn svg{width:20px;height:20px}
+.nsum{display:flex;flex-wrap:wrap;gap:8px}
+.nchip{display:inline-flex;gap:6px;align-items:center;padding:6px 12px;border-radius:999px;font-weight:600;font-size:13px}
+.nchip b{font:700 14px var(--f-data)}
+.nchip.bad{background:var(--bad-soft);color:var(--bad)} .nchip.warn{background:var(--warn-soft);color:var(--warn)} .nchip.info{background:var(--accent-soft);color:var(--accent)}
+.ngroup{display:flex;flex-direction:column;gap:8px}
+.ngroup h3{margin:0;display:flex;align-items:center;gap:8px;font:700 15px var(--f-display)}
+.ngroup h3 i{width:10px;height:10px;border-radius:50%;background:var(--warn)}
+.ngroup.bad h3 i{background:var(--bad)} .ngroup.info h3 i{background:var(--accent)}
+.ncount{font:600 12px var(--f-data);color:var(--muted)}
+.nlist{display:flex;flex-direction:column;gap:8px}
+.nitem{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:8px;background:var(--surface);min-width:0}
+.nitem.bad{border-left-color:var(--bad)} .nitem.info{border-left-color:var(--accent)}
+.nitem:hover{background:var(--sunk)} .nitem:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.nic{flex:none;width:36px;height:36px;border-radius:8px;display:grid;place-items:center;background:var(--warn-soft)}
+.nitem.bad .nic{background:var(--bad-soft)} .nitem.info .nic{background:var(--accent-soft)}
+.nic svg{width:20px;height:20px;fill:none;stroke:var(--warn);stroke-width:1.8}
+.nitem.bad .nic svg{stroke:var(--bad)} .nitem.info .nic svg{stroke:var(--accent)}
+.nbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.narea{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+html[lang="my"] .narea{letter-spacing:0;text-transform:none;font-size:12px}
+.ntext{font-size:14px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere}
+.ngo{flex:none;color:var(--accent);font-weight:600;font-size:13px}
+.ovgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr));gap:16px;align-items:start}
+.ovbox>h3{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ovh{display:flex;align-items:center;gap:8px;min-width:0}
+.ovh svg{width:20px;height:20px;flex:none;fill:none;stroke:var(--accent);stroke-width:1.8}
+.ovr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:7px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.ovr:last-child{border-bottom:0}
+.ovr .l{font-size:14px;overflow-wrap:anywhere}
+.ovr .v{font:600 15px var(--f-data);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;display:flex;gap:8px;align-items:baseline;justify-content:flex-end}
+.ovr .d{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.ovr .warnv{color:var(--warn)} .ovr .badv{color:var(--bad)}
+.ovr .chip{font-family:var(--f-body)}
+.chg{font:600 11px var(--f-data);color:var(--muted)} .chg.up{color:var(--good)} .chg.down{color:var(--bad)}
+.ovsub{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px}
+html[lang="my"] .ovsub{letter-spacing:0;text-transform:none;font-size:12px}
+.ovmore{padding-top:6px}
+@media (max-width:600px){.kpis.ovk{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.kpis.ovk .kpi{padding:10px 12px}.kpis.ovk .v{font-size:18px}.nitem{padding:10px 12px;gap:10px}.nic{width:32px;height:32px}}
 </style>
 
 
@@ -601,27 +644,6 @@ function bindCells(handler){
 
 /* ---------------- pages ---------------- */
 const V={};
-V.overview=()=>{
-  const m=UI.month,dz=monthDozens(m),bags=monthBags(m),pay=payrollTotal(m),pw=powerTotal(m);
-  const sales=list("sales").filter(s=>ym(s.date)===m&&!s.opening);const sv=sales.reduce((a,s)=>a+saleTotal(s),0);
-  const months=[];for(let i=5;i>=0;i--)months.push(addMonth(m,-i));
-  const prev=addMonth(m,-1),dzp=monthDozens(prev);
-  const al=alerts();
-  const mix=products().map(p=>({l:p.en,v:num(prodDoc(m).bags?.[p.id])*num(p.dzPerBag)})).filter(x=>x.v).sort((a,b)=>b.v-a.v).slice(0,8);
-  return `
-  <div class="kpis">
-    <div class="kpi"><span class="l">Produced</span><span class="v">${fmt(dz,1)} dz</span><span class="d">${fmt(bags)} big bags${dzp?` · ${dz>=dzp?"+":""}${fmt((dz/dzp-1)*100)}% vs ${MN[+prev.slice(5)-1]}`:""}</span></div>
-    <div class="kpi"><span class="l">Pay sheet</span><span class="v">${pay==null?"—":fmt(pay)}</span><span class="d">${pay&&dz?fmt(pay/dz,1)+" Ks per dozen":"Kyat, all staff"}</span></div>
-    <div class="kpi"><span class="l">Electricity + water</span><span class="v">${pw==null?"—":fmt(pw)}</span><span class="d">${pw&&dz?fmt(pw/dz,1)+" Ks per dozen":"Kyat"}</span></div>
-    <div class="kpi"><span class="l">Sales</span><span class="v">${fmt(sv)}</span><span class="d">${sales.length} sale${sales.length===1?"":"s"} this month</span></div>
-  </div>
-  <div class="grid2">
-    <section class="panel"><h3>Dozens produced, last 6 months</h3><div class="pb">${svgBars(months.map(x=>({l:MN[+x.slice(5)-1],v:monthDozens(x)})),{unit:" dz"})}</div></section>
-    <section class="panel"><h3>Needs attention</h3><div class="pb">${al.length?`<div class="alerts">${al.map((a,i)=>`<div class="alert"><span class="sev ${a.sev}"></span><span>${esc(a.t)}</span><button class="btn sm go" data-ai="${i}">Open</button></div>`).join("")}</div>`:`<div class="empty"><b>All clear for ${mlabel(m)}</b><div>Production, pay sheet and bills are in, and nothing is low.</div></div>`}</div></section>
-  </div>
-  <section class="panel"><h3>Top products in ${mlabel(m)}</h3><div class="pb">${mix.length?svgBars(mix,{hiLast:false,unit:" dz"}):emptyState("No production yet","Fill in the production sheet to see which products ran most.",`<button class="btn primary" data-go="product:sheet">Open production sheet</button>`)}</div></section>`;
-};
-V.overview.bind=()=>{const al=alerts();document.querySelectorAll("[data-ai]").forEach(b=>b.onclick=()=>{const a=al[+b.dataset.ai];go(a.go[0],a.go[1])})};
 
 /* ---- Product ---- */
 V.product={};
@@ -1659,53 +1681,6 @@ function editExpense(id){const x=id?S.expenses[id]:{date:today(),cat:"Transport 
  openForm({title:id?"Expense":"Add expense",data:x,fields:[{k:"date",label:"Date",type:"date",half:1},{k:"amount",label:"Amount (Ks)",type:"num",half:1},{k:"cat",label:"Kind",type:"select",opts:EXP_C.map(v=>[v,v]),half:1},{k:"method",label:"Paid by",type:"select",opts:PAY_ONLY.map(v=>[v,v]),half:1},{k:"what",label:"What for"}],
   validate:d=>!num(d.amount)?"Enter the amount":null,onSave:d=>{d.t=d.t||Date.now();save("expenses",id||uid("x"),d,"Expense saved")},onDelete:id?()=>remove("expenses",id,"Expense deleted"):null})}
 
-/* ================= Home ================= */
-V.home=()=>loadingOr(["sales","payments","customers","orders","purchases","supPays","expenses"],()=>{
- const t=today(),m=UI.month;
- const salesT=list("sales").filter(s=>s.date===t&&!s.opening);const sT=salesT.reduce((a,s)=>a+saleTotal(s),0);
- const moneyIn=pred=>list("payments").filter(p=>pred(p.date)&&!isCredit(p)).reduce((a,p)=>a+num(p.amount),0)+list("sales").filter(s=>pred(s.date)&&!s.opening).reduce((a,s)=>a+num(s.paid),0);
- const inT=moneyIn(d=>d===t),inM=moneyIn(d=>ym(d)===m);
- const cb=custBalances();const owed=Object.values(cb).reduce((a,v)=>a+Math.max(0,v),0);
- const sb=supBalances();const oweSup=Object.values(sb).reduce((a,v)=>a+Math.max(0,v),0);
- const oo=openOrders().sort((a,b)=>(a.due||"9999").localeCompare(b.due||"9999"));const late=oo.filter(o=>o.due&&o.due<t).length,dueT=oo.filter(o=>o.due===t).length;
- const salesM=list("sales").filter(s=>ym(s.date)===m&&!s.opening).reduce((a,s)=>a+saleTotal(s),0);
- const buyM=list("purchases").filter(p=>ym(p.date)===m).reduce((a,p)=>a+purTotal(p),0);
- const expM=list("expenses").filter(e=>ym(e.date)===m).reduce((a,e)=>a+num(e.amount),0);
- const months=[];for(let i=5;i>=0;i--)months.push(addMonth(m,-i));
- const top=list("customers").map(c=>Object.assign({},c,{bal:cb[c.id]||0})).filter(c=>c.bal>0.5).sort((a,b)=>b.bal-a.bal).slice(0,6);
- const tsup=list("suppliers").map(s=>Object.assign({},s,{bal:sb[s.id]||0})).filter(s=>s.bal>0.5).sort((a,b)=>b.bal-a.bal).slice(0,5);
- const bal=stockBalances();const lowM=list("materials").filter(mt=>num(mt.minStock)&&(bal[mt.id]??0)<num(mt.minStock));
- const fst=finishedStock();const need={};oo.forEach(o=>(o.lines||[]).forEach(l=>{const p=S.products[l.p];if(p&&isAP(p))need[l.p]=(need[l.p]||0)+num(l.dz)}));
- const lowP=Object.entries(need).filter(([p,n])=>(fst[p]||0)<n).map(([p,n])=>({p:S.products[p],have:fst[p]||0,n}));
- const Q=[["qSale","New sale","retail",1],["qOrder","New order","orders"],["qPay","Record payment","money"],["qBuy","New purchase","buying"],["qExp","Add expense","bill"]];
- const kpi=(go,l,v,d,cls="")=>`<div class="kpi click" data-go="${go}" role="button" tabindex="0"><span class="l">${l}</span><span class="v ${cls} notr">${v}</span><span class="d">${d}</span></div>`;
- return `<div class="hdate notr">${esc(dateLong(t))}</div>
- <div class="quick">${Q.map(q=>`<button class="qbtn ${q[3]?"main":""}" id="${q[0]}" ${canWrite?"":"disabled"}>${icon(q[2])}<span>${q[1]}</span></button>`).join("")}</div>
- <div class="kpis big">
-  ${kpi("retail:sales","Sales today",fmt(sT),`<span class="notr">${salesT.length}</span> <span>${salesT.length===1?"sale":"sales"}</span>`)}
-  ${kpi("retail:payments","Money in today",fmt(inT),"<span>Cash and bank</span>")}
-  ${kpi("retail:customers","Customers owe you",fmt(owed),"<span>Kyat, all customers</span>",owed>0.5?"warnv":"")}
-  ${kpi("buying:pay","You owe suppliers",fmt(oweSup),"<span>Kyat, all suppliers</span>")}
-  ${kpi("orders:open","Orders to deliver",oo.length,late?`<span class="badt"><span class="notr">${late}</span> <span>late</span></span>`:dueT?`<span class="notr">${dueT}</span> <span>due today</span>`:"<span>None late</span>",late?"badv":"")}
- </div>
- <section class="panel"><h3><span>Month</span> <span class="notr">${UI.lang==="my"?tm(mlabel(m)):mlabel(m)}</span></h3><div class="pb" style="display:flex;flex-direction:column;gap:12px">
-  <div class="mstrip"><div><span class="l">Sales</span><b class="notr">${fmt(salesM)}</b></div><div><span class="l">Money in</span><b class="notr">${fmt(inM)}</b></div><div><span class="l">Bought</span><b class="notr">${fmt(buyM)}</b></div><div><span class="l">Expenses</span><b class="notr">${fmt(expM)}</b></div></div>
-  <div class="small muted">Sales, last 6 months (Kyat)</div>${svgBars(months.map(x=>({l:MN[+x.slice(5)-1],v:list("sales").filter(s=>ym(s.date)===x&&!s.opening).reduce((a,s)=>a+saleTotal(s),0)})))}</div></section>
- <div class="grid2">
-  <section class="panel"><h3>Orders to deliver</h3><div class="pb">${oo.length?`<div class="mini">${oo.slice(0,6).map(o=>`<div class="row click" data-oe="${o.id}"><div class="grow"><div class="notr"><b>${esc(custName(o.cust,o.custName))}</b></div><div class="small muted notr">${esc(lineSummary(o.lines))}</div><div class="small">${dueChip(o.due)} ${ostChip(o.status||"wait")}</div></div><span class="amt notr">${fmt(saleTotal(o))}</span>${NEXT[o.status||"wait"]&&canWrite?`<button class="btn sm primary" data-onext="${o.id}">${NEXT[o.status||"wait"][1]}</button>`:""}</div>`).join("")}</div>${oo.length>6?`<button class="btn sm" data-go="orders:open" style="margin-top:8px">See all orders</button>`:""}`:`<div class="empty"><b>No orders waiting</b><div>New orders show here until they are delivered.</div></div>`}</div></section>
-  <section class="panel"><h3>Who owes the most</h3><div class="pb">${top.length?`<div class="mini">${top.map(c=>`<div class="row"><div class="grow"><div class="notr"><b>${esc(c.name)}</b></div><div class="small muted notr">${esc([c.area,c.phone].filter(Boolean).join(" · "))}</div></div><span class="amt notr">${fmt(c.bal)}</span><button class="btn sm" data-hled="${c.id}">Ledger</button><button class="btn sm" data-hpay="${c.id}" ${canWrite?"":"disabled"}>Paid</button></div>`).join("")}</div>`:`<div class="empty"><b>Nobody owes you</b><div>Every customer is paid up.</div></div>`}</div></section>
-  <section class="panel"><h3>Running low</h3><div class="pb">${lowM.length||lowP.length?`<div class="mini">${lowP.map(x=>`<div class="row"><div class="grow"><div class="notr"><b>${esc(x.p.en||x.p.my)}</b></div><div class="small muted"><span>Orders need</span> <span class="notr">${dzTxt(x.n)} dz</span></div></div><span class="amt notr">${dzTxt(x.have)} dz</span><span class="chip bad">Make more</span></div>`).join("")}${lowM.map(mt=>`<div class="row"><div class="grow"><div class="notr"><b>${esc(mt.name)}</b></div><div class="small muted"><span>Minimum</span> <span class="notr">${fmt(mt.minStock)} ${esc(mt.unit)}</span></div></div><span class="amt notr">${fmt(bal[mt.id]??0,1)} ${esc(mt.unit)}</span><span class="chip bad">Buy</span></div>`).join("")}</div>`:`<div class="empty"><b>Nothing is low</b><div>Raw materials are above their minimum and finished stock covers the open orders.</div></div>`}</div></section>
-  <section class="panel"><h3>Suppliers to pay</h3><div class="pb">${tsup.length?`<div class="mini">${tsup.map(s=>`<div class="row"><div class="grow"><div class="notr"><b>${esc(s.name)}</b></div><div class="small muted notr">${esc(s.sells||"")}</div></div><span class="amt notr">${fmt(s.bal)}</span><button class="btn sm" data-hspay="${s.id}" ${canWrite?"":"disabled"}>Pay</button></div>`).join("")}</div>`:`<div class="empty"><b>Nothing owed</b><div>Purchases bought on credit show here until they are paid.</div></div>`}</div></section>
- </div>
- <p class="small muted" style="margin:0">Tap a box to open its page. Factory production, pay sheet and bills are on the Overview page.</p>`;
-});
-V.home.bind=()=>{const on=(s,f)=>{const b=$(s);if(b)b.onclick=f};
- on("#qSale",()=>editSale(null));on("#qOrder",()=>editOrder(null));on("#qPay",()=>editPayment(null));on("#qBuy",()=>editPurchase(null));on("#qExp",()=>editExpense(null));
- document.querySelectorAll(".kpi.click").forEach(k=>k.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();k.click()}});
- bindRowClicks("data-oe",editOrder);document.querySelectorAll("[data-onext]").forEach(b=>b.onclick=e=>{e.stopPropagation();orderNext(b.dataset.onext)});
- document.querySelectorAll("[data-hled]").forEach(b=>b.onclick=()=>{UI.ledgerCust=b.dataset.hled;ls("ap.ledgerCust",UI.ledgerCust);go("retail","ledger")});
- document.querySelectorAll("[data-hpay]").forEach(b=>b.onclick=()=>editPayment(null,b.dataset.hpay));
- document.querySelectorAll("[data-hspay]").forEach(b=>b.onclick=()=>editSupPay(null,b.dataset.hspay))};
 
 /* ---- alerts for late orders ---- */
 const _alerts0=alerts;
@@ -1768,6 +1743,176 @@ Object.assign(DICT,{
  "Tap a box to open its page. Factory production, pay sheet and bills are on the Overview page.":"စာမျက်နှာဖွင့်ရန် အကွက်ကို နှိပ်ပါ။ ထုတ်လုပ်မှု၊ လစာနှင့် ဘေလ်များမှာ အကျဉ်းချုပ် စာမျက်နှာတွင် ရှိသည်။"
 });
 
+/* ================= Home = notifications, Overview = every number (2026-11-21) ================= */
+PAGES.find(p=>p.id==="home").sub="Notifications and alarms: everything that needs a look";
+PAGES.find(p=>p.id==="overview").sub="All the numbers for the month, area by area";
+const ML=m=>`<span class="notr">${UI.lang==="my"?tm(mlabel(m)):mlabel(m)}</span>`;
+
+/* more alarms: stock short for orders, orders due tomorrow, old debts, suppliers to pay */
+const _alertsHO=alerts;
+alerts=function(){const out=_alertsHO();
+ const t=today(),tmw=new Date(Date.now()+864e5).toISOString().slice(0,10);
+ if(loaded.has("orders")&&loaded.has("products")){const oo=openOrders();
+  const fst=finishedStock(),need={};oo.forEach(o=>{if((o.status||"wait")==="out")return;(o.lines||[]).forEach(l=>{const p=S.products[l.p];if(p&&isAP(p))need[l.p]=(need[l.p]||0)+num(l.dz)})});
+  for(const [pid,n] of Object.entries(need)){const have=fst[pid]||0;if(have<n){const p=S.products[pid];out.push({sev:"bad",dept:"product",t:`Not enough ${p.en||p.my} for orders: ${dzTxt(have)} dz in stock, orders need ${dzTxt(n)} dz.`,go:["retail","fstock"]})}}
+  const dueTm=oo.filter(o=>o.due===tmw).length;
+  if(dueTm)out.push({sev:"info",dept:"orders",t:`${dueTm} order${dueTm>1?"s":""} to deliver tomorrow.`,go:["orders","open"]})}
+ if(loaded.has("sales")&&loaded.has("payments")){const pm=paidMap();const old=new Date(Date.now()-30*864e5).toISOString().slice(0,10);const who={};let amt=0;
+  list("sales").forEach(s=>{const left=saleTotal(s)-pm[s.id];if(s.cust&&s.date&&s.date<old&&left>0.5){who[s.cust]=1;amt+=left}});
+  const n=Object.keys(who).length;if(n)out.push({sev:"warn",dept:"retail",t:`${n} customer${n>1?"s owe":" owes"} money from more than 30 days ago (${ks(amt)}).`,go:["retail","ledger"]})}
+ if(loaded.has("purchases")&&loaded.has("supPays")){const sb=supBalances();const xs=Object.values(sb).filter(v=>v>0.5);
+  if(xs.length)out.push({sev:"info",dept:"buying",t:`You owe ${xs.length} supplier${xs.length>1?"s":""} ${ks(xs.reduce((a,v)=>a+v,0))} in total.`,go:["buying","pay"]})}
+ return out};
+
+/* ---- Home: notifications ---- */
+const SEV=[["bad","Urgent"],["warn","To do"],["info","For information"]];
+V.home=()=>loadingOr(["products","sales","payments","orders","purchases","supPays"],()=>{
+ const al=alerts();const t=today();
+ const Q=[["qSale","New sale","retail",1],["qOrder","New order","orders"],["qPay","Record payment","money"],["qBuy","New purchase","buying"],["qExp","Add expense","bill"]];
+ const area=d=>(PAGES.find(p=>p.id===d)||{name:d==="receipts"?"Receipts":"Other"}).name;
+ const item=(a,i)=>`<button class="nitem ${a.sev}" data-ai="${i}"><span class="nic">${icon(ICONS[a.dept]?a.dept:"bill")}</span><span class="nbody"><span class="narea">${esc(area(a.dept))}</span><span class="ntext">${esc(a.t)}</span></span><span class="ngo">Open</span></button>`;
+ const groups=SEV.map(([k,l])=>{const xs=al.map((a,i)=>[a,i]).filter(([a])=>a.sev===k);return xs.length?`<section class="ngroup ${k}"><h3><i></i><span>${l}</span><span class="notr ncount">${xs.length}</span></h3><div class="nlist">${xs.map(([a,i])=>item(a,i)).join("")}</div></section>`:""}).join("");
+ const cnt=k=>al.filter(a=>a.sev===k).length;
+ return `<div class="hdate notr">${esc(dateLong(t))}</div>
+ <div class="quick compact">${Q.map(q=>`<button class="qbtn ${q[3]?"main":""}" id="${q[0]}" ${canWrite?"":"disabled"}>${icon(q[2])}<span>${q[1]}</span></button>`).join("")}</div>
+ ${al.length?`<div class="nsum">${SEV.map(([k,l])=>`<span class="nchip ${k}"><b class="notr">${cnt(k)}</b> <span>${l}</span></span>`).join("")}</div>${groups}`
+  :`<div class="panel"><div class="empty"><b>All clear</b><div>Nothing needs a look right now.</div></div></div>`}
+ <p class="small muted" style="margin:0"><span>A notification goes away by itself when the problem is fixed. Bills and sheets are checked for</span> ${ML(UI.month)}.</p>`;
+});
+V.home.bind=()=>{const on=(s,f)=>{const b=$(s);if(b)b.onclick=f};
+ on("#qSale",()=>editSale(null));on("#qOrder",()=>editOrder(null));on("#qPay",()=>editPayment(null));on("#qBuy",()=>editPurchase(null));on("#qExp",()=>editExpense(null));
+ const al=alerts();document.querySelectorAll("[data-ai]").forEach(b=>b.onclick=()=>{const a=al[+b.dataset.ai];if(a)go(a.go[0],a.go[1])})};
+
+/* ---- Overview: every number, a box per area ---- */
+function chg(a,b,upGood=true){if(!b||a==null)return "";const p=(a/b-1)*100;if(Math.abs(p)<0.5)return `<small class="chg notr">0%</small>`;const up=p>0;return `<small class="chg notr ${up===upGood?"up":"down"}">${up?"▲":"▼"} ${fmt(Math.abs(p))}%</small>`}
+const ovRow=(l,v,{d="",c="",cls=""}={})=>`<div class="ovr"><span class="l">${l}</span><span class="v"><span class="${String(v).startsWith("<")?"":"notr "}${cls}">${v}</span>${c}</span>${d?`<span class="d">${d}</span>`:""}</div>`;
+const ovBox=(ic,title,goTo,body)=>`<section class="panel ovbox"><h3><span class="ovh">${icon(ic)}<span>${title}</span></span><button class="btn sm" data-go="${goTo}">Open</button></h3><div class="pb">${body}</div></section>`;
+const ovSub=t=>`<div class="ovsub">${t}</div>`;
+const ovMore=n=>n>0?`<div class="small muted ovmore"><span>and</span> <span class="notr">${n}</span> <span>more</span></div>`:"";
+V.overview=()=>loadingOr(["products","production","sales","payments","customers","orders","purchases","supPays","expenses","materials","stock","payroll","power","staff","maint"],()=>{
+ const m=UI.month,prev=addMonth(m,-1),inM=d=>ym(d)===m,inP=d=>ym(d)===prev;
+ const salesOf=f=>list("sales").filter(s=>f(s.date)&&!s.opening);
+ const sumSales=xs=>xs.reduce((a,s)=>a+saleTotal(s),0);
+ const sM=salesOf(inM),sP=salesOf(inP),sv=sumSales(sM),svp=sumSales(sP);
+ const moneyIn=f=>list("payments").filter(p=>f(p.date)&&!isCredit(p)).reduce((a,p)=>a+num(p.amount),0)+salesOf(f).reduce((a,s)=>a+num(s.paid),0);
+ const mi=moneyIn(inM),mip=moneyIn(inP);
+ const buy=f=>list("purchases").filter(p=>f(p.date)).reduce((a,p)=>a+purTotal(p),0),bM=buy(inM),bP=buy(inP);
+ const exp=f=>list("expenses").filter(e=>f(e.date)).reduce((a,e)=>a+num(e.amount),0),eM=exp(inM),eP=exp(inP);
+ const pay=payrollTotal(m),payp=payrollTotal(prev),pw=powerTotal(m),pwp=powerTotal(prev);
+ const cb=custBalances(),owed=Object.values(cb).reduce((a,v)=>a+Math.max(0,v),0);
+ const sb=supBalances(),oweSup=Object.values(sb).reduce((a,v)=>a+Math.max(0,v),0);
+ const dz=monthDozens(m),dzp=monthDozens(prev),bags=monthBags(m),packed=num(prodDoc(m).packedDz);
+ const t=today(),oo=openOrders(),late=oo.filter(o=>o.due&&o.due<t).length;
+ const dn=list("orders").filter(o=>o.status==="done"&&inM(o.doneDate||o.date));
+ const nf=v=>v==null?"—":fmt(v);
+ const notIn=`<span class="chip warn">Not entered</span>`;
+ const kpi=(l,v,d)=>`<div class="kpi"><span class="l">${l}</span><span class="v notr">${v}</span><span class="d">${d}</span></div>`;
+
+ /* money */
+ const money=ovBox("money","Money","retail:payments",
+  ovRow("Sales",fmt(sv),{c:chg(sv,svp)})+ovRow("Money in",fmt(mi),{c:chg(mi,mip)})+ovRow("Bought from suppliers",fmt(bM),{c:chg(bM,bP,false)})+
+  ovRow("Daily expenses",fmt(eM),{c:chg(eM,eP,false)})+ovRow("Pay sheet",pay==null?notIn:fmt(pay),{c:chg(pay,payp,false)})+ovRow("Electricity and water",pw==null?notIn:fmt(pw),{c:chg(pw,pwp,false)})+
+  ovSub("Today, all months")+ovRow("Customers owe you",fmt(owed),{cls:owed>0.5?"warnv":""})+ovRow("You owe suppliers",fmt(oweSup)));
+
+ /* sales and orders */
+ const byC={};sM.forEach(s=>{const k=s.cust||"";byC[k]=(byC[k]||0)+saleTotal(s)});
+ const topC=Object.entries(byC).sort((a,b)=>b[1]-a[1]);
+ const sales=ovBox("retail","Sales and orders","retail:sales",
+  ovRow("Number of sales",fmt(sM.length),{c:chg(sM.length,sP.length)})+ovRow("Orders delivered",fmt(dn.length))+
+  ovRow("Orders still to deliver",fmt(oo.length),{d:oo.length?`<span>Worth</span> <span class="notr">${ks(oo.reduce((a,o)=>a+saleTotal(o),0))}</span>`:""})+
+  ovRow("Late orders",fmt(late),{cls:late?"badv":""})+
+  (topC.length?ovSub("Top customers this month")+topC.slice(0,5).map(([k,v])=>`<div class="ovr"><span class="l notr">${esc(custName(k))}</span><span class="v notr">${fmt(v)}</span></div>`).join("")+ovMore(topC.length-5):""));
+
+ /* production */
+ const months=[];for(let i=5;i>=0;i--)months.push(addMonth(m,-i));
+ const mix=products().map(p=>({p,v:num(prodDoc(m).bags?.[p.id])*num(p.dzPerBag)})).filter(x=>x.v).sort((a,b)=>b.v-a.v);
+ const prod=ovBox("product","Production","product:sheet",
+  ovRow("Dozens made",bags?fmt(dz,1):notIn,{c:chg(dz,dzp)})+ovRow("Big bags",fmt(bags,1))+ovRow("Pieces",fmt(dz*12))+
+  (packed?ovRow("Packed by female labour (dz)",fmt(packed,1)):"")+
+  ovSub("Dozens, last 6 months")+`<div class="ovchart">${svgBars(months.map(x=>({l:MN[+x.slice(5)-1],v:monthDozens(x)})),{h:150,unit:" dz"})}</div>`+
+  (mix.length?ovSub("Most made this month")+mix.slice(0,5).map(x=>`<div class="ovr"><span class="l notr">${esc(pname(x.p))}</span><span class="v notr">${dzTxt(x.v)} dz</span></div>`).join("")+ovMore(mix.length-5):""));
+
+ /* finished stock */
+ const fst=finishedStock(),need={};oo.forEach(o=>{if((o.status||"wait")==="out")return;(o.lines||[]).forEach(l=>{need[l.p]=(need[l.p]||0)+num(l.dz)})});
+ const fp=products().filter(p=>p.active!==false&&isAP(p)).map(p=>({p,have:fst[p.id]||0,need:need[p.id]||0})).sort((a,b)=>(b.need>b.have)-(a.need>a.have)||b.have-a.have);
+ const fstock=ovBox("product","Finished stock","retail:fstock",fp.length?fp.slice(0,10).map(x=>ovRow(`<span class="notr">${esc(pname(x.p))}</span>`,dzTxt(x.have)+" dz",{cls:x.have<x.need?"badv":"",d:x.need?`<span>Orders need</span> <span class="notr">${dzTxt(x.need)} dz</span>`:""})).join("")+ovMore(fp.length-10):`<div class="muted small">No products yet.</div>`);
+
+ /* raw materials */
+ const bal=stockBalances();
+ const mats=list("materials").map(mt=>({mt,b:bal[mt.id]??0,low:num(mt.minStock)&&(bal[mt.id]??0)<num(mt.minStock)})).sort((a,b)=>b.low-a.low||(a.mt.group||"").localeCompare(b.mt.group||"")||a.mt.name.localeCompare(b.mt.name));
+ const used=list("stock").filter(x=>x.kind==="out"&&inM(x.date)).length,got=list("stock").filter(x=>x.kind==="in"&&inM(x.date)).length;
+ const raw=ovBox("raw","Raw materials","raw:stock",(mats.length?mats.slice(0,10).map(x=>ovRow(`<span class="notr">${esc(x.mt.name)}</span>`,`${fmt(x.b,1)} ${esc(x.mt.unit||"")}`,{cls:x.low?"badv":"",d:x.low?`<span>Below the minimum of</span> <span class="notr">${fmt(x.mt.minStock)} ${esc(x.mt.unit||"")}</span>`:""})).join("")+ovMore(mats.length-10):`<div class="muted small">No materials yet.</div>`)+
+  ovSub("This month")+ovRow("Deliveries received",fmt(got))+ovRow("Issues to the floor",fmt(used)));
+
+ /* staff pay */
+ const staffN=list("staff").filter(s=>s.active!==false).length,payN=S.payroll[m]?Object.keys(S.payroll[m].rows||{}).length:0;
+ const hr=ovBox("hr","Staff pay","hr:payroll",
+  ovRow("Staff working",fmt(staffN))+ovRow("On this month's pay sheet",S.payroll[m]?fmt(payN):notIn)+ovRow("Pay sheet total",pay==null?notIn:fmt(pay),{c:chg(pay,payp,false)})+
+  ovRow("Pay per dozen",pay&&dz?fmt(pay/dz,1):"—",{d:pay&&dz?"<span>Kyat for each dozen made</span>":""}));
+
+ /* electricity */
+ const pd=S.power[m]||{};
+ const power=ovBox("power","Electricity and water","power:bills",
+  ovRow("Electricity",num(pd.elec)?fmt(pd.elec):notIn)+ovRow("Water",num(pd.water)?fmt(pd.water):"—")+ovRow("Total",nf(pw),{c:chg(pw,pwp,false)})+
+  ovRow("Per dozen",pw&&dz?fmt(pw/dz,1):"—",{c:pw&&dz&&pwp&&dzp?chg(pw/dz,pwp/dzp,false):""}));
+
+ /* molds */
+ const cd=num(set_().cleanDays)||30;let due=0,never=0;
+ for(const p of products()){if(p.active===false||(!num(p.cavB)&&!num(p.cycB)))continue;const ds=daysSince(lastClean(p.id));if(ds==null)never++;else if(ds>cd)due++}
+ const mt=list("maint").filter(x=>inM(x.date));
+ const mold=ovBox("mold","Molds and machines","mold:molds",
+  ovRow("Molds past cleaning time",fmt(due),{cls:due?"warnv":"",d:`<span>Cleaning every</span> <span class="notr">${cd}</span> <span>days</span>`})+
+  ovRow("Molds never cleaned on record",fmt(never))+ovRow("Cleanings this month",fmt(mt.filter(x=>x.type==="Clean").length))+ovRow("Repairs and other work this month",fmt(mt.filter(x=>x.type!=="Clean").length)));
+
+ /* buying */
+ const pM=list("purchases").filter(p=>inM(p.date)),paidOut=list("supPays").filter(y=>inM(y.date)).reduce((a,y)=>a+num(y.amount),0)+pM.reduce((a,p)=>a+num(p.paid),0);
+ const topS=list("suppliers").map(s=>({s,b:sb[s.id]||0})).filter(x=>x.b>0.5).sort((a,b)=>b.b-a.b);
+ const buying=ovBox("buying","Buying","buying:purchases",
+  ovRow("Purchases",fmt(pM.length))+ovRow("Bought",fmt(bM),{c:chg(bM,bP,false)})+ovRow("Paid to suppliers",fmt(paidOut))+ovRow("Daily expenses",fmt(eM))+
+  (topS.length?ovSub("You owe the most")+topS.slice(0,5).map(x=>`<div class="ovr"><span class="l notr">${esc(x.s.name)}</span><span class="v notr">${fmt(x.b)}</span></div>`).join("")+ovMore(topS.length-5):""));
+
+ return `<div class="kpis ovk">
+  ${kpi("Sales",fmt(sv),`<span class="notr">${sM.length}</span> <span>${sM.length===1?"sale":"sales"}</span>`)}
+  ${kpi("Money in",fmt(mi),"<span>Cash and bank</span>")}
+  ${kpi("Dozens made",bags?fmt(dz,1):"—",`<span class="notr">${fmt(bags,1)}</span> <span>big bags</span>`)}
+  ${kpi("Customers owe you",fmt(owed),"<span>Kyat, all customers</span>")}
+ </div>
+ <p class="small muted" style="margin:0"><span>Numbers are for</span> ${ML(m)}<span>, in Kyat unless marked. Arrows compare with</span> ${ML(prev)}<span>. Green is good, red needs a look.</span></p>
+ <div class="ovgrid">${money}${sales}${prod}${fstock}${raw}${hr}${power}${mold}${buying}</div>`;
+});
+V.overview.bind=()=>{};
+
+Object.assign(DICT,{
+ "Notifications and alarms: everything that needs a look":"အသိပေးချက်နှင့် သတိပေးချက်များ - ကြည့်ရန်လိုသည့် အရာအားလုံး",
+ "All the numbers for the month, area by area":"လအတွက် ကိန်းဂဏန်းအားလုံး၊ ဌာနအလိုက်",
+ "Urgent":"အရေးကြီး","To do":"လုပ်ရန်","For information":"သိထားရန်","Receipts":"ပြေစာများ","Other":"အခြား",
+ "All clear":"အားလုံး အဆင်ပြေသည်","Nothing needs a look right now.":"ယခု ကြည့်ရန် လိုသည့်အရာ မရှိပါ။",
+ "A notification goes away by itself when the problem is fixed. Bills and sheets are checked for":"ပြဿနာ ပြေလည်သွားလျှင် အသိပေးချက် အလိုလို ပျောက်သွားမည်။ ဘေလ်နှင့် စာရင်းများကို စစ်သည့်လ -",
+ "Record payment":"ငွေလက်ခံ မှတ်မည်","New sale":"အရောင်းအသစ်",
+ "Money":"ငွေ","Bought from suppliers":"ကုန်ပေးသွင်းသူထံမှ ဝယ်ငွေ","Daily expenses":"နေ့စဉ် အသုံးစရိတ်","Electricity and water":"မီတာခနှင့် ရေဖိုး",
+ "Today, all months":"ယနေ့အထိ၊ လအားလုံး","Not entered":"မထည့်ရသေး",
+ "Sales and orders":"အရောင်းနှင့် အော်ဒါ","Number of sales":"အရောင်း အကြိမ်ရေ","Orders delivered":"ပို့ပြီး အော်ဒါ","Orders still to deliver":"ပို့ရန်ကျန် အော်ဒါ","Late orders":"နောက်ကျနေသော အော်ဒါ",
+ "Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်","and":"နှင့်","more":"ခု ထပ်ရှိသည်",
+ "Production":"ထုတ်လုပ်မှု","Dozens made":"ထုတ်ပြီး ဒါဇင်","Packed by female labour (dz)":"အမျိုးသမီးလုပ်သား ထုပ်ပိုး (ဒါဇင်)","Dozens, last 6 months":"ဒါဇင်၊ နောက်ဆုံး ၆ လ","Most made this month":"ဤလ အများဆုံး ထုတ်သည်",
+ "No products yet.":"ကုန်ပစ္စည်း မရှိသေးပါ။","Raw materials":"ကုန်ကြမ်း","Below the minimum of":"အနည်းဆုံးပမာဏ အောက်ရောက်နေ -","No materials yet.":"ကုန်ကြမ်း မရှိသေးပါ။",
+ "This month":"ဤလ","Deliveries received":"လက်ခံရရှိမှု","Issues to the floor":"ထုတ်ပေးမှု",
+ "Staff pay":"ဝန်ထမ်းလစာ","Staff working":"လုပ်နေသော ဝန်ထမ်း","On this month's pay sheet":"ဤလ လစာစာရင်းတွင်","Pay sheet total":"လစာ စုစုပေါင်း","Pay per dozen":"တစ်ဒါဇင် လစာ","Kyat for each dozen made":"ထုတ်သည့် ဒါဇင်တိုင်းအတွက် ကျပ်",
+ "Water":"ရေဖိုး","Total":"စုစုပေါင်း","Per dozen":"တစ်ဒါဇင်လျှင်",
+ "Molds and machines":"မိုလ်နှင့် စက်များ","Molds past cleaning time":"သန့်ရှင်းရေး အချိန်ကျော်နေသော မိုလ်","Cleaning every":"သန့်ရှင်းရေး -","days":"ရက်တစ်ကြိမ်",
+ "Molds never cleaned on record":"သန့်ရှင်းရေး မှတ်တမ်း မရှိသေးသော မိုလ်","Cleanings this month":"ဤလ သန့်ရှင်းရေး","Repairs and other work this month":"ဤလ ပြုပြင်မှုနှင့် အခြားအလုပ်",
+ "Paid to suppliers":"ကုန်ပေးသွင်းသူထံ ပေးငွေ","You owe the most":"အများဆုံး ပေးရန်ကျန်","big bags":"အိတ်",
+ "Numbers are for":"ကိန်းဂဏန်းများသည်",", in Kyat unless marked. Arrows compare with":" အတွက် ဖြစ်ပြီး အထူးမဖော်ပြလျှင် ကျပ်ဖြင့် ဖြစ်သည်။ မြှားများသည် နှိုင်းယှဉ်သည့်လ -",
+ ". Green is good, red needs a look.":"။ အစိမ်းက ကောင်းသည်၊ အနီက ကြည့်ရန် လိုသည်။"
+});
+PAT.push(
+ [/^Not enough (.+) for orders: (.+) dz in stock, orders need (.+) dz\.$/,(x,a,b,c)=>`အော်ဒါအတွက် ${a} မလောက်ပါ - လက်ကျန် ${b} ဒါဇင်၊ အော်ဒါက ${c} ဒါဇင် လိုသည်။`],
+ [/^(\d+) orders? to deliver tomorrow\.$/,(x,a)=>`မနက်ဖြန် ပို့ရမည့် အော်ဒါ ${a} ခု။`],
+ [/^(\d+) orders? (?:are|is) late for delivery\.$/,(x,a)=>`ပို့ရန် နောက်ကျနေသော အော်ဒါ ${a} ခု။`],
+ [/^(\d+) orders? to deliver today\.$/,(x,a)=>`ယနေ့ ပို့ရမည့် အော်ဒါ ${a} ခု။`],
+ [/^(\d+) customers? owes? money from more than 30 days ago \((.+)\)\.$/,(x,a,b)=>`ရက် ၃၀ ကျော်ပြီး ငွေမချေရသေးသော ဖောက်သည် ${a} ဦး (${b.replace(/ Ks$/," ကျပ်")})။`],
+ [/^You owe (\d+) suppliers? (.+) in total\.$/,(x,a,b)=>`ကုန်ပေးသွင်းသူ ${a} ဦးထံ စုစုပေါင်း ${b.replace(/ Ks$/," ကျပ်")} ပေးရန်ကျန်သည်။`]
+);
+
 /* ---- Install as an app (computer and phone) ---- */
 const INST={evt:null};
 const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
@@ -1801,7 +1946,7 @@ document.addEventListener("focusout",()=>{if(deferred){setTimeout(()=>{const a=d
 const _close=closeForm;closeForm=function(){_close();if(deferred){deferred=false;render()}};
 function render(){
   const pg=curPage();const al=alerts();
-  $("#nav").innerHTML=PAGES.map(p=>{const n=al.filter(a=>a.dept===p.id&&a.sev!=="info").length;return `<button data-page="${p.id}" aria-current="${p.id===pg.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[p.id]}</svg>${esc(p.name)}${n?`<span class="count">${n}</span>`:""}</button>`}).join("");
+  $("#nav").innerHTML=PAGES.map(p=>{const n=p.id==="home"?al.filter(a=>a.sev!=="info").length:al.filter(a=>a.dept===p.id&&a.sev!=="info").length;return `<button data-page="${p.id}" aria-current="${p.id===pg.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[p.id]}</svg>${esc(p.name)}${n?`<span class="count">${n}</span>`:""}</button>`}).join("");
   $("#nav").querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.page));
   $("#pageTitle").textContent=pg.name;$("#pageSub").textContent=pg.sub;
   $("#monthIn").value=UI.month;

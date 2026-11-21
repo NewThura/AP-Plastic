@@ -2,6 +2,13 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: Home is now one list of notifications and alarms (Urgent, To do, For
+  information), each with an Open button; the quick buttons stay on top. New alarms: not enough finished stock
+  for orders, orders due tomorrow, customers owing for more than 30 days, money owed to suppliers. Overview now
+  shows every number for the month in one box per area (money, sales and orders, production, finished stock,
+  raw materials, staff pay, electricity, molds, buying), with arrows against last month. Asked for by the owner:
+  simple and clear.
+
 - 2026-11-21, Thura with Claude: `receipts/ap-receipts.html`, a simple receipt maker for the sales department
   (published as the "AP Receipts" artifact): form, modern customer receipt (picture or text for Viber), saved
   receipts for the team. Product names are typed for now; the product list will be made again later.
