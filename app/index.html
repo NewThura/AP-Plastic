@@ -19,7 +19,7 @@
 :root{
   /* white interface; blue (the logo's navy) only for small touches: outlines, links, the selected item, chart bars */
   --bg:#FFFFFF; --surface:#FFFFFF; --sunk:#F5F7FA; --line:#E3E7EE; --ink:#141C2B; --muted:#5B6578;
-  --accent:#0A2A66; --accent-ink:#FFFFFF; --accent-soft:#EEF3FB; --blue:#1F4FA8;
+  --pred:#EB6834; --accent:#0A2A66; --accent-ink:#FFFFFF; --accent-soft:#EEF3FB; --blue:#1F4FA8;
   --good:#1E7B4A; --good-soft:#DDF1E5; --warn:#A46200; --warn-soft:#FBEBCF; --bad:#B4322A; --bad-soft:#F8DEDB;
   --f-display:"Archivo","Noto Sans Myanmar",system-ui,sans-serif;
   --f-body:"IBM Plex Sans","Noto Sans Myanmar",system-ui,sans-serif;
@@ -144,6 +144,19 @@ svg.chart .ax{fill:var(--muted);font:11px var(--f-data)}
 svg.chart .vl{fill:var(--ink);font:600 11px var(--f-data)}
 svg.chart .bar{fill:var(--blue)}
 svg.chart .hit{fill:transparent}
+svg.chart .pred{fill:none;stroke:var(--pred);stroke-width:2;stroke-dasharray:5 4;pointer-events:none}
+svg.chart .predot{fill:var(--pred);stroke:var(--surface);stroke-width:2;pointer-events:none}
+svg.chart .ln{fill:none;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+svg.chart .dot{stroke:var(--surface);stroke-width:2;pointer-events:none}
+.predtxt{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:4px}
+.predtxt i{width:16px;border-top:2px dashed var(--pred)}
+.predtxt b{color:var(--ink);font:600 12px var(--f-data)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.lg{all:unset;cursor:pointer;display:inline-flex;gap:6px;align-items:center;font-size:12px;padding:3px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.lg i{width:10px;height:10px;border-radius:3px;flex:none}
+.lg[aria-pressed="false"]{color:var(--muted);text-decoration:line-through}
+.lg[aria-pressed="false"] i{opacity:.25}
+.lg:focus-visible{outline:2px solid var(--accent)}
 svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
 .hbars{display:flex;flex-direction:column;gap:8px}
 .hrow{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) auto;gap:8px;align-items:center;font-size:13px;padding:2px 0}
@@ -152,7 +165,7 @@ svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
 .htrack{height:10px;background:var(--sunk);border-radius:5px;overflow:hidden}
 .hfill{display:block;height:100%;background:var(--blue);border-radius:0 5px 5px 0}
 .hv{font:600 12px var(--f-data);text-align:right}
-.tip{position:fixed;z-index:40;display:none;pointer-events:none;background:var(--ink);color:var(--bg);font:600 12px var(--f-body);padding:6px 9px;border-radius:6px;white-space:nowrap}
+.tip{position:fixed;z-index:40;display:none;pointer-events:none;background:var(--ink);color:var(--bg);font:600 12px var(--f-body);padding:6px 9px;border-radius:6px;white-space:pre}
 /* overview notifications */
 .nav .count{margin-left:auto;background:var(--bad);color:#fff;font:600 11px var(--f-data);border-radius:9px;padding:0 6px}
 .bnav button{position:relative}
@@ -283,7 +296,8 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","Money in":"ငွေဝင်","Raw material used":"ကုန်ကြမ်း အသုံး","this month":"ဤလ","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
+ "Edit":"ပြင်မည်","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
+ "{m} production (dz)":"{m} ထုတ်လုပ်မှု (ဒါဇင်)","{m} waste (lb)":"{m} အပျက် (ပေါင်)","Expected":"ခန့်မှန်း","Expected by month end":"လကုန် ခန့်မှန်း","Sales by product, last 6 months":"ကုန်ပစ္စည်းအလိုက် အရောင်း၊ နောက်ဆုံး ၆ လ","Money in":"ငွေဝင်","Raw material used":"ကုန်ကြမ်း အသုံး","this month":"ဤလ","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
  "All":"အားလုံး","Bought this month":"ဤလ ဝယ်ယူမှု","customers":"ဦး","All customers":"ဖောက်သည် အားလုံး","Materials":"ကုန်ကြမ်း အမျိုးအစား","Used this month":"ဤလ အသုံး","Low in store":"လက်ကျန် နည်းနေသည်","materials":"မျိုး",
  "Products":"ကုန်ပစ္စည်း","Still sold":"ရောင်းဆဲ","Sold this month":"ဤလ ရောင်းပြီး","products":"မျိုး","In and out":"အဝင်အထွက်","Made":"ထုတ်ပြီး","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
  "Owe you the most":"အကြွေး အများဆုံး","Bought the most, last 6 months":"နောက်ဆုံး ၆ လ အများဆုံး ဝယ်သူ",
@@ -582,17 +596,33 @@ function editSale(id,cust){
 // top of the scale: four equal, round steps (so the axis reads 0, 25, 50, 75, 100 and never 12.5 or 37.5)
 function niceMax(v){if(v<=0)return 4;const st=v/4,p=Math.pow(10,Math.floor(Math.log10(st)));const f=st/p;return 4*(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p}
 const short=v=>v>=1e6?fmt(v/1e6,v%1e5?2:v%1e6?1:0)+"M":v>=1e3?fmt(v/1e3,v%1e3?1:0)+"k":fmt(v,v%1?1:0);
-function barChart(data,{h=190,labelEvery=1,tip}={}){
+function barChart(data,{h=190,labelEvery=1,tip,pred}={}){
   const W=Math.max(320,data.length*(data.length>20?(innerWidth<760?12:32):56)),pl=44,pr=8,pt=22,pb=24,iw=W-pl-pr,ih=h-pt-pb;
-  const top=niceMax(Math.max(...data.map(d=>d.v),0));const step=iw/data.length,bw=Math.max(4,Math.min(36,step*.62));
+  const top=niceMax(Math.max(...data.map(d=>d.v),...(pred||[]).map(p=>p.v),0));const step=iw/data.length,bw=Math.max(4,Math.min(36,step*.62));
   let g="";for(let i=0;i<=4;i++){const v=top*i/4,y=pt+ih-ih*i/4;g+=`<line class="grid" x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}"/><text class="ax" x="${pl-6}" y="${y+4}" text-anchor="end">${short(v)}</text>`}
   const maxI=data.reduce((m,d,i)=>d.v>data[m].v?i:m,0);
   data.forEach((d,i)=>{const cx=pl+step*(i+.5),bh=ih*d.v/top,y=pt+ih-bh;
-    if(d.v>0){const r=Math.min(4,bw/2,bh);g+=`<path class="bar" d="M${cx-bw/2},${pt+ih}V${y+r}Q${cx-bw/2},${y} ${cx-bw/2+r},${y}H${cx+bw/2-r}Q${cx+bw/2},${y} ${cx+bw/2},${y+r}V${pt+ih}Z"/>`}
+    if(d.v>0&&!d.future){const r=Math.min(4,bw/2,bh);g+=`<path class="bar" d="M${cx-bw/2},${pt+ih}V${y+r}Q${cx-bw/2},${y} ${cx-bw/2+r},${y}H${cx+bw/2-r}Q${cx+bw/2},${y} ${cx+bw/2},${y+r}V${pt+ih}Z"/>`}
     if(i%labelEvery===0||i===data.length-1)g+=`<text class="ax" x="${cx}" y="${h-7}" text-anchor="middle">${esc(d.l)}</text>`;
-    if(i===maxI&&d.v>0)g+=`<text class="vl" x="${cx}" y="${y-6}" text-anchor="middle">${short(d.v)}</text>`;
+    if(i===maxI&&d.v>0&&!pred)g+=`<text class="vl" x="${cx}" y="${y-6}" text-anchor="middle">${short(d.v)}</text>`;
     g+=`<rect class="hit" x="${pl+step*i}" y="${pt}" width="${step}" height="${ih}" data-tip="${esc(tip(d))}"/>`});
+  if(pred&&pred.length){const X=i=>pl+step*(i+.5),Y=v=>pt+ih-ih*v/top;
+    g+=`<path class="pred" d="${pred.map((p,k)=>(k?"L":"M")+X(p.i).toFixed(1)+","+Y(p.v).toFixed(1)).join("")}"/>`+pred.slice(1).map(p=>`<circle class="predot" cx="${X(p.i).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="4"/>`).join("")}
   return `<div class="chartbox"><svg class="chart" viewBox="0 0 ${W} ${h}" role="img">${g}<line class="base" x1="${pl}" x2="${W-pr}" y1="${pt+ih}" y2="${pt+ih}"/></svg></div>`}
+// product line colours, fixed order, never cycled. Orange is left out: orange means "prediction" in this app.
+const PAL=["#2a78d6","#1baf7a","#eda100","#6250d6","#e34948","#008300","#e87ba4","#7a7a7a"];
+function lineChart(labels,series,tip){const ph=innerWidth<760,W=ph?360:720,h=ph?230:260,pl=44,named=!ph&&series.filter(x=>!x.off).length<=4,pr=named?110:14,pt=16,pb=24,iw=W-pl-pr,ih=h-pt-pb;
+  const vis=series.filter(x=>!x.off);const top=niceMax(Math.max(0,...vis.flatMap(x=>x.vals)));
+  const step=iw/Math.max(1,labels.length-1),X=i=>pl+step*i,Y=v=>pt+ih-ih*v/top;let g="";
+  for(let i=0;i<=4;i++){const v=top*i/4,y=pt+ih-ih*i/4;g+=`<line class="grid" x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}"/><text class="ax" x="${pl-6}" y="${y+4}" text-anchor="end">${short(v)}</text>`}
+  labels.forEach((l,i)=>{g+=`<text class="ax" x="${X(i)}" y="${h-7}" text-anchor="middle">${esc(l)}</text>`});
+  vis.forEach(x=>{g+=`<path class="ln" stroke="${x.color}" d="${x.vals.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+","+Y(v).toFixed(1)).join("")}"/>`+x.vals.map((v,i)=>`<circle class="dot" fill="${x.color}" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="4"/>`).join("")});
+  // names at the end of each line (up to 4 lines), moved apart so they never overlap
+  if(named){const ends=vis.map(x=>({n:x.name.length>14?x.name.slice(0,13)+"…":x.name,y:Y(x.vals[x.vals.length-1])})).sort((a,b)=>a.y-b.y);
+    ends.forEach((e,k)=>{if(k&&e.y-ends[k-1].y<13)e.y=ends[k-1].y+13});ends.forEach(e=>{g+=`<text class="vl" x="${X(labels.length-1)+8}" y="${(e.y+4).toFixed(1)}">${esc(e.n)}</text>`})}
+  labels.forEach((l,i)=>{const x0=Math.max(pl,X(i)-step/2),x1=Math.min(W-pr,X(i)+step/2);g+=`<rect class="hit" x="${x0}" y="${pt}" width="${x1-x0}" height="${ih}" data-tip="${esc(tip(i,vis))}"/>`});
+  const legend=`<div class="legend">${series.map(x=>`<button class="lg" data-lg="${esc(x.id)}" aria-pressed="${!x.off}"><i style="background:${x.color}"></i><span class="notr">${esc(x.name)}</span></button>`).join("")}</div>`;
+  return legend+`<div class="chartbox"><svg class="chart" viewBox="0 0 ${W} ${h}" role="img">${g}<line class="base" x1="${pl}" x2="${W-pr}" y1="${pt+ih}" y2="${pt+ih}"/></svg></div>`}
 function hBars(rows,tip){if(!rows.length)return `<div class="muted small">${T("Nothing yet.")}</div>`;const max=Math.max(...rows.map(r=>r.v));
   return `<div class="hbars">${rows.map(r=>`<div class="hrow" data-tip="${esc(tip(r))}"><span class="hl notr">${esc(r.l)}</span><span class="htrack"><span class="hfill" style="width:${Math.max(1.5,r.v/max*100)}%"></span></span><span class="hv notr">${short(r.v)}</span></div>`).join("")}</div>`}
 function bindTips(){let tipEl=$("#tip");if(!tipEl){tipEl=document.createElement("div");tipEl.id="tip";tipEl.className="tip";document.body.appendChild(tipEl)}
@@ -615,6 +645,25 @@ function chartSet(m,{day,month,lists=[]}){const box=(title,body,wide)=>`<div cla
   return `<div class="charts${n===2?" c2":""}">${day?box(`${T(day.title)} · <span class="notr">${esc(monthName(m))}</span>`,barChart(day.data,{labelEvery:5,tip:d=>`${d.d} ${monthName(m)}: ${fmt(d.v,day.dec||0)}${day.u}`}),1):""}
    ${month?box(T(month.title),barChart(month.data,{tip:d=>`${monthName(d.m)}: ${fmt(d.v,month.dec||0)}${month.u}`})):""}
    ${lists.map(x=>box(T(x.title),hBars(x.rows,r=>`${r.l}: ${fmt(r.v,x.dec||0)}${x.u}`))).join("")}</div>`}
+// Sales prediction (only for the month we are in): this month = sales so far ÷ days gone × days in the month;
+// next month = the straight-line trend of the last 6 months (this month counted at its expected total), never below 0.
+function salesForecast(m){const d=perMonth(m,list("sales"),saleTotal);if(m!==ym(today()))return {d};
+  const day=+today().slice(8,10),dim=new Date(+m.slice(0,4),+m.slice(5,7),0).getDate(),proj=d[5].v/Math.max(1,day)*dim;
+  const ys=d.map(x=>x.v);ys[5]=proj;const mean=ys.reduce((a,b)=>a+b,0)/6;let sxy=0,sxx=0;ys.forEach((y,i)=>{sxy+=(i-2.5)*(y-mean);sxx+=(i-2.5)**2});
+  const next=Math.max(0,mean+sxy/sxx*3.5),nm=addMonth(m,1);
+  const data=d.concat([{l:mLabel(nm),m:nm,v:0,future:true}]);
+  return {d,proj,next,data,pred:[{i:4,v:d[4].v},{i:5,v:proj},{i:6,v:next}]}}
+function forecastChart(f,h){const K=" "+t("Kyat");if(!f.pred)return barChart(f.d,{h,tip:x=>`${monthName(x.m)}: ${fmt(x.v)}${K}`});
+  return barChart(f.data,{h,pred:f.pred,tip:x=>x.future?`${monthName(x.m)}: ${t("Expected")} ${fmt(f.next)}${K}`:x.m===f.d[5].m?`${monthName(x.m)}: ${fmt(x.v)}${K}\n${t("Expected")} ${fmt(f.proj)}${K}`:`${monthName(x.m)}: ${fmt(x.v)}${K}`})
+   +`<div class="predtxt"><i></i><span>${T("Expected by month end")}</span><b class="notr">${fmt(f.proj)}</b></div>`}
+// one line per product, sales in Kyat for the 6 months ending m; at most 8 lines (the rest go into "Other")
+function productLines(m){const months=[];for(let i=5;i>=0;i--)months.push(addMonth(m,-i));const by={};
+  list("sales").forEach(s=>{const k=months.indexOf(ym(s.date));if(k<0)return;(s.lines||[]).forEach(l=>{(by[l.p]=by[l.p]||Array(6).fill(0))[k]+=lineAmt(l)})});
+  let rows=Object.entries(by).map(([p,vals])=>({id:p,name:prodName(DB.products[p]),vals,tot:vals.reduce((a,b)=>a+b,0)})).sort((a,b)=>b.tot-a.tot);
+  if(rows.length>8){const rest=rows.slice(7);rows=rows.slice(0,7).concat([{id:"_other",name:t("Other"),vals:months.map((x,i)=>rest.reduce((a,r)=>a+r.vals[i],0))}])}
+  if(!rows.length)return `<div class="muted small">${T("Nothing yet.")}</div>`;
+  const hide=UI.hideP||{};rows.forEach((r,i)=>{r.color=PAL[i];r.off=!!hide[r.id]});const K=" "+t("Kyat");
+  return lineChart(months.map(mLabel),rows,(i,vis)=>monthName(months[i])+(vis.length?"\n"+vis.slice().sort((a,b)=>b.vals[i]-a.vals[i]).map(r=>`${r.name}: ${fmt(r.vals[i])}${K}`).join("\n"):""))}
 function salesCharts(m){
   const days=new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();const byDay=Array(days).fill(0);
   list("sales").forEach(s=>{if(ym(s.date)===m)byDay[+s.date.slice(8,10)-1]+=saleTotal(s)});
@@ -627,9 +676,10 @@ function salesCharts(m){
   const K=" "+t("Kyat");
   return `<div class="charts">
    <div class="panel wide"><h2>${T("Sales each day")} · <span class="notr">${esc(monthName(m))}</span></h2><div class="pb">${barChart(byDay.map((v,i)=>({l:String(i+1),d:i+1,v})),{labelEvery:5,tip:d=>`${d.d} ${monthName(m)}: ${fmt(d.v)}${K}`})}</div></div>
-   <div class="panel"><h2>${T("Sales, last 6 months")}</h2><div class="pb">${barChart(byMonth,{tip:d=>`${monthName(d.m)}: ${fmt(d.v)}${K}`})}</div></div>
+   <div class="panel"><h2>${T("Sales, last 6 months")}</h2><div class="pb">${forecastChart(salesForecast(m))}</div></div>
    <div class="panel"><h2>${T("Top products this month")}</h2><div class="pb">${hBars(topP,r=>`${r.l}: ${fmt(r.v)}${K}`)}</div></div>
-   <div class="panel"><h2>${T("Top customers this month")}</h2><div class="pb">${hBars(topC,r=>`${r.l}: ${fmt(r.v)}${K}`)}</div></div></div>`}
+   <div class="panel"><h2>${T("Top customers this month")}</h2><div class="pb">${hBars(topC,r=>`${r.l}: ${fmt(r.v)}${K}`)}</div></div>
+   <div class="panel wide"><h2>${T("Sales by product, last 6 months")}</h2><div class="pb">${productLines(m)}</div></div></div>`}
 function salesKpis(m){const td=today(),all=list("sales"),inM=all.filter(s=>ym(s.date)===m),tdS=all.filter(s=>s.date===td);
   const sumOf=xs=>xs.reduce((a,s)=>a+saleTotal(s),0);
   const moneyIn=inM.reduce((a,s)=>a+num(s.paid),0)+list("payments").filter(p=>ym(p.date)===m).reduce((a,p)=>a+num(p.amount),0);
@@ -654,7 +704,7 @@ V.sales=()=>{const m=UI.month,q=UI.q.toLowerCase();
    <tfoot><tr><td colspan="4">${T("Total")}</td><td class="n">${fmt(sumOf(shown))}</td><td class="n">${fmt(shown.reduce((a,s)=>a+num(PAID[s.id]),0))}</td><td></td></tr></tfoot></table></div>
    <div class="cards">${shown.map(s=>`<button class="card" data-edit="${s.id}"><span class="r1"><span class="notr">${esc(custName(s.cust))}</span><span class="n">${fmt(saleTotal(s))}</span></span><span class="r2"><span class="notr">${esc(s.date)} · #${esc(s.no||"")} · ${esc(lineText(s.lines))}</span></span><span>${st(s)}</span></button>`).join("")}</div>`
    :`<div class="empty">${T("Nothing found")}</div>`}</div>`};
-V.sales.bind=()=>{bindSearch();bindMonth();bindTips();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editSale(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editSale(r.dataset.edit))};
+V.sales.bind=()=>{bindSearch();bindMonth();bindTips();$$("[data-lg]").forEach(b=>b.onclick=()=>{UI.hideP=UI.hideP||{};UI.hideP[b.dataset.lg]=!UI.hideP[b.dataset.lg];render()});["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editSale(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editSale(r.dataset.edit))};
 
 /* ================= Overview: notifications and alarms ================= */
 // Money is overdue when: month-end customers, the month of the sale is over; everyone else, the sale is more than 30 days old.
@@ -692,20 +742,22 @@ const SEV=[["bad","Urgent"],["warn","To do"],["info","For information"]];
 let ALERTS=[];
 /* Overview: one small graph per area (last 6 months), each opens its tab */
 function overviewCharts(){const m=ym(today()),K=" "+t("Kyat"),L=" "+t("lb"),D=" "+t("dz");
+  const mon=monthName(m).replace(/\s*\d{4}$/,""),tm=k=>esc(t(k).replace("{m}",mon));
   const lbOnly=x=>(DB.materials[x.mat]?.unit||"lb")==="lb";
   const money=[...list("payments").map(p=>({date:p.date,v:num(p.amount)})),...list("sales").map(s=>({date:s.date,v:num(s.paid)}))];
   const owe=Object.entries(balances()).filter(([c,v])=>c&&v>0.5).map(([c,v])=>({l:custName(c),v})).sort((a,b)=>b.v-a.v);
-  const panel=(title,goTo,now,u,dec,body)=>`<div class="panel ov"><h2><span>${T(title)}</span><button class="btn sm" data-go="${goTo}">${T("Open")}</button></h2>
-     <div class="pb"><div class="ovnow"><b class="notr">${fmt(now,dec)}</b> <span>${u}</span></div>${body}</div></div>`;
-  const six=(title,goTo,rows,val,u,dec=0)=>{const d=perMonth(m,rows,val);
-    return panel(title,goTo,d[d.length-1].v,`${T(u.trim())} · ${T("this month")}`,dec,barChart(d,{h:150,tip:x=>`${monthName(x.m)}: ${fmt(x.v,dec)}${u}`}))};
+  const panel=(title,goTo,big,body)=>`<div class="panel ov"><h2><span class="notr">${title}</span><button class="btn sm" data-go="${goTo}">${T("Open")}</button></h2>
+     <div class="pb"><div class="ovnow">${big}</div>${body}</div></div>`;
+  const six=(key,goTo,rows,val,u,dec=0)=>{const d=perMonth(m,rows,val);
+    return panel(tm(key),goTo,`<b class="notr">${fmt(d[5].v,dec)}</b>`,barChart(d,{h:150,tip:x=>`${monthName(x.m)}: ${fmt(x.v,dec)}${u}`}))};
+  const f=salesForecast(m);
   return `<div class="charts ovg">
-   ${six("Sales","receipts",list("sales"),saleTotal,K)}
-   ${six("Money in","payments",money,r=>r.v,K)}
-   ${panel("Customers owe you","customers",owe.reduce((a,r)=>a+r.v,0),`${T("Kyat")} · <span class="notr">${owe.length}</span> ${T("customers")}`,0,hBars(owe.slice(0,5),r=>`${r.l}: ${fmt(r.v)}${K}`))}
-   ${six("Raw material used","raw",list("matMoves").filter(x=>x.kind==="out"&&lbOnly(x)),x=>num(x.qty),L,1)}
-   ${six("Production","finished",list("made"),x=>dzOf(DB.products[x.p],x.unit,x.qty),D,1)}
-   ${six("Waste","waste",list("waste").filter(x=>x.kind==="waste"),x=>num(x.qty),L,1)}</div>`}
+   ${panel(tm("{m} sales"),"receipts",`<b class="notr">${fmt(f.d[5].v)}</b>`,forecastChart(f,150))}
+   ${six("{m} income","payments",money,r=>r.v,K)}
+   ${panel(T("Customers' debt"),"customers",`<b class="notr">${fmt(owe.reduce((a,r)=>a+r.v,0))}</b> <span><span class="notr">${owe.length}</span> ${T("customers")}</span>`,hBars(owe.slice(0,6),r=>`${r.l}: ${fmt(r.v)}${K}`))}
+   ${six("Raw material used in {m} (lb)","raw",list("matMoves").filter(x=>x.kind==="out"&&lbOnly(x)),x=>num(x.qty),L,1)}
+   ${six("{m} production (dz)","finished",list("made"),x=>dzOf(DB.products[x.p],x.unit,x.qty),D,1)}
+   ${six("{m} waste (lb)","waste",list("waste").filter(x=>x.kind==="waste"),x=>num(x.qty),L,1)}</div>`}
 V.overview=()=>{const al=ALERTS=alerts();const cnt=k=>al.filter(a=>a.sev===k).length;
   const icon={Settings:"settings",Customers:"customers",Sales:"sales","Finished products":"products","Raw materials":"production","Waste products":"production",Payments:"payments"};
   const item=(a,i)=>`<button class="nitem ${a.sev}" data-al="${i}"><span class="nic">${svg(icon[a.area]||"sales")}</span><span class="nbody"><span class="narea">${T(a.area)}${a.head?` · <b class="notr">${esc(a.head)}</b>`:""}</span><span class="ntext notr">${esc(a.txt)}</span></span><span class="ngo">${T("Open")}</span></button>`;

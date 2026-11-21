@@ -2,6 +2,10 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`): Overview graphs are titled by month ("November sales",
+  "November income", "Customers' debt" ...). Sales graphs show an orange dashed prediction line (this month at
+  today's pace, next month from the 6-month trend). Sales tab has a line graph per product; tap a name to hide it.
+
 - 2026-11-21, Thura with Claude: new app (`app/`) Overview: the sales numbers are replaced by one graph per area
   (sales, money in, customers owe you, raw material used, production, waste), each with an Open button.
 
