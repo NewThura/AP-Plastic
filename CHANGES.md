@@ -2,6 +2,9 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`): the records file name is no longer shown anywhere (sales
+  workers would not understand it); the saving status is plain words: Saved, Not saved, Records file is closed.
+
 - 2026-11-21, Thura with Claude: new app (`app/`): much less explaining text (Settings is just the file name, three
   buttons and the language; no hint lines; no line under page titles; one-line file messages). Every change to a
   customer or product is now kept in an `outbox` list, ready for when other apps are connected through a cloud:

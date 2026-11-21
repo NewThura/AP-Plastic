@@ -207,7 +207,7 @@ svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
   <aside class="side">
     <div class="brand"><span class="logo"><img src="logo.png" alt="Advanced Packaging" width="720" height="227"></span><span data-t>Sales records</span></div>
     <nav class="nav" id="nav"></nav>
-    <div class="foot"><div><span class="dot" id="dot"></span><span id="sync"></span></div><div class="notr" id="fileName"></div></div>
+    <div class="foot"><div><span class="dot" id="dot"></span><span id="sync"></span></div></div>
   </aside>
   <header class="mhead"><span class="logo"><img src="logo.png" alt="Advanced Packaging" width="720" height="227"></span></header>
   <main class="main" id="main"></main>
@@ -271,7 +271,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","New file":"ဖိုင်အသစ်","Choose file":"ဖိုင် ရွေးမည်","Records file is closed":"မှတ်တမ်းဖိုင် ပိတ်ထားသည်","No records file yet":"မှတ်တမ်းဖိုင် မရှိသေးပါ","Use Chrome or Edge to save to a file.":"ဖိုင်ထဲ သိမ်းရန် Chrome သို့မဟုတ် Edge ကို သုံးပါ။","Products":"ကုန်ပစ္စည်းများ"
+ "Edit":"ပြင်မည်","Not saved":"မသိမ်းရသေး","New file":"ဖိုင်အသစ်","Choose file":"ဖိုင် ရွေးမည်","Records file is closed":"မှတ်တမ်းဖိုင် ပိတ်ထားသည်","No records file yet":"မှတ်တမ်းဖိုင် မရှိသေးပါ","Use Chrome or Edge to save to a file.":"ဖိုင်ထဲ သိမ်းရန် Chrome သို့မဟုတ် Edge ကို သုံးပါ။","Products":"ကုန်ပစ္စည်းများ"
 };
 const MON_EN=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const MON_MY=["ဇန်နဝါရီ","ဖေဖော်ဝါရီ","မတ်","ဧပြီ","မေ","ဇွန်","ဇူလိုင်","ဩဂုတ်","စက်တင်ဘာ","အောက်တိုဘာ","နိုဝင်ဘာ","ဒီဇင်ဘာ"];
@@ -369,7 +369,7 @@ async function remove(col,id,msg){if(!Store.canChange())return;const before=DB[c
 async function fileAction(kind){
   try{if(kind==="open"&&Store.file.state==="need"){if(!(await Store.reopen()))return toast(t("The file was not allowed"))}
     else if(kind==="new")await Store.newFile();else await Store.openFile();
-    toast(t("Records file")+": "+Store.file.name);render()}
+    toast(t("Saved"));render()}
   catch(e){if(e&&e.name==="AbortError")return;toast(t("Could not use the file")+": "+(e&&e.message||e))}}
 
 window.apBackups=async()=>(await Store.tx("backups","readonly",st=>st.getAll())||[]).map(b=>({day:b.day,saved:b.saved,records:b.records.length}));
@@ -655,8 +655,7 @@ V.payments.bind=()=>{bindMonth();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick
 /* ================= Settings ================= */
 V.settings=()=>{const F=Store.file;
   const fileBox=F.state==="nosupport"?`<div class="muted">${T("Use Chrome or Edge to save to a file.")}</div>`
-   :`<div class="notr" style="font:600 16px var(--f-data)">${F.name?esc(F.name):"—"}</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open")}</button>`:""}<button class="btn" data-file="new">${T("New file")}</button><button class="btn" data-file="pick">${T("Choose file")}</button></div>`;
+   :`    <div style="display:flex;gap:8px;flex-wrap:wrap">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open")}</button>`:""}<button class="btn" data-file="new">${T("New file")}</button><button class="btn" data-file="pick">${T("Choose file")}</button></div>`;
   return `<div class="panel"><h2>${T("Records file")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:12px">${fileBox}</div></div>
    <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
 V.settings.bind=()=>{bindLang()};
@@ -671,13 +670,13 @@ const langSeg=()=>`<span class="seg"><button data-lang="my" aria-pressed="${UI.l
 function bindLang(){$$("[data-lang]").forEach(b=>b.onclick=()=>{UI.lang=b.dataset.lang;ls("ap2.lang",UI.lang);render()})}
 function go(p){UI.page=p;UI.q="";ls("ap2.page",p);render();window.scrollTo(0,0)}
 function fileBanner(){const F=Store.file;if(!Store.ready)return "";
-  if(F.state==="need")return `<div class="banner"><span><span>${T("Records file is closed")}</span>: <b class="notr">${esc(F.name)}</b></span><button class="btn sm primary" data-file="open">${T("Open")}</button></div>`;
+  if(F.state==="need")return `<div class="banner"><span>${T("Records file is closed")}</span><button class="btn sm primary" data-file="open">${T("Open")}</button></div>`;
   if(F.state==="none")return `<div class="banner"><span>${T("No records file yet")}</span><span class="btns"><button class="btn sm primary" data-file="new">${T("New file")}</button><button class="btn sm" data-file="pick">${T("Choose file")}</button></span></div>`;
   if(F.state==="on"&&F.err)return `<div class="banner bad"><span>${T("Could not save to the records file")}</span><button class="btn sm" data-file="pick">${T("Choose file")}</button></div>`;
   return ""}
 function syncText(){const F=Store.file;if(!Store.ready)return ["",t("Loading…")];
-  if(F.state==="on")return F.err?["bad",t("Not saved to the file")]:["on",t("Saved to the records file")];
-  if(F.state==="need")return ["",t("Records file not open")];return ["",t("Saved in this browser only")]}
+  if(F.state==="on")return F.err?["bad",t("Not saved")]:["on",t("Saved")];
+  if(F.state==="need")return ["",t("Records file is closed")];return ["",t("Saved")]}
 function render(){
   const tp=document.getElementById("tip");if(tp)tp.style.display="none";
   document.documentElement.lang=UI.lang==="my"?"my":"en";
@@ -687,7 +686,7 @@ function render(){
   $("#nav").innerHTML=PAGES.map(navBtn).join("");$("#bnav").innerHTML=PAGES.map(navBtn).join("");
   $$("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
   $$("[data-t]").forEach(el=>{el.__en=el.__en||el.textContent;el.textContent=t(el.__en)});
-  const [cls,txt]=syncText();$("#dot").className="dot "+cls;$("#sync").textContent=txt;$("#fileName").textContent=Store.file.name||"";
+  const [cls,txt]=syncText();$("#dot").className="dot "+cls;$("#sync").textContent=txt;
   if(Store.ready)PAID=paidMap();
   const body=Store.ready?V[id]():`<div class="empty">${T("Loading…")}</div>`;
   $("#main").innerHTML=`<div class="top"><div><h1>${T(name)}</h1></div><div class="tools">${id!=="settings"?langSeg():""}</div></div>${fileBanner()}${body}`;
