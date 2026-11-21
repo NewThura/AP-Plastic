@@ -18,3 +18,7 @@ Screenshot*
 # Test output
 /test/out/
 __pycache__/
+
+# Records files and backups (private)
+ap-records*.json
+ap-erp-backup*.json

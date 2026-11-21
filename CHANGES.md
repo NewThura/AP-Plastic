@@ -6,6 +6,8 @@ Newest first. Date, who (and which AI), what changed and why.
   browser, starting empty, with no sign-in (`config.js` mode "device"). Settings has a Backup box with "Save a
   backup file"; Import records loads a backup back. The cloud code stays so a cloud can be connected again later.
   `test/run_test.py --device` tests this way. The owner is not renting the cloud for now.
+  On a computer (Chrome or Edge) the records are kept in a file on the drive that the owner picks once; every
+  change is saved into it, and after a restart one click opens it again. Asked for by the owner: "on my drive".
 
 - 2026-11-21, Thura with Claude: Home is now one list of notifications and alarms (Urgent, To do, For
   information), each with an Open button; the quick buttons stay on top. New alarms: not enough finished stock

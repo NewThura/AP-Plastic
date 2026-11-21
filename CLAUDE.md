@@ -9,8 +9,11 @@ molds, electricity, sales, customers, orders, bills, buying and suppliers. Myanm
 - Live app: https://newthura.github.io/AP-Plastic/ (GitHub Pages serves `index.html` from `main`).
 - **For now (since 2026-11-21) there is no cloud database.** `config.js` has `mode: "device"`: each computer or
   phone keeps its own records in the browser (IndexedDB), with no sign-in. Records are not shared between devices.
-  Settings > Backup saves a backup file; Settings > Import records loads it back. Backup files are private:
-  never put one in this project.
+  On a computer with Chrome or Edge the records are also kept in a **records file on the drive** (for example
+  `E:\AP Recordsp-records.json`): the file is the main copy, every change is written into it, and after a restart
+  the app asks for one click to open it again. Settings > "Where records are kept" picks the file, and it can save a
+  backup file; Import records loads one back. Records files and backups are private: never put one in this
+  project (`.gitignore` blocks `ap-records*.json` and `ap-erp-backup*.json`).
 - The cloud code is kept for later: put a Supabase address and publishable key in `config.js` (and remove the
   `mode` line) to go back to shared records with sign-in (one table `records`: `col` = record type, `id`,
   `data` JSON; access in `app_users` with roles owner / editor / viewer).

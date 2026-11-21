@@ -123,6 +123,8 @@ main{min-width:0;padding-block:20px 48px;padding-left:24px;padding-right:max(24p
 .tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
 .tabs button:focus-visible{outline:2px solid var(--accent)}
 .banner{border-radius:8px;padding:10px 14px;font-size:13px;display:flex;gap:10px;align-items:flex-start;background:var(--paper-soft);color:var(--paper-ink);border:1px solid color-mix(in srgb,var(--paper) 50%,transparent)}
+.fbanner{align-items:center;flex-wrap:wrap;justify-content:space-between}
+.fbtns{display:flex;gap:8px;flex-wrap:wrap}
 .banner.bad{background:var(--bad-soft);color:var(--bad);border-color:transparent}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -1055,10 +1057,14 @@ async function addUser(){const un=$("#nuName").value.trim(),pw=$("#nuPass").valu
     if(r.error){m.textContent=r.error.message;return}
     toast((my?"ထည့်ပြီး - ":"Added: ")+un);$("#nuName").value="";$("#nuPass").value="";USERS=null;loadUsers();
   }finally{$("#nuAdd").disabled=false}}
-function backupPanel(){return `<section class="panel"><h3>Backup</h3><div class="pb" style="display:flex;flex-direction:column;gap:10px">
- <div class="banner" style="margin:0">Records are kept on this device only, not in the cloud. If the browser's data is cleared or the device breaks, they are lost.</div>
- <div class="muted">Save a backup file every week. Keep it somewhere safe, such as a USB stick. Never put it in the GitHub project. To bring records back, or to move them to another computer, load the file below in Import records.</div>
- <div><button class="btn primary" id="bkSave">Save a backup file</button></div></div></section>`}
+function backupPanel(){const F=FILE();
+ const fileBox=!F?"":F.state==="nosupport"?`<div class="banner" style="margin:0">This browser cannot keep records in a file. Use Chrome or Edge on a computer. Until then, records stay in this browser only.</div>`
+  :`<div class="ovr"><span class="l">Records file</span><span class="v"><span class="notr">${F.name?esc(F.name):"—"}</span></span><span class="d">${F.state==="on"?"Every change is saved into this file straight away.":F.state==="need"?"Chosen, but not open yet.":"No file chosen yet."}</span></div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" data-file="new">Make a new records file</button><button class="btn" data-file="pick">Open a records file</button></div>
+   <div class="small muted">Keep the file anywhere on your drive, for example E:\\AP Records. Never put it inside the AP-Plastic project folder: that folder is public on GitHub.</div>`;
+ return `<section class="panel"><h3>Where records are kept</h3><div class="pb" style="display:flex;flex-direction:column;gap:10px">${fileBox}
+ <div class="muted">Also save a backup file every week, and keep it somewhere safe, such as a USB stick. To bring records back, load the file below in Import records.</div>
+ <div><button class="btn" id="bkSave">Save a backup file</button></div></div></section>`}
 function saveBackup(){const recs=db&&db.all?db.all():[];const blob=new Blob([JSON.stringify({backup:true,app:"AP Plastic ERP",saved:new Date().toISOString(),records:recs})],{type:"application/json"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ap-erp-backup-"+today()+".json";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
  toast((UI.lang==="my"?"သိမ်းပြီး - မှတ်တမ်း ":"Saved: ")+recs.length+(UI.lang==="my"?" ခု":" records"))}
@@ -1890,7 +1896,16 @@ V.overview=()=>loadingOr(["products","production","sales","payments","customers"
 });
 V.overview.bind=()=>{};
 
-Object.assign(DICT,{"Saved on this device":"ဤစက်တွင် သိမ်းထားသည်","This device":"ဤစက်","Backup":"အရန်ကူးယူ",
+Object.assign(DICT,{"This computer":"ဤကွန်ပျူတာ","Saved to the records file":"မှတ်တမ်းဖိုင်ထဲ သိမ်းပြီး","Not saved to the file":"ဖိုင်ထဲ မသိမ်းရသေး","Records file not open":"မှတ်တမ်းဖိုင် မဖွင့်ရသေး","Saved in this browser only":"ဤ browser တွင်သာ သိမ်းထားသည်",
+ "Your records are in the file":"သင့်မှတ်တမ်းများ ရှိသည့်ဖိုင် -",". Open it to carry on. Nothing can be changed until it is open.":"။ ဆက်လုပ်ရန် ဖွင့်ပါ။ မဖွင့်မချင်း ဘာမှ ပြင်၍ မရပါ။","Open records file":"မှတ်တမ်းဖိုင် ဖွင့်မည်",
+ "Records are only in this browser for now. Keep them in a file on your computer, so they are safe on your drive.":"ယခု မှတ်တမ်းများ ဤ browser တွင်သာ ရှိသည်။ drive ပေါ်တွင် လုံခြုံစေရန် ကွန်ပျူတာထဲရှိ ဖိုင်တစ်ခုတွင် သိမ်းပါ။",
+ "Make a new records file":"မှတ်တမ်းဖိုင်အသစ် လုပ်မည်","Open a records file":"မှတ်တမ်းဖိုင် ဖွင့်မည်",
+ "Could not save to the records file. Check that the drive is there, then open the file again.":"မှတ်တမ်းဖိုင်ထဲ မသိမ်းနိုင်ပါ။ drive ရှိမရှိ စစ်ပြီး ဖိုင်ကို ပြန်ဖွင့်ပါ။",
+ "This browser cannot keep records in a file. Use Chrome or Edge on a computer. Until then, records stay in this browser only.":"ဤ browser သည် ဖိုင်ထဲ မှတ်တမ်း မသိမ်းနိုင်ပါ။ ကွန်ပျူတာပေါ်ရှိ Chrome သို့မဟုတ် Edge ကို သုံးပါ။ ထိုအချိန်အထိ မှတ်တမ်းများ ဤ browser တွင်သာ ရှိမည်။",
+ "Records file":"မှတ်တမ်းဖိုင်","Every change is saved into this file straight away.":"ပြောင်းလဲမှုတိုင်းကို ဤဖိုင်ထဲ ချက်ချင်း သိမ်းသည်။","Chosen, but not open yet.":"ရွေးထားပြီး၊ မဖွင့်ရသေးပါ။","No file chosen yet.":"ဖိုင် မရွေးရသေးပါ။",
+ "Keep the file anywhere on your drive, for example E:\\AP Records. Never put it inside the AP-Plastic project folder: that folder is public on GitHub.":"ဖိုင်ကို drive ပေါ် ကြိုက်သည့်နေရာတွင် ထားပါ၊ ဥပမာ E:\\AP Records။ AP-Plastic project ဖိုင်တွဲထဲ ဘယ်တော့မှ မထည့်ပါနှင့် - ထိုဖိုင်တွဲသည် GitHub တွင် လူတိုင်း မြင်နိုင်သည်။",
+ "Where records are kept":"မှတ်တမ်း သိမ်းသည့်နေရာ","Also save a backup file every week, and keep it somewhere safe, such as a USB stick. To bring records back, load the file below in Import records.":"အပတ်တိုင်း အရန်ဖိုင်လည်း သိမ်းပြီး USB ကဲ့သို့ လုံခြုံသောနေရာတွင် ထားပါ။ မှတ်တမ်းများ ပြန်ယူရန် အောက်ပါ မှတ်တမ်း တင်သွင်းရန် တွင် ဖိုင်ကို ဖွင့်ပါ။",
+ "Saved on this device":"ဤစက်တွင် သိမ်းထားသည်","This device":"ဤစက်","Backup":"အရန်ကူးယူ",
  "Records are kept on this device only, not in the cloud. If the browser's data is cleared or the device breaks, they are lost.":"မှတ်တမ်းများကို ဤစက်တွင်သာ သိမ်းထားပြီး cloud တွင် မသိမ်းပါ။ browser ဒေတာ ဖျက်မိလျှင် သို့မဟုတ် စက်ပျက်လျှင် ပျောက်သွားမည်။",
  "Save a backup file every week. Keep it somewhere safe, such as a USB stick. Never put it in the GitHub project. To bring records back, or to move them to another computer, load the file below in Import records.":"အပတ်တိုင်း အရန်ဖိုင် သိမ်းပါ။ USB ကဲ့သို့ လုံခြုံသောနေရာတွင် ထားပါ။ GitHub project ထဲ ဘယ်တော့မှ မထည့်ပါနှင့်။ မှတ်တမ်းများ ပြန်ယူရန် သို့မဟုတ် အခြားကွန်ပျူတာသို့ ရွှေ့ရန် အောက်ပါ မှတ်တမ်းတင်သွင်းရန် တွင် ဖိုင်ကို ဖွင့်ပါ။",
  "Save a backup file":"အရန်ဖိုင် သိမ်းမည်"});
@@ -1967,16 +1982,17 @@ function render(){
   $("#tabsArea").querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>go(pg.id,b.dataset.tab));
   let ban="";
   if(dbState==="off")ban=`<div class="banner bad">This copy cannot save. Open the AP Plastic ERP from Claude to see and save the factory's records.</div>`;
-  else if(!canWrite)ban=`<div class="banner">You can view these records but not change them. Ask the owner for edit access.</div>`;
+  else if(!canWrite&&!DEVICE)ban=`<div class="banner">You can view these records but not change them. Ask the owner for edit access.</div>`;
   const nt=set_(),note=UI.lang==="my"&&nt.notice_my?nt.notice_my:nt.notice;
   if(note)ban=`<div class="banner notr" style="background:var(--accent-soft);color:var(--ink);border-color:transparent">${esc(note)}</div>`+ban;
-  $("#bannerArea").innerHTML=ban;
+  $("#bannerArea").innerHTML=ban+(DEVICE?fileBanner():"");
   const fn=pg.tabs?V[pg.id][t]:V[pg.id];
   $("#view").innerHTML=fn();
   if(fn.bind)fn.bind();
+  if(DEVICE)bindFileBanner();
   $("#view").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const [p,tb]=b.dataset.go.split(":");go(p,tb)});
   $("#view").querySelectorAll("[data-bill]").forEach(b=>{b.onclick=e=>{e.stopPropagation();showBill(b.dataset.bill)};b.ondblclick=e=>e.stopPropagation()});
-  $("#syncDot").className="dot"+(dbState==="on"?" on":"");$("#syncTxt").textContent=dbState==="on"?(DEVICE?"Saved on this device":"Saved to shared records"):dbState==="off"?"Not connected":"Connecting…";
+  $("#syncDot").className="dot"+(dbState==="on"?" on":"");$("#syncTxt").textContent=dbState==="on"?syncText():dbState==="off"?"Not connected":"Connecting…";
 }
 function pickMonth(){const ms=Object.keys(S.production).filter(k=>monthBags(k)).sort();return ms[ms.length-1]||ym(today())}
 $("#mPrev").onclick=()=>{UI.month=addMonth(UI.month,-1);render()};
@@ -2014,27 +2030,63 @@ function makeDb(){
 /* records kept on this device (IndexedDB) while there is no cloud database */
 function makeDeviceDb(){
   const subs={},cache={};let started=false,idb=null;
+  // the records file on this computer: state none (not chosen) | need (chosen, waiting for a click) | on | nosupport
+  const F={handle:null,name:"",state:"none",timer:null,saving:false,again:false,err:false};
   const emit=col=>{const m=cache[col]||new Map();const docs=[...m.entries()].map(([id,data])=>({id,exists:true,data:()=>data}));(subs[col]||[]).forEach(f=>f({docs}))};
-  const open=()=>new Promise((ok,bad)=>{const r=indexedDB.open("ap-erp",1);r.onupgradeneeded=()=>r.result.createObjectStore("records",{keyPath:["col","id"]});r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)});
-  const tx=(mode,fn)=>new Promise((ok,bad)=>{const t=idb.transaction("records",mode);const st=t.objectStore("records");const out=fn(st);t.oncomplete=()=>ok(out&&out.result);t.onerror=()=>bad(t.error)});
+  const open=()=>new Promise((ok,bad)=>{const r=indexedDB.open("ap-erp",2);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("records"))d.createObjectStore("records",{keyPath:["col","id"]});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta")};r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)});
+  const tx=(store,mode,fn)=>new Promise((ok,bad)=>{const t=idb.transaction(store,mode);const req=fn(t.objectStore(store));t.oncomplete=()=>ok(req&&req.result);t.onerror=()=>bad(t.error)});
+  const all=()=>{const out=[];for(const [col,m] of Object.entries(cache))for(const [id,data] of m)out.push({col,id,data});return out};
+  async function replaceAll(recs){await tx("records","readwrite",st=>{st.clear();recs.forEach(r=>st.put({col:r.col,id:r.id,data:r.data}))});
+    Object.keys(cache).forEach(k=>delete cache[k]);recs.forEach(r=>(cache[r.col]||(cache[r.col]=new Map())).set(r.id,r.data));Object.keys(subs).forEach(emit)}
+  async function readFile(h){const t=await (await h.getFile()).text();if(!t.trim())return [];const j=JSON.parse(t);return (j.records||[]).filter(r=>r&&r.col&&r.id&&r.data)}
+  async function writeFile(){if(F.state!=="on")return;if(F.saving){F.again=true;return}F.saving=true;
+    try{const w=await F.handle.createWritable();await w.write(JSON.stringify({app:"AP Plastic ERP",saved:new Date().toISOString(),records:all()}));await w.close();if(F.err){F.err=false;scheduleRender()}}
+    catch(e){if(!F.err){F.err=true;toast(UI.lang==="my"?"မှတ်တမ်းဖိုင်ထဲ မသိမ်းနိုင်ပါ":"Could not save to the records file");scheduleRender()}}
+    finally{F.saving=false;if(F.again){F.again=false;writeFile()}}}
+  const soon=()=>{clearTimeout(F.timer);F.timer=setTimeout(writeFile,300)};
+  async function link(h){F.handle=h;F.name=h.name;F.state="on";F.err=false;await tx("meta","readwrite",st=>st.put(h,"file"))}
+  const TYPES=[{description:"AP Plastic records",accept:{"application/json":[".json"]}}];
   return {
-    async start(){idb=await open();const rows=await tx("readonly",st=>st.getAll());
-      (rows||[]).forEach(r=>(cache[r.col]||(cache[r.col]=new Map())).set(r.id,r.data));started=true;Object.keys(subs).forEach(emit);
+    file:F,all,
+    async start(){idb=await open();const rows=await tx("records","readonly",st=>st.getAll());
+      (rows||[]).forEach(r=>(cache[r.col]||(cache[r.col]=new Map())).set(r.id,r.data));
+      if(!window.showOpenFilePicker)F.state="nosupport";
+      else{const h=await tx("meta","readonly",st=>st.get("file"));
+        if(h){F.handle=h;F.name=h.name;let p="prompt";try{p=await h.queryPermission({mode:"readwrite"})}catch(e){}
+          if(p==="granted"){try{await replaceAll(await readFile(h));F.state="on"}catch(e){F.state="need"}}
+          else F.state="need"}}
+      started=true;Object.keys(subs).forEach(emit);
       try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}},
-    all(){const out=[];for(const [col,m] of Object.entries(cache))for(const [id,data] of m)out.push({col,id,data});return out},
+    async reconnect(){const p=await F.handle.requestPermission({mode:"readwrite"});if(p!=="granted")return false;await replaceAll(await readFile(F.handle));F.state="on";return true},
+    async newFile(){const h=await showSaveFilePicker({suggestedName:"ap-records.json",types:TYPES});await link(h);await writeFile()},
+    async openFile(){const [h]=await showOpenFilePicker({types:TYPES,multiple:false});const recs=await readFile(h);await replaceAll(recs);await link(h)},
     collection(col){return {
       onSnapshot(next){(subs[col]||(subs[col]=[])).push(next);if(started)emit(col);return ()=>{}},
       doc(id){return {
-        async set(data){await tx("readwrite",st=>st.put({col,id,data}));(cache[col]||(cache[col]=new Map())).set(id,data);emit(col)},
-        async delete(){await tx("readwrite",st=>st.delete([col,id]));cache[col]&&cache[col].delete(id);emit(col)}}}}}
+        async set(data){await tx("records","readwrite",st=>st.put({col,id,data}));(cache[col]||(cache[col]=new Map())).set(id,data);emit(col);soon()},
+        async delete(){await tx("records","readwrite",st=>st.delete([col,id]));cache[col]&&cache[col].delete(id);emit(col);soon()}}}}}
   };
 }
+function FILE(){return DEVICE&&db&&db.file?db.file:null}
+function applyFileState(){const F=FILE();canWrite=!(F&&F.state==="need");render()}
 function startDevice(){
   SESSION.role="owner";canWrite=true;canSystem=true;$("#login").hidden=true;
-  $("#whoTxt").textContent=UI.lang==="my"?"ဤစက်":"This device";
+  $("#whoTxt").textContent=UI.lang==="my"?"ဤကွန်ပျူတာ":"This computer";
   if(!window.indexedDB){dbState="off";render();return}
-  startRecords(makeDeviceDb());
+  startRecords(makeDeviceDb()).then(applyFileState);
 }
+async function fileAction(kind){const F=FILE();if(!F)return;
+  try{if(kind==="open"&&F.state==="need"){if(!(await db.reconnect()))return toast(UI.lang==="my"?"ဖိုင်ကို ခွင့်မပြုရသေးပါ":"The file was not allowed")}
+    else if(kind==="new")await db.newFile();else await db.openFile();
+    toast((UI.lang==="my"?"မှတ်တမ်းဖိုင် - ":"Records file: ")+F.name);applyFileState()}
+  catch(e){if(e&&e.name==="AbortError")return;toast((UI.lang==="my"?"ဖိုင် မဖွင့်နိုင်ပါ - ":"Could not use the file: ")+(e&&e.message||e))}}
+function fileBanner(){const F=FILE();if(!F)return "";
+  if(F.state==="need")return `<div class="banner fbanner"><span><span>Your records are in the file</span> <b class="notr">${esc(F.name)}</b><span>. Open it to carry on. Nothing can be changed until it is open.</span></span><button class="btn sm primary" data-file="open">Open records file</button></div>`;
+  if(F.state==="none")return `<div class="banner fbanner"><span>Records are only in this browser for now. Keep them in a file on your computer, so they are safe on your drive.</span><span class="fbtns"><button class="btn sm primary" data-file="new">Make a new records file</button><button class="btn sm" data-file="pick">Open a records file</button></span></div>`;
+  if(F.state==="on"&&F.err)return `<div class="banner bad"><span>Could not save to the records file. Check that the drive is there, then open the file again.</span><button class="btn sm" data-file="pick">Open records file</button></div>`;
+  return ""}
+function bindFileBanner(){document.querySelectorAll("[data-file]").forEach(b=>b.onclick=()=>fileAction(b.dataset.file))}
+function syncText(){const F=FILE();if(!F)return "Saved to shared records";return F.state==="on"?(F.err?"Not saved to the file":"Saved to the records file"):F.state==="need"?"Records file not open":"Saved in this browser only"}
 const USER_DOMAIN="ap-plastic.app";
 const toEmail=u=>{u=String(u||"").trim().toLowerCase();return u.includes("@")?u:u.replace(/[^a-z0-9._-]/g,"")+"@"+USER_DOMAIN};
 const toName=e=>String(e||"").endsWith("@"+USER_DOMAIN)?String(e).split("@")[0]:String(e||"");
