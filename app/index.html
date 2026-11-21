@@ -66,7 +66,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .banner{border-radius:8px;padding:10px 14px;font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--warn-soft);color:var(--ink)}
 .banner.bad{background:var(--bad-soft)}
 .banner .btns{display:flex;gap:8px;flex-wrap:wrap}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .kpi .l{font-size:12px;color:var(--muted);font-weight:500}
 .kpi .v{font:600 22px/1.25 var(--f-data);font-variant-numeric:tabular-nums}
@@ -278,7 +279,9 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
+ "Edit":"ပြင်မည်","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
+ "All":"အားလုံး","Bought this month":"ဤလ ဝယ်ယူမှု","customers":"ဦး","All customers":"ဖောက်သည် အားလုံး","Materials":"ကုန်ကြမ်း အမျိုးအစား","Used this month":"ဤလ အသုံး","Low in store":"လက်ကျန် နည်းနေသည်","materials":"မျိုး",
+ "Products":"ကုန်ပစ္စည်း","Still sold":"ရောင်းဆဲ","Sold this month":"ဤလ ရောင်းပြီး","products":"မျိုး","In and out":"အဝင်အထွက်","Made":"ထုတ်ပြီး","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
  "Owe you the most":"အကြွေး အများဆုံး","Bought the most, last 6 months":"နောက်ဆုံး ၆ လ အများဆုံး ဝယ်သူ",
  "Material used each day (lb)":"နေ့စဉ် ကုန်ကြမ်း အသုံး (ပေါင်)","Material bought, last 6 months":"ကုန်ကြမ်း ဝယ်ယူမှု၊ နောက်ဆုံး ၆ လ","Bought this month, by material":"ဤလ ကုန်ကြမ်းအလိုက် ဝယ်ယူမှု",
  "Made each day (dz)":"နေ့စဉ် ထုတ်လုပ်မှု (ဒါဇင်)","Made, last 6 months (dz)":"ထုတ်လုပ်မှု၊ နောက်ဆုံး ၆ လ (ဒါဇင်)","In store now (dz)":"လက်ရှိ လက်ကျန် (ဒါဇင်)",
@@ -492,10 +495,10 @@ function editCustomer(id){const c=id?DB.customers[id]:{no:list("customers").redu
 V.customers=()=>{const q=UI.q.toLowerCase(),bal=balances();
   const cs=list("customers").filter(c=>!q||[c.name,c.town,c.phone,c.agent,c.no].join(" ").toLowerCase().includes(q)).sort((a,b)=>(num(a.no)||1e9)-(num(b.no)||1e9)||byName(a,b));
   const bar=`<div class="bar"><div class="left"><input class="search" id="q" placeholder="${T("Find name, town or phone")}" value="${esc(UI.q)}"></div><button class="btn primary" id="add">${T("Add customer")}</button></div>`;
-  if(!list("customers").length)return bar+empty("No customers yet","Add the shops and people who buy from you.","Add customer","add2");
+  if(!list("customers").length)return bar+empty("No customers yet","","Add customer","add2");
   const owe=id=>{const v=bal[id]||0;return v>0.5?`<span class="chip warn">${fmt(v)}</span>`:"–"};
   const cur=DB.customers[UI.cust]?UI.cust:"";
-  return custCharts(bal)+bar+`<div class="panel">${cs.length?`<div class="tw"><table><thead><tr><th class="n">${T("No")}</th><th>${T("Name")}</th><th>${T("Town / area")}</th><th>${T("Phone")}</th><th>${T("Payment term")}</th><th class="n">${T("Owes you")}</th><th></th></tr></thead><tbody>
+  return bar+custKpis(bal)+custCharts(bal)+`<div class="panel">${listTitle("All customers")}${cs.length?`<div class="tw"><table><thead><tr><th class="n">${T("No")}</th><th>${T("Name")}</th><th>${T("Town / area")}</th><th>${T("Phone")}</th><th>${T("Payment term")}</th><th class="n">${T("Owes you")}</th><th></th></tr></thead><tbody>
    ${cs.map(c=>`<tr class="click" data-hist="${c.id}" aria-current="${c.id===cur}"><td class="n">${esc(c.no||"")}</td><td class="notr">${esc(c.name)}</td><td class="notr">${esc(c.town||"")}</td><td class="notr">${esc(c.phone||"")}</td><td>${c.terms?T(c.terms):"–"}</td><td class="n">${owe(c.id)}</td><td><button class="btn sm" data-edit="${c.id}">${T("Edit")}</button></td></tr>`).join("")}</tbody></table></div>
    <div class="cards">${cs.map(c=>`<button class="card" data-hist="${c.id}"><span class="r1"><span class="notr">${esc(c.name)}</span><span>${owe(c.id)}</span></span><span class="r2 notr"><span>${esc(c.town||"")}</span><span>${esc(c.phone||"")}</span></span></button>`).join("")}</div>`
    :`<div class="empty">${T("Nothing found")}</div>`}</div>${cur?custDetail(cur):""}`};
@@ -512,6 +515,10 @@ function custDetail(id){const c=DB.customers[id];const ev=[];
    <div class="bar"><div class="left"><button class="btn" id="hEdit">${T("Edit")}</button></div><div class="left"><button class="btn" id="hPay">${T("Record payment")}</button><button class="btn primary" id="hSale">${T("New receipt")}</button></div></div>
    ${ev.length?`<div style="overflow-x:auto"><table><thead><tr><th>${T("Date")}</th><th>${T("Items")}</th><th class="n">${T("Sold")}</th><th class="n">${T("Paid")}</th><th class="n">${T("Balance")}</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="muted">${T("Nothing yet.")}</div>`}</div></div>`}
 function openCustomer(id){UI.cust=id;go("customers",true);const p=$("#custPanel");if(p)p.scrollIntoView({behavior:"smooth",block:"start"})}
+function custKpis(bal){const m=ym(today()),owe=Object.entries(bal).filter(([c,v])=>c&&v>0.5);
+  const buyers=new Set(list("sales").filter(s=>s.cust&&ym(s.date)===m).map(s=>s.cust)).size;
+  return kpiRow([kpi("Customers",fmt(list("customers").length),T("All")),kpi("Bought this month",fmt(buyers),T("customers")),
+    kpi("Customers who owe",fmt(owe.length),T("customers"),owe.length?"warn":""),kpi("Customers owe you",fmt(owe.reduce((a,[,v])=>a+v,0)),T("Kyat"),owe.length?"warn":"")])}
 function custCharts(bal){const K=" "+t("Kyat"),from=addMonth(ym(today()),-5);
   const owe=Object.entries(bal).filter(([c,v])=>c&&v>0.5).map(([c,v])=>({l:custName(c),v})).sort((a,b)=>b.v-a.v).slice(0,8);
   const bought=topBy(list("sales").filter(s=>s.cust&&ym(s.date)>=from),s=>s.cust,saleTotal,custName,8);
@@ -634,11 +641,11 @@ V.sales=()=>{const m=UI.month,q=UI.q.toLowerCase();
   const ready=list("customers").length&&list("products").length;
   const kpis=salesKpis(m);
   const bar=`<div class="bar"><div class="left">${monthPicker()}<input class="search" id="q" placeholder="${T("Find customer or product")}" value="${esc(UI.q)}"></div><button class="btn primary" id="add" ${ready?"":"disabled"}>${T("New receipt")}</button></div>`;
-  if(!ready)return kpis+bar+`<div class="panel"><div class="empty"><b>${T("First add a customer and a product.")}</b><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn" data-go="customers">${T("Customers")}</button><button class="btn" data-go="products">${T("Products")}</button></div></div></div>`;
+  if(!ready)return bar+kpis+`<div class="panel"><div class="empty"><b>${T("First add a customer and a product.")}</b><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn" data-go="customers">${T("Customers")}</button><button class="btn" data-go="products">${T("Products")}</button></div></div></div>`;
   const charts=salesCharts(m);
-  if(!inM.length)return kpis+bar+empty("No receipts this month","","New receipt","add2")+charts;
+  if(!inM.length)return bar+kpis+charts+empty("No receipts this month","","New receipt","add2");
   const st=s=>{const o=saleOwed(s);return o>0.5?`<span class="chip warn">${T("Owed")} ${fmt(o)}</span>`:`<span class="chip good">${T("Paid in full")}</span>`};
-  return kpis+charts+bar+`<div class="panel">${shown.length?`<div class="tw"><table><thead><tr><th>${T("Date")}</th><th class="n">${T("No")}</th><th>${T("Customer")}</th><th>${T("Items")}</th><th class="n">${T("Total")}</th><th class="n">${T("Paid")}</th><th></th></tr></thead><tbody>
+  return bar+kpis+charts+`<div class="panel">${listTitle("Receipts",m)}${shown.length?`<div class="tw"><table><thead><tr><th>${T("Date")}</th><th class="n">${T("No")}</th><th>${T("Customer")}</th><th>${T("Items")}</th><th class="n">${T("Total")}</th><th class="n">${T("Paid")}</th><th></th></tr></thead><tbody>
    ${shown.map(s=>`<tr class="click" data-edit="${s.id}"><td class="notr">${esc(s.date)}</td><td class="n">${esc(s.no||"")}</td><td class="notr">${esc(custName(s.cust))}</td><td class="notr">${esc(lineText(s.lines))}</td><td class="n">${fmt(saleTotal(s))}</td><td class="n">${fmt(PAID[s.id])}</td><td>${st(s)}</td></tr>`).join("")}</tbody>
    <tfoot><tr><td colspan="4">${T("Total")}</td><td class="n">${fmt(sumOf(shown))}</td><td class="n">${fmt(shown.reduce((a,s)=>a+num(PAID[s.id]),0))}</td><td></td></tr></tfoot></table></div>
    <div class="cards">${shown.map(s=>`<button class="card" data-edit="${s.id}"><span class="r1"><span class="notr">${esc(custName(s.cust))}</span><span class="n">${fmt(saleTotal(s))}</span></span><span class="r2"><span class="notr">${esc(s.date)} · #${esc(s.no||"")} · ${esc(lineText(s.lines))}</span></span><span>${st(s)}</span></button>`).join("")}</div>`
@@ -698,12 +705,16 @@ function editPayment(id,cust){const bal=balances();
    onDelete:id?()=>remove("payments",id,"Deleted"):null})}
 V.payments=()=>{const m=UI.month;const ps=list("payments").filter(p=>ym(p.date)===m).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.t||0)-(a.t||0));
   const bar=`<div class="bar"><div class="left">${monthPicker()}</div><button class="btn primary" id="add" ${list("customers").length?"":"disabled"}>${T("Record payment")}</button></div>`;
-  if(!ps.length)return bar+empty("No payments this month","When a customer pays money they owe, write it here.",list("customers").length?"Record payment":null,"add2")+(list("payments").length?payCharts(m):"");
+  if(!ps.length)return bar+payKpis(m)+(list("payments").length?payCharts(m):"")+empty("No payments this month","",list("customers").length?"Record payment":null,"add2");
   const tot=ps.reduce((a,p)=>a+num(p.amount),0);
-  return payCharts(m)+bar+`<div class="panel"><div class="tw"><table><thead><tr><th>${T("Date")}</th><th>${T("Customer")}</th><th>${T("Paid by")}</th><th>${T("Note")}</th><th class="n">${T("Amount")}</th></tr></thead><tbody>
+  return bar+payKpis(m)+payCharts(m)+`<div class="panel">${listTitle("Payments",m)}<div class="tw"><table><thead><tr><th>${T("Date")}</th><th>${T("Customer")}</th><th>${T("Paid by")}</th><th>${T("Note")}</th><th class="n">${T("Amount")}</th></tr></thead><tbody>
    ${ps.map(p=>`<tr class="click" data-edit="${p.id}"><td class="notr">${esc(p.date)}</td><td class="notr">${esc(custName(p.cust))}</td><td>${T(p.method||"Cash")}</td><td class="notr">${esc(p.note||"")}</td><td class="n">${fmt(p.amount)}</td></tr>`).join("")}</tbody>
    <tfoot><tr><td colspan="4">${T("Total")}</td><td class="n">${fmt(tot)}</td></tr></tfoot></table></div>
    <div class="cards">${ps.map(p=>`<button class="card" data-edit="${p.id}"><span class="r1"><span class="notr">${esc(custName(p.cust))}</span><span class="n">${fmt(p.amount)}</span></span><span class="r2"><span class="notr">${esc(p.date)}</span><span>${T(p.method||"Cash")}</span></span></button>`).join("")}</div></div>`};
+function payKpis(m){const td=today(),all=list("payments"),inM=all.filter(p=>ym(p.date)===m),tdP=all.filter(p=>p.date===td),sum=xs=>xs.reduce((a,p)=>a+num(p.amount),0);
+  const bal=Object.values(balances()).filter(v=>v>0.5);
+  return kpiRow([kpi("Payments today",fmt(sum(tdP)),count(tdP.length,"payment","payments")),kpi("Payments this month",fmt(sum(inM)),count(inM.length,"payment","payments")),
+    kpi("Customers owe you",fmt(bal.reduce((a,v)=>a+v,0)),T("Kyat"),bal.length?"warn":""),kpi("Customers who owe",fmt(bal.length),T("All months"))])}
 function payCharts(m){const K=" "+t("Kyat"),all=list("payments"),amt=p=>num(p.amount),inM=all.filter(p=>ym(p.date)===m);
   return chartSet(m,{day:{title:"Payments each day",data:perDay(m,all,amt),u:K},month:{title:"Payments, last 6 months",data:perMonth(m,all,amt),u:K},
     lists:[{title:"Paid by, this month",rows:topBy(inM,p=>p.method||"Cash",amt,k=>t(k)),u:K}]})}
@@ -748,11 +759,16 @@ V.raw=()=>{const m=UI.month,st=matStock();
   if(!ms.length)return bar+empty("No materials yet","","Add material","addMat2");
   const mv=list("matMoves").filter(x=>ym(x.date)===m).sort(byDateNew);
   const inKs=mv.filter(x=>x.kind==="in").reduce((a,x)=>a+num(x.qty)*num(x.price),0);
-  return rawCharts(m)+bar+`<div class="panel"><h2>${T("In store")}</h2>${grid([{l:"Material"},{l:"Unit",tr:1},{l:"Price per unit (Ks)",n:1},{l:"Minimum in store",n:1},{l:"In store",n:1}],
+  return bar+rawKpis(m,st)+rawCharts(m)+`<div class="panel"><h2>${T("In store")}</h2>${grid([{l:"Material"},{l:"Unit",tr:1},{l:"Price per unit (Ks)",n:1},{l:"Minimum in store",n:1},{l:"In store",n:1}],
      ms.map(x=>({id:x.id,cells:[esc(x.name),T(x.unit||"lb"),x.price?fmt(x.price):"–",x.min?fmt(x.min):"–",`<span class="${low(x)?"chip warn":""}">${fmt(st[x.id],1)} ${esc(t(x.unit||"lb"))}</span>`]})),"mat")}</div>
-   <div class="panel"><h2>${T("In and out this month")}</h2>${grid([{l:"Date"},{l:"Material"},{l:"In or used",tr:1},{l:"Supplier"},{l:"Amount Ks",n:1},{l:"Amount",n:1}],
+   <div class="panel">${listTitle("In and out",m)}${grid([{l:"Date"},{l:"Material"},{l:"In or used",tr:1},{l:"Supplier"},{l:"Amount Ks",n:1},{l:"Amount",n:1}],
      mv.map(x=>({id:x.id,cells:[esc(x.date),esc(mName(x.mat)),`<span class="chip ${x.kind==="in"?"good":"mute"}">${T(x.kind==="in"?"In":"Used")}</span>`,esc(x.supplier||x.note||""),x.kind==="in"&&x.price?fmt(num(x.qty)*num(x.price)):"",`${x.kind==="in"?"+":"−"}${fmt(x.qty,1)} ${esc(t(DB.materials[x.mat]?.unit||"lb"))}`]})),"mv",
      mv.length?[T("Total"),"","","",fmt(inKs),""]:null)}</div>`};
+function rawKpis(m,st){const mv=list("matMoves").filter(x=>ym(x.date)===m),ms=list("materials");
+  const low=ms.filter(x=>num(x.min)&&st[x.id]<num(x.min)).length;
+  const used=mv.filter(x=>x.kind==="out"&&(DB.materials[x.mat]?.unit||"lb")==="lb").reduce((a,x)=>a+num(x.qty),0);
+  return kpiRow([kpi("Materials",fmt(ms.length),T("All")),kpi("Bought this month",fmt(mv.filter(x=>x.kind==="in").reduce((a,x)=>a+num(x.qty)*num(x.price),0)),T("Kyat")),
+    kpi("Used this month",fmt(used,1),T("lb")),kpi("Low in store",fmt(low),T("materials"),low?"warn":"")])}
 function rawCharts(m){const K=" "+t("Kyat"),L=" "+t("lb"),mv=list("matMoves"),ins=mv.filter(x=>x.kind==="in"),ks=x=>num(x.qty)*num(x.price);
   const usedLb=mv.filter(x=>x.kind==="out"&&(DB.materials[x.mat]?.unit||"lb")==="lb");
   return chartSet(m,{day:{title:"Material used each day (lb)",data:perDay(m,usedLb,x=>num(x.qty)),u:L,dec:1},month:{title:"Material bought, last 6 months",data:perMonth(m,ins,ks),u:K},
@@ -776,11 +792,16 @@ V.finished=()=>{const m=UI.month,q=UI.q.toLowerCase(),st=fgStock();
   if(!list("products").length)return bar+empty("No products yet","","Add product","add2");
   const stock=p=>{const v=st[p.id]||0;const cls=v<0?"chip bad":num(p.minDz)&&v<num(p.minDz)?"chip warn":"";return `<span class="${cls}">${fmt(v,1)} ${esc(t("dz"))}</span>`};
   const mm=list("made").filter(x=>ym(x.date)===m).sort(byDateNew);const madeDz=mm.reduce((a,x)=>a+dzOf(DB.products[x.p],x.unit,x.qty),0);
-  return fgCharts(m,st)+bar+`<div class="panel"><h2>${T("Finished products")}</h2>${grid([{l:"Product"},{l:"Per dozen",n:1},{l:"Per bag",n:1},{l:"Dozens in one bag",n:1},{l:"Minimum (dz)",n:1},{l:"In store",n:1}],
+  return bar+fgKpis(m,st)+fgCharts(m,st)+`<div class="panel"><h2>${T("Finished products")}</h2>${grid([{l:"Product"},{l:"Per dozen",n:1},{l:"Per bag",n:1},{l:"Dozens in one bag",n:1},{l:"Minimum (dz)",n:1},{l:"In store",n:1}],
      ps.map(p=>({id:p.id,cells:[esc(prodName(p))+(p.active===false?` <span class="chip mute">${T("Not sold now")}</span>`:""),p.priceDz?fmt(p.priceDz):"–",p.priceBag?fmt(p.priceBag):"–",p.perBag?fmt(p.perBag,1):"–",p.minDz?fmt(p.minDz):"–",stock(p)]})),"edit")}</div>
-   <div class="panel"><h2>${T("Made this month")}</h2>${grid([{l:"Date"},{l:"Product"},{l:"Note"},{l:"Qty",n:1}],
+   <div class="panel">${listTitle("Made",m)}${grid([{l:"Date"},{l:"Product"},{l:"Note"},{l:"Qty",n:1}],
      mm.map(x=>({id:x.id,cells:[esc(x.date),esc(prodName(DB.products[x.p])),esc(x.note||""),`${fmt(x.qty,1)} ${esc(unitWord(x.unit,x.qty))}`]})),"md",
      mm.length?[T("Total"),"","",`${fmt(madeDz,1)} ${esc(t("dz"))}`]:null)}</div>`};
+function fgKpis(m,st){const ps=list("products").filter(p=>p.active!==false);
+  const made=list("made").filter(x=>ym(x.date)===m).reduce((a,x)=>a+dzOf(DB.products[x.p],x.unit,x.qty),0);
+  let sold=0;list("sales").forEach(s=>{if(ym(s.date)===m)(s.lines||[]).forEach(l=>sold+=dzOf(DB.products[l.p],l.unit,l.qty))});
+  const low=ps.filter(p=>(st[p.id]||0)<0||(num(p.minDz)&&(st[p.id]||0)<num(p.minDz))).length;
+  return kpiRow([kpi("Products",fmt(ps.length),T("Still sold")),kpi("Made this month",fmt(made,1),T("dz")),kpi("Sold this month",fmt(sold,1),T("dz")),kpi("Low in store",fmt(low),T("products"),low?"warn":"")])}
 function fgCharts(m,st){const D=" "+t("dz"),mm=list("made"),dz=x=>dzOf(DB.products[x.p],x.unit,x.qty);
   const inStore=list("products").filter(p=>p.active!==false&&(st[p.id]||0)>0).map(p=>({l:prodName(p),v:st[p.id]})).sort((a,b)=>b.v-a.v).slice(0,8);
   return chartSet(m,{day:{title:"Made each day (dz)",data:perDay(m,mm,dz),u:D,dec:1},month:{title:"Made, last 6 months (dz)",data:perMonth(m,mm,dz),u:D,dec:1},
@@ -806,13 +827,12 @@ const WASTE_LIMIT=5;
 V.waste=()=>{const m=UI.month,ws=list("waste").filter(x=>ym(x.date)===m).sort(byDateNew);
   const sum=k=>ws.filter(x=>x.kind===k).reduce((a,x)=>a+num(x.qty),0);const soldKs=ws.filter(x=>x.kind==="sold").reduce((a,x)=>a+num(x.qty)*num(x.price),0);
   const pct=wastePct(m);
-  const kpi=(l,v,d,cls="")=>`<div class="kpi"><span class="l">${T(l)}</span><span class="v notr ${cls}">${v}</span><span class="d">${d}</span></div>`;
   const kinds={waste:["Waste","warn"],regrind:["Regrind","good"],sold:["Sold","mute"]};
-  return `<div class="kpis">${kpi("Waste this month",fmt(sum("waste"),1),pct==null?T("lb"):`<span class="notr">${fmt(pct,1)}%</span> ${T("of material used")}`,pct!=null&&pct>WASTE_LIMIT?"warn":"")}${kpi("Regrind made",fmt(sum("regrind"),1),T("lb"))}${kpi("Waste sold",fmt(sum("sold"),1),`<span class="notr">${fmt(soldKs)}</span> ${T("Kyat")}`)}${kpi("Waste in store",fmt(wasteStore(),1),T("lb"))}</div>
-   ${wasteCharts(m)}<div class="bar"><div class="left">${monthPicker()}</div><div class="left"><button class="btn" id="wSold">${T("Waste sold")}</button><button class="btn" id="wRe">${T("Regrind made")}</button><button class="btn primary" id="wAdd">${T("Add waste")}</button></div></div>
-   <div class="panel">${grid([{l:"Date"},{l:"Kind",tr:1},{l:"Details"},{l:"Amount Ks",n:1},{l:"Weight (lb)",n:1}],
+  const tools=`<div class="bar"><div class="left">${monthPicker()}</div><div class="left"><button class="btn" id="wSold">${T("Waste sold")}</button><button class="btn" id="wRe">${T("Regrind made")}</button><button class="btn primary" id="wAdd">${T("Add waste")}</button></div></div>`;
+  return tools+`<div class="kpis">${kpi("Waste this month",fmt(sum("waste"),1),pct==null?T("lb"):`<span class="notr">${fmt(pct,1)}%</span> ${T("of material used")}`,pct!=null&&pct>WASTE_LIMIT?"warn":"")}${kpi("Regrind made",fmt(sum("regrind"),1),T("lb"))}${kpi("Waste sold",fmt(sum("sold"),1),`<span class="notr">${fmt(soldKs)}</span> ${T("Kyat")}`)}${kpi("Waste in store",fmt(wasteStore(),1),T("lb"))}</div>
+   ${wasteCharts(m)}<div class="panel">${listTitle("Waste products",m)}${grid([{l:"Date"},{l:"Kind",tr:1},{l:"Details"},{l:"Amount Ks",n:1},{l:"Weight (lb)",n:1}],
      ws.map(x=>({id:x.id,cells:[esc(x.date),`<span class="chip ${kinds[x.kind][1]}">${T(kinds[x.kind][0])}</span>`,
-       esc(x.kind==="waste"?[x.from,t(x.reason||"")].filter(Boolean).join(" · "):x.kind==="regrind"?(x.mat?t("Added to")+" "+mName(x.mat):""):[x.buyer,x.price?fmt(x.price)+" / lb":""].filter(Boolean).join(" · ")),
+       esc(x.kind==="waste"?[x.from,t(x.reason||"")].filter(Boolean).join(" · "):x.kind==="regrind"?(x.mat?t("Added to")+" "+mName(x.mat):""):[x.buyer,x.price?fmt(x.price)+" / "+t("lb"):""].filter(Boolean).join(" · ")),
        x.kind==="sold"&&x.price?fmt(num(x.qty)*num(x.price)):"",fmt(x.qty,1)]})),"ws")}</div>`};
 function wasteCharts(m){const L=" "+t("lb"),w=list("waste").filter(x=>x.kind==="waste"),q=x=>num(x.qty);
   return chartSet(m,{day:{title:"Waste each day (lb)",data:perDay(m,w,q),u:L,dec:1},month:{title:"Waste, last 6 months (lb)",data:perMonth(m,w,q),u:L,dec:1},
@@ -837,6 +857,13 @@ const DEPTS=[
   {id:"settings",name:"Settings"}];
 const OLD={products:"finished"};   // older page names still used in a few places
 const deptOf=k=>DEPTS.find(d=>d.id===k||(d.tabs||[]).some(x=>x[0]===k))||DEPTS[0];
+/* Every tab is built the same way, top to bottom:
+   1. tools: month (and search) on the left, buttons on the right, the main button last and outlined in blue
+   2. four numbers (kpiRow)   3. graphs (chartSet)   4. the lists, each in a panel with a title */
+function kpi(l,v,d,cls=""){return `<div class="kpi"><span class="l">${T(l)}</span><span class="v notr ${cls}">${v}</span><span class="d">${d||"&nbsp;"}</span></div>`}
+const kpiRow=items=>`<div class="kpis">${items.join("")}</div>`;
+const count=(n,one,many)=>`<span class="notr">${fmt(n)}</span> ${T(n===1?one:many)}`;
+const listTitle=(l,m)=>`<h2>${T(l)}${m?` · <span class="notr">${esc(monthName(m))}</span>`:""}</h2>`;
 function empty(title,body,btn,id){return `<div class="panel"><div class="empty"><b>${T(title)}</b>${body?`<div>${T(body)}</div>`:""}${btn?`<button class="btn primary" id="${id}">${T(btn)}</button>`:""}</div></div>`}
 function monthPicker(){return `<span class="seg"><button id="mPrev" aria-label="Previous month">‹</button><button aria-pressed="false" style="cursor:default" class="notr">${esc(monthName(UI.month))}</button><button id="mNext" aria-label="Next month">›</button></span>`}
 function bindMonth(){$("#mPrev")&&($("#mPrev").onclick=()=>{UI.month=addMonth(UI.month,-1);render()});$("#mNext")&&($("#mNext").onclick=()=>{UI.month=addMonth(UI.month,1);render()})}

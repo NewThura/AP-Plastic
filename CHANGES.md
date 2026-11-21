@@ -2,6 +2,10 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`): every tab built the same way, top to bottom: tools (month,
+  search, buttons), four numbers, graphs, then the lists with a title. Added the four numbers to Payments,
+  Customers, Raw materials and Finished products; removed the last hint lines.
+
 - 2026-11-21, Thura with Claude: new app (`app/`): graphs on every tab. Payments (each day, 6 months, paid by),
   Customers (owe the most, bought the most), Raw materials (used each day, bought), Finished products (made each
   day, 6 months, in store), Waste (each day, 6 months, by reason). Chart scales now use round steps.
