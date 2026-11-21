@@ -51,6 +51,14 @@ and only updates its own copy after someone presses Accept. Refuse leaves its co
 connected when there is a cloud again; until then the outbox only fills up. Sales and payments are not shared.
 The main app shows as little explaining text as possible: no hint lines, short buttons, short messages.
 
+**Cloud plan (decided 2026-11-21, not built yet: no cloud rented).** Records are kept in two places: the cloud
+and the office computer's folder. Neither replaces the other; the folder saving stays as it is. The cloud must
+keep at least one year of records: every record stays (nothing is cleared after a time limit), and the cloud also
+keeps one copy for each month, the same as `ap-records-YYYY-MM.json` on the computer, never deleting a month that
+is less than 12 months old. Don't count on the cloud company's own backups for this (on cheap plans they are kept
+only a few days, or not at all); the app makes the monthly copies itself. Choose a plan that does not pause the
+database when it is not used for a while.
+
 ## How the code is laid out (old app)
 Everything is in `index.html` (one file, no build step): styles at the top, then the page, then one script.
 - `COLS`: record types loaded from Supabase. `S[col][id]` holds them. `save(col,id,data,msg)` / `remove(col,id,msg)` write.
