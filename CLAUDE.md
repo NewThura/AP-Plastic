@@ -32,7 +32,15 @@ Write your name, the part, and the date. Remove your line when you are done.
 | Thura (Main App Chat) | Records kept on the device instead of Supabase (sign-in, saving), branch `device-records` | 2026-11-21 |
 | Thura (Main App Chat) | New simple app in `app/` (step 1: sales), branch `new-app` | 2026-11-21 |
 
-## How the code is laid out
+## The new app (`app/`, started 2026-11-21)
+A new, simpler app is being built step by step in `app/index.html` (one file, readable code). It only collects
+data and shows it to the CEO. Step 1: sales (products, customers, sales, payments). Records are kept in a records
+file on the office computer's drive (Chrome or Edge), with a copy in the browser; nothing is sent anywhere.
+Words: `MY` (English → Myanmar) at the top of its script; wrap fixed text in `t()` / `T()`. Test it with
+`python -m http.server 8770 --directory .` from the project folder, then open http://127.0.0.1:8770/app/ .
+The old app below stays live until the new one replaces it.
+
+## How the code is laid out (old app)
 Everything is in `index.html` (one file, no build step): styles at the top, then the page, then one script.
 - `COLS`: record types loaded from Supabase. `S[col][id]` holds them. `save(col,id,data,msg)` / `remove(col,id,msg)` write.
 - `PAGES`: the left menu and each page's tabs. `V.<page>.<tab>()` returns the HTML of a tab; `V.<page>.<tab>.bind()` hooks up its buttons.

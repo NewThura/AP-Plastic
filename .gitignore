@@ -18,3 +18,7 @@ Screenshot*
 # Test output
 /test/out/
 __pycache__/
+
+# New app: records files and backups (private)
+ap-sales-records*.json
+ap-sales-backup*.json

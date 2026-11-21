@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AP Plastic</title>
+<meta name="theme-color" content="#0B6E78">
+<link rel="icon" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Myanmar:wght@400;600&display=swap">
+<style>
+/* =========================================================
+   AP Plastic: simple data app (new, 2026-11-21)
+   One file: styles, page, script. Records are kept in a file
+   on this computer's drive (Chrome or Edge), with a copy in
+   the browser. Nothing is sent anywhere.
+   ========================================================= */
+:root{
+  --bg:#F4F5F2; --surface:#FFFFFF; --sunk:#ECEEEA; --line:#DCDFD8; --ink:#1B2226; --muted:#5F6B70;
+  --accent:#0B6E78; --accent-ink:#FFFFFF; --accent-soft:#DDEFF0;
+  --good:#1E7B4A; --good-soft:#DDF1E5; --warn:#A46200; --warn-soft:#FBEBCF; --bad:#B4322A; --bad-soft:#F8DEDB;
+  --f-display:"Archivo","Noto Sans Myanmar",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Noto Sans Myanmar",system-ui,sans-serif;
+  --f-data:"IBM Plex Mono","Noto Sans Myanmar",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#101416; --surface:#181E21; --sunk:#12171A; --line:#2A3337; --ink:#E6ECEE; --muted:#93A1A6;
+  --accent:#4FBFC8; --accent-ink:#06282B; --accent-soft:#16363B;
+  --good:#5CC98C; --good-soft:#143224; --warn:#E5A84A; --warn-soft:#33260F; --bad:#EF7A70; --bad-soft:#3A1916;
+  color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);-webkit-font-smoothing:antialiased}
+html[lang="my"] body{line-height:1.75}
+button,input,select,textarea{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
+.side{background:var(--surface);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh}
+.brand b{display:block;font:800 20px var(--f-display);letter-spacing:-.01em}
+.brand span{font-size:12px;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--muted);font-weight:500}
+.nav button svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8}
+.nav button:hover{background:var(--sunk);color:var(--ink)}
+.nav button[aria-current="true"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.nav button:focus-visible{outline:2px solid var(--accent)}
+.side .foot{margin-top:auto;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--warn);margin-right:6px}
+.dot.on{background:var(--good)} .dot.bad{background:var(--bad)}
+.main{padding:24px 28px 40px;display:flex;flex-direction:column;gap:16px;min-width:0;max-width:1180px}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.top h1{margin:0;font:800 26px var(--f-display);letter-spacing:-.01em}
+.top .sub{color:var(--muted);font-size:13px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{all:unset;cursor:pointer;padding:6px 12px;font-size:13px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;min-height:38px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--bad)} .btn.danger.arm{background:var(--bad);color:#fff;border-color:var(--bad)}
+.btn.sm{padding:4px 10px;min-height:30px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.banner{border-radius:8px;padding:10px 14px;font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--warn-soft);color:var(--ink)}
+.banner.bad{background:var(--bad-soft)}
+.banner .btns{display:flex;gap:8px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi .l{font-size:12px;color:var(--muted);font-weight:500}
+.kpi .v{font:600 22px/1.25 var(--f-data);font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12px;color:var(--muted)}
+.kpi .v.warn{color:var(--warn)}
+.bar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.bar .left{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+input.search,select.pick{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;min-height:38px}
+input.search{min-width:220px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.panel>h2{margin:0;padding:12px 16px;font:700 15px var(--f-display);border-bottom:1px solid var(--line)}
+.panel>.pb{padding:14px 16px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;font-weight:600;color:var(--muted);background:var(--sunk);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-family:var(--f-data);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.click{cursor:pointer} tr.click:hover td{background:var(--sunk)}
+tfoot td{font-weight:600;background:var(--sunk)}
+.small{font-size:12px} .muted{color:var(--muted)}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:10px;white-space:nowrap}
+.chip.good{background:var(--good-soft);color:var(--good)} .chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.mute{background:var(--sunk);color:var(--muted)}
+.empty{padding:36px 16px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:10px;align-items:center}
+.empty b{color:var(--ink);font-size:16px}
+/* cards instead of tables on phones */
+.cards{display:none;flex-direction:column}
+.card{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.card:last-child{border-bottom:0}
+.card .r1{display:flex;justify-content:space-between;gap:10px;font-weight:600}
+.card .r1 .n{font-family:var(--f-data)}
+.card .r2{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted)}
+/* side form */
+.scrim{position:fixed;inset:0;background:rgba(10,15,18,.45);display:flex;justify-content:flex-end;z-index:20}
+.drawer{background:var(--surface);width:min(560px,100%);height:100%;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.2)}
+.drawer header,.drawer footer{padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+.drawer footer{border-bottom:0;border-top:1px solid var(--line)}
+.drawer h2{margin:0;font:700 18px var(--f-display)}
+.drawer .body{padding:16px 18px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:13px;font-weight:600;color:var(--muted)}
+.field input,.field select,.field textarea,.ln input,.ln select{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px;min-height:40px;width:100%;min-width:0}
+.field textarea{min-height:70px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus,.ln input:focus,.ln select:focus{outline:2px solid var(--accent);outline-offset:-1px;background:var(--surface)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lines{display:flex;flex-direction:column;gap:8px}
+.ln{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr) minmax(0,.9fr) minmax(0,1.2fr) 36px;gap:6px;align-items:center}
+.ln input.num{text-align:right}
+.lnhead{font-size:12px;font-weight:600;color:var(--muted)}
+.ln .x{all:unset;cursor:pointer;text-align:center;color:var(--muted);font-size:20px;line-height:36px}
+.ln .x:hover{color:var(--bad)}
+.ln .amt{grid-column:1/-1;text-align:right;font:600 13px var(--f-data);color:var(--muted);margin-top:-4px}
+.sums{background:var(--sunk);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-variant-numeric:tabular-nums}
+.sums div{display:flex;justify-content:space-between}
+.sums b{font-family:var(--f-data)}
+.sums .big{font-size:17px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600;z-index:30;max-width:90vw}
+.bnav{display:none}
+@media (max-width:760px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{display:none}
+  .main{padding:16px 16px 96px}
+  .top h1{font-size:22px}
+  .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);z-index:10;padding-bottom:env(safe-area-inset-bottom)}
+  .bnav button{all:unset;cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;font-size:11px;color:var(--muted);text-align:center}
+  .bnav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8}
+  .bnav button[aria-current="true"]{color:var(--accent);font-weight:600}
+  .tw{display:none} .cards{display:flex}
+  input.search{min-width:0;flex:1}
+  .frow{grid-template-columns:1fr}
+  .ln{grid-template-columns:minmax(0,1fr) minmax(0,.9fr) minmax(0,1.2fr) 32px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .kpi{padding:10px 12px} .kpi .v{font-size:18px}
+  .ln>:first-child{grid-column:1/-1}
+  .ln{padding-bottom:8px;border-bottom:1px dashed var(--line)}
+  .lnhead{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><b>AP Plastic</b><span data-t>Sales records</span></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="foot"><div><span class="dot" id="dot"></span><span id="sync"></span></div><div class="notr" id="fileName"></div></div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<nav class="bnav" id="bnav"></nav>
+<div id="drawer"></div>
+<script>
+"use strict";
+/* ================= words (English → Myanmar) ================= */
+const MY={
+ "Sales records":"အရောင်းမှတ်တမ်း","Sales":"အရောင်း","Payments":"ငွေလက်ခံ","Customers":"ဖောက်သည်","Products":"ကုန်ပစ္စည်း","Settings":"ဆက်တင်",
+ "Every sale, by month":"လအလိုက် အရောင်းအားလုံး","Money customers pay after the sale":"အရောင်းပြီးနောက် ဖောက်သည် ပေးငွေ",
+ "Who buys, and what they owe":"ဝယ်သူနှင့် ပေးရန်ကျန်ငွေ","What you sell, and the usual price":"ရောင်းသည့်ပစ္စည်းနှင့် ပုံမှန်ဈေး",
+ "Records file, backup and language":"မှတ်တမ်းဖိုင်၊ အရန်နှင့် ဘာသာစကား",
+ "New sale":"အရောင်းအသစ်","Sale":"အရောင်း","Record payment":"ငွေလက်ခံ မှတ်မည်","Payment":"ငွေလက်ခံ","Add customer":"ဖောက်သည် ထည့်မည်","New customer":"ဖောက်သည်အသစ်",
+ "Add product":"ကုန်ပစ္စည်း ထည့်မည်","New product":"ကုန်ပစ္စည်းအသစ်",
+ "Sales today":"ယနေ့ အရောင်း","Sales this month":"ဤလ အရောင်း","Money in this month":"ဤလ ဝင်ငွေ","Customers owe you":"ဖောက်သည်ထံမှ ရရန်",
+ "sales":"ကြိမ်","sale":"ကြိမ်","Kyat":"ကျပ်","All customers, all months":"ဖောက်သည်အားလုံး၊ လအားလုံး","Cash, bank and phone pay":"ငွေသား၊ ဘဏ်နှင့် ဖုန်းငွေလွှဲ",
+ "Find customer or product":"ဖောက်သည် သို့မဟုတ် ကုန်ပစ္စည်း ရှာရန်","Find name, town or phone":"အမည်၊ မြို့ သို့မဟုတ် ဖုန်း ရှာရန်","Find product":"ကုန်ပစ္စည်း ရှာရန်",
+ "Date":"ရက်စွဲ","No":"နံပါတ်","Customer":"ဖောက်သည်","Items":"ပစ္စည်းများ","Total":"စုစုပေါင်း","Paid":"ပေးပြီး","Owed":"ကျန်ငွေ","Paid in full":"ငွေချေပြီး",
+ "Amount":"ငွေပမာဏ","Paid by":"ပေးချေပုံ","Note":"မှတ်ချက်","Name":"အမည်","Town":"မြို့","Phone":"ဖုန်း","Owes you":"ရရန်ကျန်","Bought":"ဝယ်ငွေ","In use":"သုံးနေဆဲ","Not sold now":"ယခု မရောင်း",
+ "Myanmar name":"မြန်မာအမည်","English name":"အင်္ဂလိပ်အမည်","Price per dozen (Ks)":"တစ်ဒါဇင်ဈေး (ကျပ်)","Price per bag (Ks)":"တစ်အိတ်ဈေး (ကျပ်)","Dozens in one bag":"တစ်အိတ်တွင် ဒါဇင်",
+ "Still sold?":"ရောင်းနေဆဲလား","Yes":"ဟုတ်","No, hide it":"မဟုတ်၊ ဖျောက်ထားမည်","Per dozen":"တစ်ဒါဇင်","Per bag":"တစ်အိတ်",
+ "Dozen":"ဒါဇင်","Bag":"အိတ်","dz":"ဒါဇင်","bags":"အိတ်","Qty":"အရေအတွက်","Unit":"ယူနစ်","Price (Ks)":"ဈေး (ကျပ်)","Product":"ကုန်ပစ္စည်း",
+ "— choose —":"— ရွေးပါ —","+ Add product line":"+ ကုန်ပစ္စည်း ထပ်ထည့်မည်","Paid now (Ks)":"ယခု ပေးငွေ (ကျပ်)","Still owed":"ပေးရန်ကျန်","Total of this sale":"ဤအရောင်း စုစုပေါင်း",
+ "Cash":"ငွေသား","KBZPay":"KBZPay","Bank":"ဘဏ်","Other":"အခြား","Not paid yet":"မပေးရသေး",
+ "Save":"သိမ်းမည်","Cancel":"မလုပ်တော့ပါ","Close":"ပိတ်မည်","Delete":"ဖျက်မည်","Tap again to delete":"ဖျက်ရန် ထပ်နှိပ်ပါ",
+ "Saved":"သိမ်းပြီး","Deleted":"ဖျက်ပြီး","Sale saved":"အရောင်း သိမ်းပြီး","Payment saved":"ငွေလက်ခံ သိမ်းပြီး","Customer saved":"ဖောက်သည် သိမ်းပြီး","Product saved":"ကုန်ပစ္စည်း သိမ်းပြီး",
+ "Choose the customer":"ဖောက်သည်ကို ရွေးပါ","Add at least one product with a quantity":"အရေအတွက်နှင့် ကုန်ပစ္စည်း အနည်းဆုံး တစ်ခု ထည့်ပါ","Enter a price for each product":"ကုန်ပစ္စည်းတိုင်းအတွက် ဈေး ထည့်ပါ",
+ "Enter the amount":"ငွေပမာဏ ထည့်ပါ","Enter a name":"အမည် ထည့်ပါ","Paid now is more than the total":"ယခုပေးငွေသည် စုစုပေါင်းထက် များနေသည်",
+ "This customer has sales or payments, so it is kept":"ဤဖောက်သည်တွင် အရောင်း သို့မဟုတ် ငွေလက်ခံ ရှိ၍ ဖျက်မရပါ","This product is in sales, so it is kept. Set it to not sold instead.":"ဤကုန်ပစ္စည်းသည် အရောင်းထဲတွင် ရှိ၍ ဖျက်မရပါ။ မရောင်းတော့ဟု ပြောင်းပါ။",
+ "No sales this month":"ဤလ အရောင်း မရှိပါ","Write each sale here: who bought, what, and what they paid.":"အရောင်းတိုင်း ဒီမှာ ရေးပါ - ဘယ်သူဝယ်သည်၊ ဘာဝယ်သည်၊ ဘယ်လောက် ပေးသည်။",
+ "No payments this month":"ဤလ ငွေလက်ခံ မရှိပါ","When a customer pays money they owe, write it here.":"ဖောက်သည်က ပေးရန်ကျန်ငွေ ပေးလျှင် ဒီမှာ ရေးပါ။",
+ "No customers yet":"ဖောက်သည် မရှိသေးပါ","Add the shops and people who buy from you.":"သင့်ထံ ဝယ်သော ဆိုင်များနှင့် လူများကို ထည့်ပါ။",
+ "No products yet":"ကုန်ပစ္စည်း မရှိသေးပါ","Add what you sell and the usual price. Sales then take the price for you.":"ရောင်းသည့်ပစ္စည်းနှင့် ပုံမှန်ဈေးကို ထည့်ပါ။ အရောင်းတွင် ဈေးကို အလိုလို ယူပေးမည်။",
+ "First add a customer and a product.":"ပထမဦးစွာ ဖောက်သည်နှင့် ကုန်ပစ္စည်း ထည့်ပါ။","Nothing found":"ရှာမတွေ့ပါ",
+ "Tap a row to change it.":"ပြင်ရန် အတန်းကို နှိပ်ပါ။",
+ "Records file":"မှတ်တမ်းဖိုင်","Make a new records file":"မှတ်တမ်းဖိုင်အသစ် လုပ်မည်","Open a records file":"မှတ်တမ်းဖိုင် ဖွင့်မည်","Open records file":"မှတ်တမ်းဖိုင် ဖွင့်မည်",
+ "Saved to the records file":"မှတ်တမ်းဖိုင်ထဲ သိမ်းပြီး","Saved in this browser only":"ဤ browser တွင်သာ သိမ်းထားသည်","Records file not open":"မှတ်တမ်းဖိုင် မဖွင့်ရသေး","Not saved to the file":"ဖိုင်ထဲ မသိမ်းရသေး",
+ "Records are only in this browser for now. Keep them in a file on your drive.":"ယခု မှတ်တမ်းများ ဤ browser တွင်သာ ရှိသည်။ drive ပေါ်ရှိ ဖိုင်တစ်ခုတွင် သိမ်းပါ။",
+ "Your records are in the file":"သင့်မှတ်တမ်းများ ရှိသည့်ဖိုင် -","Open it to carry on. Nothing can be changed until it is open.":"ဆက်လုပ်ရန် ဖွင့်ပါ။ မဖွင့်မချင်း ဘာမှ ပြင်၍ မရပါ။",
+ "Could not save to the records file. Check that the drive is there, then open the file again.":"မှတ်တမ်းဖိုင်ထဲ မသိမ်းနိုင်ပါ။ drive ရှိမရှိ စစ်ပြီး ဖိုင်ကို ပြန်ဖွင့်ပါ။",
+ "This browser cannot keep records in a file. Use Chrome or Edge on a computer. Until then, records stay in this browser only.":"ဤ browser သည် ဖိုင်ထဲ မှတ်တမ်း မသိမ်းနိုင်ပါ။ ကွန်ပျူတာပေါ်ရှိ Chrome သို့မဟုတ် Edge ကို သုံးပါ။ ထိုအချိန်အထိ မှတ်တမ်းများ ဤ browser တွင်သာ ရှိမည်။",
+ "Every change is saved into this file straight away.":"ပြောင်းလဲမှုတိုင်းကို ဤဖိုင်ထဲ ချက်ချင်း သိမ်းသည်။","Chosen, but not open yet.":"ရွေးထားပြီး၊ မဖွင့်ရသေးပါ။","No file chosen yet.":"ဖိုင် မရွေးရသေးပါ။",
+ "Keep the file anywhere on your drive, for example E:\\AP Records. Never put it inside the AP-Plastic project folder: that folder is public on GitHub.":"ဖိုင်ကို drive ပေါ် ကြိုက်သည့်နေရာတွင် ထားပါ၊ ဥပမာ E:\\AP Records။ AP-Plastic project ဖိုင်တွဲထဲ ဘယ်တော့မှ မထည့်ပါနှင့် - ထိုဖိုင်တွဲသည် GitHub တွင် လူတိုင်း မြင်နိုင်သည်။",
+ "Backup":"အရန်ကူးယူ","Save a backup file every week and keep it somewhere safe, such as a USB stick.":"အပတ်တိုင်း အရန်ဖိုင် သိမ်းပြီး USB ကဲ့သို့ လုံခြုံသောနေရာတွင် ထားပါ။",
+ "Save a backup file":"အရန်ဖိုင် သိမ်းမည်","Load a backup file":"အရန်ဖိုင် ပြန်ထည့်မည်","Loading a backup replaces all records in the app with the ones in the file.":"အရန်ဖိုင် ပြန်ထည့်လျှင် app ထဲရှိ မှတ်တမ်းအားလုံးကို ဖိုင်ထဲရှိ မှတ်တမ်းများဖြင့် အစားထိုးမည်။",
+ "Backup loaded":"အရန်ဖိုင် ပြန်ထည့်ပြီး","This is not a backup file":"ဤဖိုင်သည် အရန်ဖိုင် မဟုတ်ပါ","Language":"ဘာသာစကား","records":"မှတ်တမ်း",
+ "Could not use the file":"ဖိုင်ကို မသုံးနိုင်ပါ","The file was not allowed":"ဖိုင်ကို ခွင့်မပြုရသေးပါ","Could not save to the records file":"မှတ်တမ်းဖိုင်ထဲ မသိမ်းနိုင်ပါ",
+ "This computer":"ဤကွန်ပျူတာ","Loading…":"ဖွင့်နေသည်…","Walk-in":"လမ်းသွားဝယ်သူ","Remove":"ဖယ်မည်","Payment history":"ငွေပေးချေမှု မှတ်တမ်း","History":"မှတ်တမ်း",
+ "Sold":"ရောင်းငွေ","Balance":"ကျန်ငွေ","Nothing yet.":"မရှိသေးပါ။","Pay":"ငွေလက်ခံ","Customer pays":"ဖောက်သည် ပေးငွေ","owes":"ပေးရန်ကျန်",
+ "Products sold this month":"ဤလ ရောင်းသည့် ကုန်ပစ္စည်း","Usual price":"ပုံမှန်ဈေး","Edit":"ပြင်မည်","Products":"ကုန်ပစ္စည်းများ"
+};
+const MON_EN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MON_MY=["ဇန်နဝါရီ","ဖေဖော်ဝါရီ","မတ်","ဧပြီ","မေ","ဇွန်","ဇူလိုင်","ဩဂုတ်","စက်တင်ဘာ","အောက်တိုဘာ","နိုဝင်ဘာ","ဒီဇင်ဘာ"];
+
+/* ================= small helpers ================= */
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=v=>{const n=parseFloat(String(v??"").replace(/[၀-၉]/g,d=>d.charCodeAt(0)-0x1040).replace(/,/g,""));return isFinite(n)?n:0};
+const fmt=(n,d=0)=>Number(n||0).toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:d});
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const ym=d=>String(d||"").slice(0,7);
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+const UI={page:ls("ap2.page")||"sales",lang:ls("ap2.lang")||"en",month:ym(today()),q:"",cust:""};
+const t=s=>UI.lang==="my"&&MY[s]?MY[s]:s;          // translate a fixed piece of text
+const T=s=>esc(t(s));                              // translated and safe for HTML
+const monthName=m=>{const [y,mo]=m.split("-");return (UI.lang==="my"?MON_MY:MON_EN)[+mo-1]+" "+y};
+const addMonth=(m,k)=>{const [y,mo]=m.split("-").map(Number);const d=new Date(y,mo-1+k,1);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")};
+function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2200)}
+const ICON={
+ sales:'<path d="M4 7h16l-1.5 12h-13z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
+ payments:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/>',
+ customers:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.5-3.5 3-5.5 6-5.5s5.5 2 6 5.5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.5c2.6.2 4.4 2 5 5"/>',
+ products:'<path d="M6 4h12l-1.5 16h-9z"/><path d="M5 4h14"/>',
+ settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'};
+const svg=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
+
+/* ================= where records are kept =================
+   Main copy: a records file on this computer's drive (Chrome / Edge, File System Access).
+   Working copy: the browser (IndexedDB), so the app opens fast and still works without the file.
+   File format: {app, saved, records:[{col,id,data}]} */
+const COLS=["products","customers","sales","payments"];
+const DB={};COLS.forEach(c=>DB[c]={});
+const Store={
+  idb:null,ready:false,
+  file:{handle:null,name:"",state:"none",err:false,timer:null,saving:false,again:false}, // none | need | on | nosupport
+  open(){return new Promise((ok,bad)=>{const r=indexedDB.open("ap-sales-app",1);r.onupgradeneeded=()=>{r.result.createObjectStore("records",{keyPath:["col","id"]});r.result.createObjectStore("meta")};r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)})},
+  tx(store,mode,fn){return new Promise((ok,bad)=>{const x=this.idb.transaction(store,mode);const req=fn(x.objectStore(store));x.oncomplete=()=>ok(req&&req.result);x.onerror=()=>bad(x.error)})},
+  all(){const out=[];for(const c of COLS)for(const [id,data] of Object.entries(DB[c]))out.push({col:c,id,data});return out},
+  async replaceAll(recs){await this.tx("records","readwrite",st=>{st.clear();recs.forEach(r=>st.put(r))});COLS.forEach(c=>DB[c]={});recs.forEach(r=>{if(DB[r.col])DB[r.col][r.id]=r.data})},
+  async readFile(h){const txt=await (await h.getFile()).text();if(!txt.trim())return [];const j=JSON.parse(txt);return (j.records||[]).filter(r=>r&&COLS.includes(r.col)&&r.id&&r.data)},
+  async writeFile(){const F=this.file;if(F.state!=="on")return;if(F.saving){F.again=true;return}F.saving=true;
+    try{const w=await F.handle.createWritable();await w.write(JSON.stringify({app:"AP Plastic sales",saved:new Date().toISOString(),records:this.all()}));await w.close();if(F.err){F.err=false;render()}}
+    catch(e){if(!F.err){F.err=true;toast(t("Could not save to the records file"));render()}}
+    finally{F.saving=false;if(F.again){F.again=false;this.writeFile()}}},
+  soon(){clearTimeout(this.file.timer);this.file.timer=setTimeout(()=>this.writeFile(),300)},
+  async link(h){const F=this.file;F.handle=h;F.name=h.name;F.state="on";F.err=false;await this.tx("meta","readwrite",st=>st.put(h,"file"))},
+  async start(){
+    this.idb=await this.open();
+    (await this.tx("records","readonly",st=>st.getAll())||[]).forEach(r=>{if(DB[r.col])DB[r.col][r.id]=r.data});
+    const F=this.file;
+    if(!window.showOpenFilePicker)F.state="nosupport";
+    else{const h=await this.tx("meta","readonly",st=>st.get("file"));
+      if(h){F.handle=h;F.name=h.name;let p="prompt";try{p=await h.queryPermission({mode:"readwrite"})}catch(e){}
+        if(p==="granted"){try{await this.replaceAll(await this.readFile(h));F.state="on"}catch(e){F.state="need"}}else F.state="need"}}
+    try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+    this.ready=true;
+  },
+  canChange(){return this.ready&&this.file.state!=="need"},
+  async put(col,id,data){await this.tx("records","readwrite",st=>st.put({col,id,data}));DB[col][id]=data;this.soon()},
+  async del(col,id){await this.tx("records","readwrite",st=>st.delete([col,id]));delete DB[col][id];this.soon()},
+  async reopen(){const F=this.file;const p=await F.handle.requestPermission({mode:"readwrite"});if(p!=="granted")return false;await this.replaceAll(await this.readFile(F.handle));F.state="on";F.err=false;return true},
+  TYPES:[{description:"AP Plastic records",accept:{"application/json":[".json"]}}],
+  async newFile(){const h=await showSaveFilePicker({suggestedName:"ap-sales-records.json",types:this.TYPES});await this.link(h);await this.writeFile()},
+  async openFile(){const [h]=await showOpenFilePicker({types:this.TYPES,multiple:false});await this.replaceAll(await this.readFile(h));await this.link(h)}
+};
+async function save(col,id,data,msg){if(!Store.canChange())return toast(t("Records file not open"));try{await Store.put(col,id,data);if(msg)toast(t(msg));render()}catch(e){toast(String(e.message||e))}}
+async function remove(col,id,msg){if(!Store.canChange())return;await Store.del(col,id);if(msg)toast(t(msg));render()}
+async function fileAction(kind){
+  try{if(kind==="open"&&Store.file.state==="need"){if(!(await Store.reopen()))return toast(t("The file was not allowed"))}
+    else if(kind==="new")await Store.newFile();else await Store.openFile();
+    toast(t("Records file")+": "+Store.file.name);render()}
+  catch(e){if(e&&e.name==="AbortError")return;toast(t("Could not use the file")+": "+(e&&e.message||e))}}
+
+/* ================= reading the records ================= */
+const list=c=>Object.entries(DB[c]).map(([id,d])=>Object.assign({id},d));
+const byName=(a,b)=>(a.name||"").localeCompare(b.name||"");
+const prodName=p=>p?(UI.lang==="my"&&p.my?p.my:(p.en||p.my||"?")):"?";
+const custName=id=>DB.customers[id]?.name||t("Walk-in");
+const lineAmt=l=>num(l.qty)*num(l.price);
+const saleTotal=s=>(s.lines||[]).reduce((a,l)=>a+lineAmt(l),0);
+const unitWord=(u,q)=>u==="bag"?t(num(q)===1?"Bag":"bags"):t("dz");
+const lineText=lines=>(lines||[]).map(l=>`${prodName(DB.products[l.p])} ${fmt(l.qty,1)} ${unitWord(l.unit,l.qty)}`).join(", ");
+function balances(){const b={};list("sales").forEach(s=>{if(s.cust)b[s.cust]=(b[s.cust]||0)+saleTotal(s)-num(s.paid)});list("payments").forEach(p=>{if(p.cust)b[p.cust]=(b[p.cust]||0)-num(p.amount)});return b}
+// money received per sale: paid with the sale, plus later payments used for that customer's oldest sales first
+function paidMap(){const pool={},out={};
+  list("payments").forEach(p=>{if(p.cust)pool[p.cust]=(pool[p.cust]||0)+num(p.amount)});
+  list("sales").sort((a,b)=>(a.date||"").localeCompare(b.date||"")||num(a.no)-num(b.no)).forEach(s=>{const tot=saleTotal(s);let pd=num(s.paid);
+    if(pd<tot&&s.cust&&pool[s.cust]>0){const take=Math.min(pool[s.cust],tot-pd);pd+=take;pool[s.cust]-=take}out[s.id]=pd});return out}
+let PAID={};
+const saleOwed=s=>Math.max(0,saleTotal(s)-(PAID[s.id]??num(s.paid)));
+const METHODS=["Cash","KBZPay","Bank","Other"];
+
+/* ================= side form ================= */
+let form=null;
+function openForm(o){form=o;drawForm()}
+function closeForm(){form=null;$("#drawer").innerHTML=""}
+function field(f,v){const id="f_"+f.k;let inp;
+  if(f.type==="select")inp=`<select id="${id}">${f.opts.map(o=>`<option value="${esc(o[0])}" ${String(o[0])===String(v??"")?"selected":""}>${esc(o[1])}</option>`).join("")}</select>`;
+  else if(f.type==="textarea")inp=`<textarea id="${id}">${esc(v)}</textarea>`;
+  else inp=`<input id="${id}" type="${f.type==="num"?"text":(f.type||"text")}" ${f.type==="num"?'inputmode="decimal"':""} value="${esc(v)}" autocomplete="off">`;
+  return `<div class="field"><label for="${id}">${T(f.label)}</label>${inp}</div>`}
+function drawForm(){const o=form;if(!o)return;
+  // fields marked after:1 go below the extra part (for a sale: payment comes after the products)
+  const build=fs=>{let rows="",half=[];const flush=()=>{if(half.length){rows+=`<div class="frow">${half.join("")}</div>`;half=[]}};
+    fs.forEach(f=>{const h=field(f,o.data[f.k]);if(f.half){half.push(h);if(half.length===2)flush()}else{flush();rows+=h}});flush();return rows};
+  const rows=build(o.fields.filter(f=>!f.after)),rowsAfter=build(o.fields.filter(f=>f.after));
+  $("#drawer").innerHTML=`<div class="scrim" id="scrim"><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="dT">
+   <header><h2 id="dT">${T(o.title)}</h2><button class="btn sm" id="dX">${T("Close")}</button></header>
+   <div class="body">${rows}${o.extra?`<div id="dExtra">${o.extra()}</div>`:""}${rowsAfter}</div>
+   <footer><div>${o.onDelete?`<button class="btn danger" id="dDel">${T("Delete")}</button>`:""}</div><div style="display:flex;gap:8px"><button class="btn" id="dCancel">${T("Cancel")}</button><button class="btn primary" id="dSave">${T("Save")}</button></div></footer></div></div>`;
+  $("#scrim").onclick=e=>{if(e.target.id==="scrim")closeForm()};$("#dX").onclick=closeForm;$("#dCancel").onclick=closeForm;
+  if(o.bind)o.bind();
+  $("#dSave").onclick=()=>{const d=Object.assign({},o.data);o.fields.forEach(f=>{let v=$("#f_"+f.k).value;if(f.type==="num")v=v===""?"":num(v);d[f.k]=v});
+    if(o.collect)o.collect(d);const err=o.check&&o.check(d);if(err)return toast(t(err));o.onSave(d);closeForm()};
+  const del=$("#dDel");if(del)del.onclick=()=>{if(!del.classList.contains("arm")){del.classList.add("arm");del.textContent=t("Tap again to delete");return}o.onDelete();closeForm()};
+  const first=$("#drawer input,#drawer select");if(first)first.focus()}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&form)closeForm()});
+
+/* ================= Products ================= */
+function editProduct(id){const p=id?DB.products[id]:{active:"1",perBag:""};
+  openForm({title:id?prodName(p):"New product",data:Object.assign({},p,{active:p.active===false?"":"1"}),fields:[
+    {k:"my",label:"Myanmar name",half:1},{k:"en",label:"English name",half:1},
+    {k:"priceDz",label:"Price per dozen (Ks)",type:"num",half:1},{k:"priceBag",label:"Price per bag (Ks)",type:"num",half:1},
+    {k:"perBag",label:"Dozens in one bag",type:"num",half:1},{k:"active",label:"Still sold?",type:"select",opts:[["1",t("Yes")],["",t("No, hide it")]],half:1}],
+   collect:d=>{d.active=!!d.active;d.my=String(d.my||"").trim();d.en=String(d.en||"").trim()},
+   check:d=>!d.my&&!d.en?"Enter a name":null,
+   onSave:d=>save("products",id||uid("p"),d,"Product saved"),
+   onDelete:id?()=>{if(list("sales").some(s=>(s.lines||[]).some(l=>l.p===id)))return toast(t("This product is in sales, so it is kept. Set it to not sold instead."));remove("products",id,"Deleted")}:null})}
+const V={};
+V.products=()=>{const q=UI.q.toLowerCase();
+  const ps=list("products").filter(p=>!q||[p.my,p.en].join(" ").toLowerCase().includes(q)).sort((a,b)=>(b.active!==false)-(a.active!==false)||prodName(a).localeCompare(prodName(b)));
+  const bar=`<div class="bar"><div class="left"><input class="search" id="q" placeholder="${T("Find product")}" value="${esc(UI.q)}"></div><button class="btn primary" id="add">${T("Add product")}</button></div>`;
+  if(!list("products").length)return bar+empty("No products yet","Add what you sell and the usual price. Sales then take the price for you.","Add product","add2");
+  const st=p=>p.active===false?`<span class="chip mute">${T("Not sold now")}</span>`:`<span class="chip good">${T("In use")}</span>`;
+  return bar+`<div class="panel">${ps.length?`<div class="tw"><table><thead><tr><th>${T("Myanmar name")}</th><th>${T("English name")}</th><th class="n">${T("Per dozen")}</th><th class="n">${T("Per bag")}</th><th class="n">${T("Dozens in one bag")}</th><th></th></tr></thead><tbody>
+   ${ps.map(p=>`<tr class="click" data-edit="${p.id}"><td class="notr">${esc(p.my)}</td><td class="notr">${esc(p.en)}</td><td class="n">${p.priceDz?fmt(p.priceDz):"–"}</td><td class="n">${p.priceBag?fmt(p.priceBag):"–"}</td><td class="n">${p.perBag?fmt(p.perBag,1):"–"}</td><td>${st(p)}</td></tr>`).join("")}</tbody></table></div>
+   <div class="cards">${ps.map(p=>`<button class="card" data-edit="${p.id}"><span class="r1"><span>${esc(prodName(p))}</span>${st(p)}</span><span class="r2"><span>${T("Per dozen")} ${p.priceDz?fmt(p.priceDz):"–"}</span><span>${T("Per bag")} ${p.priceBag?fmt(p.priceBag):"–"}</span></span></button>`).join("")}</div>`
+   :`<div class="empty">${T("Nothing found")}</div>`}</div><p class="small muted" style="margin:0">${T("Tap a row to change it.")}</p>`};
+V.products.bind=()=>{bindSearch();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editProduct(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editProduct(r.dataset.edit))};
+
+/* ================= Customers ================= */
+function editCustomer(id){const c=id?DB.customers[id]:{};
+  openForm({title:id?c.name:"New customer",data:c,fields:[{k:"name",label:"Name"},{k:"town",label:"Town",half:1},{k:"phone",label:"Phone",type:"tel",half:1},{k:"note",label:"Note",type:"textarea"}],
+   collect:d=>{d.name=String(d.name||"").trim()},check:d=>!d.name?"Enter a name":null,
+   onSave:d=>save("customers",id||uid("c"),d,"Customer saved"),
+   onDelete:id?()=>{if(list("sales").some(s=>s.cust===id)||list("payments").some(p=>p.cust===id))return toast(t("This customer has sales or payments, so it is kept"));remove("customers",id,"Deleted")}:null})}
+V.customers=()=>{const q=UI.q.toLowerCase(),bal=balances();
+  const cs=list("customers").filter(c=>!q||[c.name,c.town,c.phone].join(" ").toLowerCase().includes(q)).sort(byName);
+  const bar=`<div class="bar"><div class="left"><input class="search" id="q" placeholder="${T("Find name, town or phone")}" value="${esc(UI.q)}"></div><button class="btn primary" id="add">${T("Add customer")}</button></div>`;
+  if(!list("customers").length)return bar+empty("No customers yet","Add the shops and people who buy from you.","Add customer","add2");
+  const owe=id=>{const v=bal[id]||0;return v>0.5?`<span class="chip warn">${fmt(v)}</span>`:"–"};
+  const cur=DB.customers[UI.cust]?UI.cust:"";
+  return bar+`<div class="panel">${cs.length?`<div class="tw"><table><thead><tr><th>${T("Name")}</th><th>${T("Town")}</th><th>${T("Phone")}</th><th class="n">${T("Owes you")}</th><th></th></tr></thead><tbody>
+   ${cs.map(c=>`<tr class="click" data-edit="${c.id}"><td class="notr">${esc(c.name)}</td><td class="notr">${esc(c.town||"")}</td><td class="notr">${esc(c.phone||"")}</td><td class="n">${owe(c.id)}</td><td><button class="btn sm" data-hist="${c.id}">${T("History")}</button></td></tr>`).join("")}</tbody></table></div>
+   <div class="cards">${cs.map(c=>`<button class="card" data-hist="${c.id}"><span class="r1"><span class="notr">${esc(c.name)}</span><span>${owe(c.id)}</span></span><span class="r2 notr"><span>${esc(c.town||"")}</span><span>${esc(c.phone||"")}</span></span></button>`).join("")}</div>`
+   :`<div class="empty">${T("Nothing found")}</div>`}</div>${cur?custHistory(cur):""}`};
+function custHistory(id){const c=DB.customers[id];const ev=[];
+  list("sales").filter(s=>s.cust===id).forEach(s=>{ev.push({d:s.date,k:0,txt:"#"+(s.no||"")+" · "+lineText(s.lines),plus:saleTotal(s),id:s.id,kind:"sale"});if(num(s.paid))ev.push({d:s.date,k:1,txt:t("Paid")+" · "+t(s.method||"Cash"),minus:num(s.paid),id:s.id,kind:"sale"})});
+  list("payments").filter(p=>p.cust===id).forEach(p=>ev.push({d:p.date,k:2,txt:t("Payment")+" · "+t(p.method||"Cash")+(p.note?" · "+p.note:""),minus:num(p.amount),id:p.id,kind:"pay"}));
+  ev.sort((a,b)=>(a.d||"").localeCompare(b.d||"")||a.k-b.k);let bal=0;
+  const rows=ev.map(e=>{bal+=(e.plus||0)-(e.minus||0);return `<tr class="click" data-${e.kind}="${e.id}"><td class="notr">${esc(e.d)}</td><td class="notr">${esc(e.txt)}</td><td class="n">${e.plus?fmt(e.plus):""}</td><td class="n">${e.minus?fmt(e.minus):""}</td><td class="n"><b>${fmt(bal)}</b></td></tr>`}).join("");
+  return `<div class="panel"><h2><span>${T("History")}</span>: <span class="notr">${esc(c.name)}</span></h2><div class="pb" style="display:flex;flex-direction:column;gap:10px">
+   <div class="bar"><div class="left"><span>${T("Owes you")} <b class="notr">${fmt(bal)} ${T("Kyat")}</b></span></div><div class="left"><button class="btn" id="hEdit">${T("Edit")}</button><button class="btn" id="hPay">${T("Record payment")}</button><button class="btn primary" id="hSale">${T("New sale")}</button></div></div>
+   ${ev.length?`<div style="overflow-x:auto"><table><thead><tr><th>${T("Date")}</th><th>${T("Items")}</th><th class="n">${T("Sold")}</th><th class="n">${T("Paid")}</th><th class="n">${T("Balance")}</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="muted">${T("Nothing yet.")}</div>`}</div></div>`}
+V.customers.bind=()=>{bindSearch();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editCustomer(null)));
+  $$("tr[data-edit]").forEach(r=>r.onclick=e=>{if(e.target.closest("button"))return;editCustomer(r.dataset.edit)});
+  $$("[data-hist]").forEach(b=>b.onclick=()=>{UI.cust=UI.cust===b.dataset.hist?"":b.dataset.hist;render();const h=$("#hPay");if(h)h.closest(".panel").scrollIntoView({behavior:"smooth",block:"start"})});
+  $$("[data-sale]").forEach(r=>r.onclick=()=>editSale(r.dataset.sale));$$("[data-pay]").forEach(r=>r.onclick=()=>editPayment(r.dataset.pay));
+  $("#hEdit")&&($("#hEdit").onclick=()=>editCustomer(UI.cust));$("#hPay")&&($("#hPay").onclick=()=>editPayment(null,UI.cust));$("#hSale")&&($("#hSale").onclick=()=>editSale(null,UI.cust))};
+
+/* ================= Sales ================= */
+const custOpts=()=>[["",t("— choose —")]].concat(list("customers").sort(byName).map(c=>[c.id,c.name]));
+const prodOpts=keep=>[["",t("— choose —")]].concat(list("products").filter(p=>p.active!==false||p.id===keep).sort((a,b)=>prodName(a).localeCompare(prodName(b))).map(p=>[p.id,prodName(p)]));
+const priceFor=(p,u)=>{if(!p)return "";if(u==="bag")return num(p.priceBag)||(num(p.priceDz)&&num(p.perBag)?num(p.priceDz)*num(p.perBag):"");return num(p.priceDz)||""};
+function editSale(id,cust){
+  const s=id?JSON.parse(JSON.stringify(DB.sales[id])):{date:today(),cust:cust||"",lines:[{p:"",unit:"dz",qty:"",price:""}],paid:"",method:"Cash",no:list("sales").reduce((a,x)=>Math.max(a,num(x.no)),0)+1};
+  if(!s.lines||!s.lines.length)s.lines=[{p:"",unit:"dz",qty:"",price:""}];
+  const L=s.lines;
+  const linesHTML=()=>`<div class="field"><label>${T("Products")}</label><div class="lines">
+    <div class="ln lnhead"><span>${T("Product")}</span><span>${T("Unit")}</span><span style="text-align:right">${T("Qty")}</span><span style="text-align:right">${T("Price (Ks)")}</span><span></span></div>
+    ${L.map((l,i)=>`<div class="ln"><select data-i="${i}" data-k="p" aria-label="${T("Product")}">${prodOpts(l.p).map(o=>`<option value="${esc(o[0])}" ${o[0]===l.p?"selected":""}>${esc(o[1])}</option>`).join("")}</select>
+      <select data-i="${i}" data-k="unit" aria-label="${T("Unit")}"><option value="dz" ${l.unit!=="bag"?"selected":""}>${T("Dozen")}</option><option value="bag" ${l.unit==="bag"?"selected":""}>${T("Bag")}</option></select>
+      <input class="num" data-i="${i}" data-k="qty" inputmode="decimal" placeholder="${T("Qty")}" value="${esc(l.qty)}" aria-label="${T("Qty")}">
+      <input class="num" data-i="${i}" data-k="price" inputmode="decimal" placeholder="${T("Price (Ks)")}" value="${esc(l.price)}" aria-label="${T("Price (Ks)")}">
+      <button class="x" data-rm="${i}" aria-label="${T("Remove")}" title="${T("Remove")}">×</button>
+      <span class="amt notr" data-amt="${i}">${lineAmt(l)?fmt(lineAmt(l)):""}</span></div>`).join("")}
+    <button class="btn sm" id="addLn" type="button" style="align-self:flex-start">${T("+ Add product line")}</button></div></div>
+    <div class="sums"><div class="big"><span>${T("Total of this sale")}</span><b id="sTot">${fmt(saleTotal(s))}</b></div><div><span>${T("Still owed")}</span><b id="sOwed">${fmt(Math.max(0,saleTotal(s)-num(s.paid)))}</b></div></div>`;
+  const refresh=()=>{const tot=saleTotal({lines:L});$("#sTot").textContent=fmt(tot);$("#sOwed").textContent=fmt(Math.max(0,tot-num($("#f_paid").value)));
+    L.forEach((l,i)=>{const a=$(`[data-amt="${i}"]`);if(a)a.textContent=lineAmt(l)?fmt(lineAmt(l)):""})};
+  const hook=()=>{
+    $$("#dExtra [data-k]").forEach(el=>el.oninput=el.onchange=()=>{const l=L[+el.dataset.i];const k=el.dataset.k;l[k]=el.value;
+      if(k==="p"||k==="unit"){const pr=priceFor(DB.products[l.p],l.unit);if(pr!==""){l.price=pr;const pi=$(`#dExtra [data-i="${el.dataset.i}"][data-k="price"]`);if(pi)pi.value=pr}}refresh()});
+    $$("#dExtra [data-rm]").forEach(b=>b.onclick=()=>{L.splice(+b.dataset.rm,1);if(!L.length)L.push({p:"",unit:"dz",qty:"",price:""});redraw()});
+    $("#addLn").onclick=()=>{L.push({p:"",unit:L[L.length-1]?.unit||"dz",qty:"",price:""});redraw();const s2=$$("#dExtra select[data-k=p]");s2[s2.length-1].focus()};
+    $("#f_paid").oninput=refresh};
+  const redraw=()=>{$("#dExtra").innerHTML=linesHTML();hook()};
+  openForm({title:id?t("Sale")+" #"+(s.no||""):"New sale",data:s,fields:[
+    {k:"date",label:"Date",type:"date",half:1},{k:"cust",label:"Customer",type:"select",opts:custOpts(),half:1},
+    {k:"paid",label:"Paid now (Ks)",type:"num",half:1,after:1},{k:"method",label:"Paid by",type:"select",opts:METHODS.map(m=>[m,t(m)]),half:1,after:1},
+    {k:"note",label:"Note",after:1}],
+   extra:linesHTML,bind:hook,
+   collect:d=>{d.lines=L.filter(l=>l.p&&num(l.qty)).map(l=>({p:l.p,unit:l.unit==="bag"?"bag":"dz",qty:num(l.qty),price:num(l.price)}));d.paid=num(d.paid)},
+   check:d=>!d.cust?"Choose the customer":!d.lines.length?"Add at least one product with a quantity":d.lines.some(l=>!l.price)?"Enter a price for each product":d.paid>saleTotal(d)+0.5?"Paid now is more than the total":null,
+   onSave:d=>{d.t=d.t||Date.now();save("sales",id||uid("s"),d,"Sale saved")},
+   onDelete:id?()=>remove("sales",id,"Deleted"):null});
+}
+V.sales=()=>{const m=UI.month,td=today(),q=UI.q.toLowerCase();
+  const all=list("sales");const inM=all.filter(s=>ym(s.date)===m);
+  const sumOf=xs=>xs.reduce((a,s)=>a+saleTotal(s),0);
+  const tdS=all.filter(s=>s.date===td);
+  const moneyIn=inM.reduce((a,s)=>a+num(s.paid),0)+list("payments").filter(p=>ym(p.date)===m).reduce((a,p)=>a+num(p.amount),0);
+  const owed=Object.values(balances()).reduce((a,v)=>a+Math.max(0,v),0);
+  const shown=inM.filter(s=>!q||[custName(s.cust),lineText(s.lines),s.no].join(" ").toLowerCase().includes(q)).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||num(b.no)-num(a.no));
+  const ready=list("customers").length&&list("products").length;
+  const kpis=`<div class="kpis">
+    <div class="kpi"><span class="l">${T("Sales today")}</span><span class="v notr">${fmt(sumOf(tdS))}</span><span class="d"><span class="notr">${tdS.length}</span> ${T(tdS.length===1?"sale":"sales")}</span></div>
+    <div class="kpi"><span class="l">${T("Sales this month")}</span><span class="v notr">${fmt(sumOf(inM))}</span><span class="d"><span class="notr">${inM.length}</span> ${T(inM.length===1?"sale":"sales")}</span></div>
+    <div class="kpi"><span class="l">${T("Money in this month")}</span><span class="v notr">${fmt(moneyIn)}</span><span class="d">${T("Cash, bank and phone pay")}</span></div>
+    <div class="kpi"><span class="l">${T("Customers owe you")}</span><span class="v notr ${owed>0.5?"warn":""}">${fmt(owed)}</span><span class="d">${T("All customers, all months")}</span></div></div>`;
+  const bar=`<div class="bar"><div class="left">${monthPicker()}<input class="search" id="q" placeholder="${T("Find customer or product")}" value="${esc(UI.q)}"></div><button class="btn primary" id="add" ${ready?"":"disabled"}>${T("New sale")}</button></div>`;
+  if(!ready)return kpis+bar+`<div class="panel"><div class="empty"><b>${T("First add a customer and a product.")}</b><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn" data-go="customers">${T("Customers")}</button><button class="btn" data-go="products">${T("Products")}</button></div></div></div>`;
+  if(!inM.length)return kpis+bar+empty("No sales this month","Write each sale here: who bought, what, and what they paid.","New sale","add2");
+  const st=s=>{const o=saleOwed(s);return o>0.5?`<span class="chip warn">${T("Owed")} ${fmt(o)}</span>`:`<span class="chip good">${T("Paid in full")}</span>`};
+  return kpis+bar+`<div class="panel">${shown.length?`<div class="tw"><table><thead><tr><th>${T("Date")}</th><th class="n">${T("No")}</th><th>${T("Customer")}</th><th>${T("Items")}</th><th class="n">${T("Total")}</th><th class="n">${T("Paid")}</th><th></th></tr></thead><tbody>
+   ${shown.map(s=>`<tr class="click" data-edit="${s.id}"><td class="notr">${esc(s.date)}</td><td class="n">${esc(s.no||"")}</td><td class="notr">${esc(custName(s.cust))}</td><td class="notr">${esc(lineText(s.lines))}</td><td class="n">${fmt(saleTotal(s))}</td><td class="n">${fmt(PAID[s.id])}</td><td>${st(s)}</td></tr>`).join("")}</tbody>
+   <tfoot><tr><td colspan="4">${T("Total")}</td><td class="n">${fmt(sumOf(shown))}</td><td class="n">${fmt(shown.reduce((a,s)=>a+num(PAID[s.id]),0))}</td><td></td></tr></tfoot></table></div>
+   <div class="cards">${shown.map(s=>`<button class="card" data-edit="${s.id}"><span class="r1"><span class="notr">${esc(custName(s.cust))}</span><span class="n">${fmt(saleTotal(s))}</span></span><span class="r2"><span class="notr">${esc(s.date)} · #${esc(s.no||"")} · ${esc(lineText(s.lines))}</span></span><span>${st(s)}</span></button>`).join("")}</div>`
+   :`<div class="empty">${T("Nothing found")}</div>`}</div><p class="small muted" style="margin:0">${T("Tap a row to change it.")}</p>`};
+V.sales.bind=()=>{bindSearch();bindMonth();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editSale(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editSale(r.dataset.edit))};
+
+/* ================= Payments ================= */
+function editPayment(id,cust){const bal=balances();
+  const p=id?DB.payments[id]:{date:today(),cust:cust||"",amount:cust&&bal[cust]>0?Math.round(bal[cust]):"",method:"Cash"};
+  openForm({title:id?"Payment":"Record payment",data:p,fields:[
+    {k:"date",label:"Date",type:"date",half:1},{k:"cust",label:"Customer",type:"select",opts:custOpts(),half:1},
+    {k:"amount",label:"Amount",type:"num",half:1},{k:"method",label:"Paid by",type:"select",opts:METHODS.map(m=>[m,t(m)]),half:1},{k:"note",label:"Note"}],
+   bind:()=>{const c=$("#f_cust");c.onchange=()=>{const a=$("#f_amount");if(!a.value&&bal[c.value]>0)a.value=Math.round(bal[c.value])}},
+   check:d=>!d.cust?"Choose the customer":!num(d.amount)?"Enter the amount":null,
+   onSave:d=>{d.amount=num(d.amount);d.t=d.t||Date.now();save("payments",id||uid("y"),d,"Payment saved")},
+   onDelete:id?()=>remove("payments",id,"Deleted"):null})}
+V.payments=()=>{const m=UI.month;const ps=list("payments").filter(p=>ym(p.date)===m).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.t||0)-(a.t||0));
+  const bar=`<div class="bar"><div class="left">${monthPicker()}</div><button class="btn primary" id="add" ${list("customers").length?"":"disabled"}>${T("Record payment")}</button></div>`;
+  if(!ps.length)return bar+empty("No payments this month","When a customer pays money they owe, write it here.",list("customers").length?"Record payment":null,"add2");
+  const tot=ps.reduce((a,p)=>a+num(p.amount),0);
+  return bar+`<div class="panel"><div class="tw"><table><thead><tr><th>${T("Date")}</th><th>${T("Customer")}</th><th>${T("Paid by")}</th><th>${T("Note")}</th><th class="n">${T("Amount")}</th></tr></thead><tbody>
+   ${ps.map(p=>`<tr class="click" data-edit="${p.id}"><td class="notr">${esc(p.date)}</td><td class="notr">${esc(custName(p.cust))}</td><td>${T(p.method||"Cash")}</td><td class="notr">${esc(p.note||"")}</td><td class="n">${fmt(p.amount)}</td></tr>`).join("")}</tbody>
+   <tfoot><tr><td colspan="4">${T("Total")}</td><td class="n">${fmt(tot)}</td></tr></tfoot></table></div>
+   <div class="cards">${ps.map(p=>`<button class="card" data-edit="${p.id}"><span class="r1"><span class="notr">${esc(custName(p.cust))}</span><span class="n">${fmt(p.amount)}</span></span><span class="r2"><span class="notr">${esc(p.date)}</span><span>${T(p.method||"Cash")}</span></span></button>`).join("")}</div></div>`};
+V.payments.bind=()=>{bindMonth();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editPayment(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editPayment(r.dataset.edit))};
+
+/* ================= Settings ================= */
+V.settings=()=>{const F=Store.file;
+  const fileBox=F.state==="nosupport"?`<div class="banner">${T("This browser cannot keep records in a file. Use Chrome or Edge on a computer. Until then, records stay in this browser only.")}</div>`
+   :`<div class="kpi" style="border:0;padding:0"><span class="l">${T("Records file")}</span><span class="v notr" style="font-size:17px">${F.name?esc(F.name):"—"}</span><span class="d">${T(F.state==="on"?"Every change is saved into this file straight away.":F.state==="need"?"Chosen, but not open yet.":"No file chosen yet.")}</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open records file")}</button>`:""}<button class="btn ${F.state==="none"?"primary":""}" data-file="new">${T("Make a new records file")}</button><button class="btn" data-file="pick">${T("Open a records file")}</button></div>
+    <div class="small muted">${T("Keep the file anywhere on your drive, for example E:\\AP Records. Never put it inside the AP-Plastic project folder: that folder is public on GitHub.")}</div>`;
+  return `<div class="panel"><h2>${T("Records file")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:12px">${fileBox}</div></div>
+   <div class="panel"><h2>${T("Backup")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:10px"><div class="muted">${T("Save a backup file every week and keep it somewhere safe, such as a USB stick.")}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bkSave">${T("Save a backup file")}</button><label class="btn" for="bkLoad">${T("Load a backup file")}</label><input type="file" id="bkLoad" accept=".json,application/json" hidden></div>
+    <div class="small muted">${T("Loading a backup replaces all records in the app with the ones in the file.")}</div></div></div>
+   <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
+V.settings.bind=()=>{bindLang();
+  $("#bkSave").onclick=()=>{const recs=Store.all();const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({app:"AP Plastic sales",backup:true,saved:new Date().toISOString(),records:recs})],{type:"application/json"}));
+    a.download="ap-sales-backup-"+today()+".json";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast(t("Saved")+": "+recs.length+" "+t("records"))};
+  $("#bkLoad").onchange=async e=>{const f=e.target.files[0];if(!f)return;if(!Store.canChange())return toast(t("Records file not open"));
+    try{const j=JSON.parse(await f.text());const recs=(j.records||[]).filter(r=>r&&COLS.includes(r.col)&&r.id&&r.data);if(!recs.length)return toast(t("This is not a backup file"));
+      await Store.replaceAll(recs);Store.soon();toast(t("Backup loaded")+": "+recs.length+" "+t("records"));render()}catch(x){toast(t("This is not a backup file"))}}};
+
+/* ================= page frame ================= */
+const PAGES=[["sales","Sales","Every sale, by month"],["payments","Payments","Money customers pay after the sale"],["customers","Customers","Who buys, and what they owe"],["products","Products","What you sell, and the usual price"],["settings","Settings","Records file, backup and language"]];
+function empty(title,body,btn,id){return `<div class="panel"><div class="empty"><b>${T(title)}</b>${body?`<div>${T(body)}</div>`:""}${btn?`<button class="btn primary" id="${id}">${T(btn)}</button>`:""}</div></div>`}
+function monthPicker(){return `<span class="seg"><button id="mPrev" aria-label="Previous month">‹</button><button aria-pressed="false" style="cursor:default" class="notr">${esc(monthName(UI.month))}</button><button id="mNext" aria-label="Next month">›</button></span>`}
+function bindMonth(){$("#mPrev")&&($("#mPrev").onclick=()=>{UI.month=addMonth(UI.month,-1);render()});$("#mNext")&&($("#mNext").onclick=()=>{UI.month=addMonth(UI.month,1);render()})}
+function bindSearch(){const q=$("#q");if(!q)return;q.oninput=()=>{UI.q=q.value;const pos=q.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)}}
+const langSeg=()=>`<span class="seg"><button data-lang="my" aria-pressed="${UI.lang==="my"}">မြန်မာ</button><button data-lang="en" aria-pressed="${UI.lang==="en"}">English</button></span>`;
+function bindLang(){$$("[data-lang]").forEach(b=>b.onclick=()=>{UI.lang=b.dataset.lang;ls("ap2.lang",UI.lang);render()})}
+function go(p){UI.page=p;UI.q="";ls("ap2.page",p);render();window.scrollTo(0,0)}
+function fileBanner(){const F=Store.file;if(!Store.ready)return "";
+  if(F.state==="need")return `<div class="banner"><span><span>${T("Your records are in the file")}</span> <b class="notr">${esc(F.name)}</b>. <span>${T("Open it to carry on. Nothing can be changed until it is open.")}</span></span><button class="btn sm primary" data-file="open">${T("Open records file")}</button></div>`;
+  if(F.state==="none")return `<div class="banner"><span>${T("Records are only in this browser for now. Keep them in a file on your drive.")}</span><span class="btns"><button class="btn sm primary" data-file="new">${T("Make a new records file")}</button><button class="btn sm" data-file="pick">${T("Open a records file")}</button></span></div>`;
+  if(F.state==="on"&&F.err)return `<div class="banner bad"><span>${T("Could not save to the records file. Check that the drive is there, then open the file again.")}</span><button class="btn sm" data-file="pick">${T("Open records file")}</button></div>`;
+  return ""}
+function syncText(){const F=Store.file;if(!Store.ready)return ["",t("Loading…")];
+  if(F.state==="on")return F.err?["bad",t("Not saved to the file")]:["on",t("Saved to the records file")];
+  if(F.state==="need")return ["",t("Records file not open")];return ["",t("Saved in this browser only")]}
+function render(){
+  document.documentElement.lang=UI.lang==="my"?"my":"en";
+  const pg=PAGES.find(p=>p.id===UI.page)||PAGES.find(p=>p[0]===UI.page)||PAGES[0];const [id,name,sub]=pg;
+  const navBtn=([k,n])=>`<button data-go="${k}" aria-current="${k===id}">${svg(k)}<span>${T(n)}</span></button>`;
+  $("#nav").innerHTML=PAGES.map(navBtn).join("");$("#bnav").innerHTML=PAGES.map(navBtn).join("");
+  $$("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+  $$("[data-t]").forEach(el=>{el.__en=el.__en||el.textContent;el.textContent=t(el.__en)});
+  const [cls,txt]=syncText();$("#dot").className="dot "+cls;$("#sync").textContent=txt;$("#fileName").textContent=Store.file.name||"";
+  if(Store.ready)PAID=paidMap();
+  const body=Store.ready?V[id]():`<div class="empty">${T("Loading…")}</div>`;
+  $("#main").innerHTML=`<div class="top"><div><h1>${T(name)}</h1><div class="sub">${T(sub)}</div></div><div class="tools">${id!=="settings"?langSeg():""}</div></div>${fileBanner()}${body}`;
+  bindLang();
+  if(Store.ready&&V[id].bind)V[id].bind();
+  $$("#main [data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+  $$("[data-file]").forEach(b=>b.onclick=()=>fileAction(b.dataset.file==="pick"?"pick":b.dataset.file));
+  if(!Store.canChange())$$("#main .btn.primary:not([data-file])").forEach(b=>b.disabled=true);
+}
+
+/* ================= start ================= */
+render();
+Store.start().then(render).catch(e=>{$("#main").innerHTML=`<div class="banner bad">${esc(String(e&&e.message||e))}</div>`});
+</script>
+</body>
+</html>

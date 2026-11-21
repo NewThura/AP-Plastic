@@ -2,6 +2,12 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: start of a new, simpler app in `app/` for collecting data and showing it to
+  the CEO, built step by step. Step 1 is sales: product list (price per dozen and per bag), customer list,
+  sales with several products in dozens or bags, paid now, later payments, and what each customer still owes.
+  Records are kept in a file on the office computer's drive. English and Myanmar, computer and phone. The old
+  app stays as it is until the new one is ready.
+
 - 2026-11-21, Thura with Claude: Home is now one list of notifications and alarms (Urgent, To do, For
   information), each with an Open button; the quick buttons stay on top. New alarms: not enough finished stock
   for orders, orders due tomorrow, customers owing for more than 30 days, money owed to suppliers. Overview now
