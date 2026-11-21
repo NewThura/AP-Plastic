@@ -271,7 +271,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","Products":"ကုန်ပစ္စည်းများ"
+ "Edit":"ပြင်မည်","New file":"ဖိုင်အသစ်","Choose file":"ဖိုင် ရွေးမည်","Records file is closed":"မှတ်တမ်းဖိုင် ပိတ်ထားသည်","No records file yet":"မှတ်တမ်းဖိုင် မရှိသေးပါ","Use Chrome or Edge to save to a file.":"ဖိုင်ထဲ သိမ်းရန် Chrome သို့မဟုတ် Edge ကို သုံးပါ။","Products":"ကုန်ပစ္စည်းများ"
 };
 const MON_EN=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const MON_MY=["ဇန်နဝါရီ","ဖေဖော်ဝါရီ","မတ်","ဧပြီ","မေ","ဇွန်","ဇူလိုင်","ဩဂုတ်","စက်တင်ဘာ","အောက်တိုဘာ","နိုဝင်ဘာ","ဒီဇင်ဘာ"];
@@ -305,7 +305,7 @@ const svg=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
    Main copy: a records file on this computer's drive (Chrome / Edge, File System Access).
    Working copy: the browser (IndexedDB), so the app opens fast and still works without the file.
    File format: {app, saved, records:[{col,id,data}]} */
-const COLS=["products","customers","sales","payments"];
+const COLS=["products","customers","sales","payments","outbox"];
 const DB={};COLS.forEach(c=>DB[c]={});
 const Store={
   idb:null,ready:false,
@@ -351,8 +351,21 @@ const Store={
   async newFile(){const h=await showSaveFilePicker({suggestedName:"ap-sales-records.json",types:this.TYPES});await this.link(h);await this.writeFile()},
   async openFile(){const [h]=await showOpenFilePicker({types:this.TYPES,multiple:false});await this.replaceAll(await this.readFile(h));await this.link(h)}
 };
-async function save(col,id,data,msg){if(!Store.canChange())return toast(t("Records file not open"));try{await Store.put(col,id,data);if(msg)toast(t(msg));render()}catch(e){toast(String(e.message||e))}}
-async function remove(col,id,msg){if(!Store.canChange())return;await Store.del(col,id);if(msg)toast(t(msg));render()}
+/* changes to share with other apps (not shown here). Every add, change or removal of a customer or a
+   product is written to "outbox" with what it was before and what it is now. When there is a cloud,
+   these go to the other apps, which ask "The main app changed this. Accept?" before updating. */
+const SHARED=["customers","products"];
+function outboxEntry(col,id,before,after){
+  const action=!before?"add":!after?"remove":"change";
+  const keys=[...new Set(Object.keys(before||{}).concat(Object.keys(after||{})))].filter(k=>k!=="t");
+  const changed=keys.filter(k=>JSON.stringify((before||{})[k]??"")!==JSON.stringify((after||{})[k]??""));
+  if(action==="change"&&!changed.length)return null;
+  const pick=o=>o?Object.fromEntries(changed.map(k=>[k,o[k]??""])):null;
+  return {at:new Date().toISOString(),what:col,recId:id,name:(after||before).name||(after||before).en||(after||before).my||"",action,
+    before:action==="add"?null:action==="remove"?before:pick(before),after:action==="remove"?null:action==="add"?after:pick(after),status:"waiting"}}
+async function logShared(col,id,before,after){if(!SHARED.includes(col))return;const e=outboxEntry(col,id,before,after);if(e)await Store.put("outbox",uid("o"),e)}
+async function save(col,id,data,msg){if(!Store.canChange())return toast(t("Records file not open"));try{const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.put(col,id,data);await logShared(col,id,before,data);if(msg)toast(t(msg));render()}catch(e){toast(String(e.message||e))}}
+async function remove(col,id,msg){if(!Store.canChange())return;const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.del(col,id);await logShared(col,id,before,null);if(msg)toast(t(msg));render()}
 async function fileAction(kind){
   try{if(kind==="open"&&Store.file.state==="need"){if(!(await Store.reopen()))return toast(t("The file was not allowed"))}
     else if(kind==="new")await Store.newFile();else await Store.openFile();
@@ -428,7 +441,7 @@ V.products=()=>{const q=UI.q.toLowerCase();
   return bar+`<div class="panel">${ps.length?`<div class="tw"><table><thead><tr><th>${T("Myanmar name")}</th><th>${T("English name")}</th><th class="n">${T("Per dozen")}</th><th class="n">${T("Per bag")}</th><th class="n">${T("Dozens in one bag")}</th><th></th></tr></thead><tbody>
    ${ps.map(p=>`<tr class="click" data-edit="${p.id}"><td class="notr">${esc(p.my)}</td><td class="notr">${esc(p.en)}</td><td class="n">${p.priceDz?fmt(p.priceDz):"–"}</td><td class="n">${p.priceBag?fmt(p.priceBag):"–"}</td><td class="n">${p.perBag?fmt(p.perBag,1):"–"}</td><td>${st(p)}</td></tr>`).join("")}</tbody></table></div>
    <div class="cards">${ps.map(p=>`<button class="card" data-edit="${p.id}"><span class="r1"><span>${esc(prodName(p))}</span>${st(p)}</span><span class="r2"><span>${T("Per dozen")} ${p.priceDz?fmt(p.priceDz):"–"}</span><span>${T("Per bag")} ${p.priceBag?fmt(p.priceBag):"–"}</span></span></button>`).join("")}</div>`
-   :`<div class="empty">${T("Nothing found")}</div>`}</div><p class="small muted" style="margin:0">${T("Tap a row to change it.")}</p>`};
+   :`<div class="empty">${T("Nothing found")}</div>`}</div>`};
 V.products.bind=()=>{bindSearch();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editProduct(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editProduct(r.dataset.edit))};
 
 /* ================= Customers ================= */
@@ -457,7 +470,7 @@ V.customers=()=>{const q=UI.q.toLowerCase(),bal=balances();
   return bar+`<div class="panel">${cs.length?`<div class="tw"><table><thead><tr><th class="n">${T("No")}</th><th>${T("Name")}</th><th>${T("Town / area")}</th><th>${T("Phone")}</th><th>${T("Payment term")}</th><th class="n">${T("Owes you")}</th><th></th></tr></thead><tbody>
    ${cs.map(c=>`<tr class="click" data-hist="${c.id}" aria-current="${c.id===cur}"><td class="n">${esc(c.no||"")}</td><td class="notr">${esc(c.name)}</td><td class="notr">${esc(c.town||"")}</td><td class="notr">${esc(c.phone||"")}</td><td>${c.terms?T(c.terms):"–"}</td><td class="n">${owe(c.id)}</td><td><button class="btn sm" data-edit="${c.id}">${T("Edit")}</button></td></tr>`).join("")}</tbody></table></div>
    <div class="cards">${cs.map(c=>`<button class="card" data-hist="${c.id}"><span class="r1"><span class="notr">${esc(c.name)}</span><span>${owe(c.id)}</span></span><span class="r2 notr"><span>${esc(c.town||"")}</span><span>${esc(c.phone||"")}</span></span></button>`).join("")}</div>`
-   :`<div class="empty">${T("Nothing found")}</div>`}</div>${cur?custDetail(cur):`<p class="small muted" style="margin:0">${T("Tap a customer to see all their details and history.")}</p>`}`};
+   :`<div class="empty">${T("Nothing found")}</div>`}</div>${cur?custDetail(cur):""}`};
 function custDetail(id){const c=DB.customers[id];const ev=[];
   list("sales").filter(s=>s.cust===id).forEach(s=>{ev.push({d:s.date,k:0,txt:"#"+(s.no||"")+" · "+lineText(s.lines),plus:saleTotal(s),id:s.id,kind:"sale"});if(num(s.paid))ev.push({d:s.date,k:1,txt:t("Paid")+" · "+t(s.method||"Cash"),minus:num(s.paid),id:s.id,kind:"sale"})});
   list("payments").filter(p=>p.cust===id).forEach(p=>ev.push({d:p.date,k:2,txt:t("Payment")+" · "+t(p.method||"Cash")+(p.note?" · "+p.note:""),minus:num(p.amount),id:p.id,kind:"pay"}));
@@ -581,7 +594,7 @@ V.sales=()=>{const m=UI.month,q=UI.q.toLowerCase();
    ${shown.map(s=>`<tr class="click" data-edit="${s.id}"><td class="notr">${esc(s.date)}</td><td class="n">${esc(s.no||"")}</td><td class="notr">${esc(custName(s.cust))}</td><td class="notr">${esc(lineText(s.lines))}</td><td class="n">${fmt(saleTotal(s))}</td><td class="n">${fmt(PAID[s.id])}</td><td>${st(s)}</td></tr>`).join("")}</tbody>
    <tfoot><tr><td colspan="4">${T("Total")}</td><td class="n">${fmt(sumOf(shown))}</td><td class="n">${fmt(shown.reduce((a,s)=>a+num(PAID[s.id]),0))}</td><td></td></tr></tfoot></table></div>
    <div class="cards">${shown.map(s=>`<button class="card" data-edit="${s.id}"><span class="r1"><span class="notr">${esc(custName(s.cust))}</span><span class="n">${fmt(saleTotal(s))}</span></span><span class="r2"><span class="notr">${esc(s.date)} · #${esc(s.no||"")} · ${esc(lineText(s.lines))}</span></span><span>${st(s)}</span></button>`).join("")}</div>`
-   :`<div class="empty">${T("Nothing found")}</div>`}</div><p class="small muted" style="margin:0">${T("Tap a row to change it.")}</p>`};
+   :`<div class="empty">${T("Nothing found")}</div>`}</div>`};
 V.sales.bind=()=>{bindSearch();bindMonth();bindTips();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editSale(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editSale(r.dataset.edit))};
 
 /* ================= Overview: notifications and alarms ================= */
@@ -593,13 +606,13 @@ function dueDate(s){const c=DB.customers[s.cust];const [y,mo]=s.date.split("-").
 const daysBetween=(a,b)=>Math.round((new Date(b+"T00:00:00Z")-new Date(a+"T00:00:00Z"))/864e5);
 function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
   if(!Store.ready)return out;
-  if(F.state==="need")out.push({sev:"bad",area:"Settings",go:()=>go("settings"),txt:t("The records file is not open. Nothing can be changed until it is open.")});
-  if(F.state==="on"&&F.err)out.push({sev:"bad",area:"Settings",go:()=>go("settings"),txt:t("Could not save to the records file. Check that the drive is there, then open the file again.")});
+  if(F.state==="need")out.push({sev:"bad",area:"Settings",go:()=>go("settings"),txt:t("Records file is closed")});
+  if(F.state==="on"&&F.err)out.push({sev:"bad",area:"Settings",go:()=>go("settings"),txt:t("Could not save to the records file")});
   // overdue money, one line per customer
   const over={};list("sales").forEach(s=>{const o=saleOwed(s);if(s.cust&&o>0.5&&dueDate(s)<td){const x=over[s.cust]||(over[s.cust]={amt:0,oldest:s.date});x.amt+=o;if(s.date<x.oldest)x.oldest=s.date}});
   Object.entries(over).sort((a,b)=>b[1].amt-a[1].amt).forEach(([c,x])=>out.push({sev:"bad",area:"Customers",head:custName(c),go:()=>openCustomer(c),
     txt:`${t("Overdue")}: ${fmt(x.amt)}${K} · ${t("oldest sale")} ${x.oldest} (${daysBetween(x.oldest,td)} ${t("days")})`}));
-  if(F.state==="none")out.push({sev:"warn",area:"Settings",go:()=>go("settings"),txt:t("Records are only in this browser. Make a records file on your drive.")});
+  if(F.state==="none")out.push({sev:"warn",area:"Settings",go:()=>go("settings"),txt:t("No records file yet")});
   const notDue=list("sales").filter(s=>saleOwed(s)>0.5&&dueDate(s)>=td);
   if(notDue.length)out.push({sev:"warn",area:"Sales",go:()=>go("sales"),txt:`${notDue.length} ${t("sales not paid yet, not overdue")} (${fmt(notDue.reduce((a,s)=>a+saleOwed(s),0))}${K})`});
   const noPrice=list("products").filter(p=>p.active!==false&&!num(p.priceDz)&&!num(p.priceBag));
@@ -608,7 +621,7 @@ function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
   out.push({sev:"info",area:"Sales",go:()=>go("sales"),txt:tdS.length?`${t("Today")}: ${tdS.length} ${t(tdS.length===1?"sale":"sales")}, ${fmt(tdS.reduce((a,s)=>a+saleTotal(s),0))}${K}`:t("No sales written today yet.")});
   const noPhone=list("customers").filter(c=>!c.phone);
   if(noPhone.length)out.push({sev:"info",area:"Customers",go:()=>go("customers"),txt:`${t("No phone number")}: ${noPhone.map(c=>c.name).join(", ")}`});
-  if(F.state==="nosupport")out.push({sev:"info",area:"Settings",go:()=>go("settings"),txt:t("This browser cannot keep records in a file. Use Chrome or Edge on a computer. Until then, records stay in this browser only.")});
+  if(F.state==="nosupport")out.push({sev:"info",area:"Settings",go:()=>go("settings"),txt:t("Use Chrome or Edge to save to a file.")});
   return out}
 const SEV=[["bad","Urgent"],["warn","To do"],["info","For information"]];
 let ALERTS=[];
@@ -616,8 +629,7 @@ V.overview=()=>{const al=ALERTS=alerts();const cnt=k=>al.filter(a=>a.sev===k).le
   const icon={Settings:"settings",Customers:"customers",Sales:"sales",Products:"products",Payments:"payments"};
   const item=(a,i)=>`<button class="nitem ${a.sev}" data-al="${i}"><span class="nic">${svg(icon[a.area]||"sales")}</span><span class="nbody"><span class="narea">${T(a.area)}${a.head?` · <b class="notr">${esc(a.head)}</b>`:""}</span><span class="ntext notr">${esc(a.txt)}</span></span><span class="ngo">${T("Open")}</span></button>`;
   const groups=SEV.map(([k,l])=>{const xs=al.map((a,i)=>[a,i]).filter(([a])=>a.sev===k);return xs.length?`<section class="ngroup ${k}"><h3><i></i><span>${T(l)}</span><span class="notr ncount">${xs.length}</span></h3><div class="nlist">${xs.map(([a,i])=>item(a,i)).join("")}</div></section>`:""}).join("");
-  return salesKpis(ym(today()))+`<div class="nsum">${SEV.map(([k,l])=>`<span class="nchip ${k}"><b class="notr">${cnt(k)}</b> <span>${T(l)}</span></span>`).join("")}</div>${groups}
-   <p class="small muted" style="margin:0">${T("A notification goes away by itself when the problem is fixed. Money is overdue when a month-end customer's month is over, or after 30 days for everyone else.")}</p>`};
+  return salesKpis(ym(today()))+`<div class="nsum">${SEV.map(([k,l])=>`<span class="nchip ${k}"><b class="notr">${cnt(k)}</b> <span>${T(l)}</span></span>`).join("")}</div>${groups}`};
 V.overview.bind=()=>$$("[data-al]").forEach(b=>b.onclick=()=>{const a=ALERTS[+b.dataset.al];if(a)a.go()});
 
 /* ================= Payments ================= */
@@ -642,10 +654,9 @@ V.payments.bind=()=>{bindMonth();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick
 
 /* ================= Settings ================= */
 V.settings=()=>{const F=Store.file;
-  const fileBox=F.state==="nosupport"?`<div class="banner">${T("This browser cannot keep records in a file. Use Chrome or Edge on a computer. Until then, records stay in this browser only.")}</div>`
-   :`<div class="kpi" style="border:0;padding:0"><span class="l">${T("Records file")}</span><span class="v notr" style="font-size:17px">${F.name?esc(F.name):"—"}</span><span class="d">${T(F.state==="on"?"Every change is saved into this file straight away.":F.state==="need"?"Chosen, but not open yet.":"No file chosen yet.")}</span></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open records file")}</button>`:""}<button class="btn ${F.state==="none"?"primary":""}" data-file="new">${T("Make a new records file")}</button><button class="btn" data-file="pick">${T("Open a records file")}</button></div>
-    <div class="small muted">${T("Keep the file anywhere on your drive, for example E:\\AP Records. Never put it inside the AP-Plastic project folder: that folder is public on GitHub.")}</div>`;
+  const fileBox=F.state==="nosupport"?`<div class="muted">${T("Use Chrome or Edge to save to a file.")}</div>`
+   :`<div class="notr" style="font:600 16px var(--f-data)">${F.name?esc(F.name):"—"}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open")}</button>`:""}<button class="btn" data-file="new">${T("New file")}</button><button class="btn" data-file="pick">${T("Choose file")}</button></div>`;
   return `<div class="panel"><h2>${T("Records file")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:12px">${fileBox}</div></div>
    <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
 V.settings.bind=()=>{bindLang()};
@@ -660,9 +671,9 @@ const langSeg=()=>`<span class="seg"><button data-lang="my" aria-pressed="${UI.l
 function bindLang(){$$("[data-lang]").forEach(b=>b.onclick=()=>{UI.lang=b.dataset.lang;ls("ap2.lang",UI.lang);render()})}
 function go(p){UI.page=p;UI.q="";ls("ap2.page",p);render();window.scrollTo(0,0)}
 function fileBanner(){const F=Store.file;if(!Store.ready)return "";
-  if(F.state==="need")return `<div class="banner"><span><span>${T("Your records are in the file")}</span> <b class="notr">${esc(F.name)}</b>. <span>${T("Open it to carry on. Nothing can be changed until it is open.")}</span></span><button class="btn sm primary" data-file="open">${T("Open records file")}</button></div>`;
-  if(F.state==="none")return `<div class="banner"><span>${T("Records are only in this browser for now. Keep them in a file on your drive.")}</span><span class="btns"><button class="btn sm primary" data-file="new">${T("Make a new records file")}</button><button class="btn sm" data-file="pick">${T("Open a records file")}</button></span></div>`;
-  if(F.state==="on"&&F.err)return `<div class="banner bad"><span>${T("Could not save to the records file. Check that the drive is there, then open the file again.")}</span><button class="btn sm" data-file="pick">${T("Open records file")}</button></div>`;
+  if(F.state==="need")return `<div class="banner"><span><span>${T("Records file is closed")}</span>: <b class="notr">${esc(F.name)}</b></span><button class="btn sm primary" data-file="open">${T("Open")}</button></div>`;
+  if(F.state==="none")return `<div class="banner"><span>${T("No records file yet")}</span><span class="btns"><button class="btn sm primary" data-file="new">${T("New file")}</button><button class="btn sm" data-file="pick">${T("Choose file")}</button></span></div>`;
+  if(F.state==="on"&&F.err)return `<div class="banner bad"><span>${T("Could not save to the records file")}</span><button class="btn sm" data-file="pick">${T("Choose file")}</button></div>`;
   return ""}
 function syncText(){const F=Store.file;if(!Store.ready)return ["",t("Loading…")];
   if(F.state==="on")return F.err?["bad",t("Not saved to the file")]:["on",t("Saved to the records file")];
@@ -679,7 +690,7 @@ function render(){
   const [cls,txt]=syncText();$("#dot").className="dot "+cls;$("#sync").textContent=txt;$("#fileName").textContent=Store.file.name||"";
   if(Store.ready)PAID=paidMap();
   const body=Store.ready?V[id]():`<div class="empty">${T("Loading…")}</div>`;
-  $("#main").innerHTML=`<div class="top"><div><h1>${T(name)}</h1><div class="sub">${T(sub)}</div></div><div class="tools">${id!=="settings"?langSeg():""}</div></div>${fileBanner()}${body}`;
+  $("#main").innerHTML=`<div class="top"><div><h1>${T(name)}</h1></div><div class="tools">${id!=="settings"?langSeg():""}</div></div>${fileBanner()}${body}`;
   bindLang();
   if(Store.ready&&V[id].bind)V[id].bind();
   $$("#main [data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));

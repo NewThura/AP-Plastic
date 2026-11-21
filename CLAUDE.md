@@ -40,6 +40,15 @@ Words: `MY` (English → Myanmar) at the top of its script; wrap fixed text in `
 `python -m http.server 8770 --directory .` from the project folder, then open http://127.0.0.1:8770/app/ .
 The old app below stays live until the new one replaces it.
 
+**Rule for other apps (decided 2026-11-21): the main app leads, other apps ask.** When the main app adds,
+changes or removes a customer or a product, it writes an entry to `outbox` (in its records): `what`
+(customers / products), `recId`, `name`, `action` (add / change / remove), `before` and `after` (only the fields
+that changed), `at`, `status: "waiting"`. Another app, such as the sales department's receipt app, must never
+take these changes by itself: it shows each one ("The main app changed this. Accept?") with before and after,
+and only updates its own copy after someone presses Accept. Refuse leaves its copy as it was. The two apps get
+connected when there is a cloud again; until then the outbox only fills up. Sales and payments are not shared.
+The main app shows as little explaining text as possible: no hint lines, short buttons, short messages.
+
 ## How the code is laid out (old app)
 Everything is in `index.html` (one file, no build step): styles at the top, then the page, then one script.
 - `COLS`: record types loaded from Supabase. `S[col][id]` holds them. `save(col,id,data,msg)` / `remove(col,id,msg)` write.

@@ -2,6 +2,11 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-21, Thura with Claude: new app (`app/`): much less explaining text (Settings is just the file name, three
+  buttons and the language; no hint lines; no line under page titles; one-line file messages). Every change to a
+  customer or product is now kept in an `outbox` list, ready for when other apps are connected through a cloud:
+  they must ask "Accept?" before taking a change from the main app (rule written in CLAUDE.md).
+
 - 2026-11-21, Thura with Claude: new app (`app/`): better Myanmar words for overdue money (past the time) and the
   past sale. Backup is now automatic and not shown: one copy of all records per day, taken the first time the
   app is used that day, last 30 days kept in the browser. The Backup box and the backup reminder are gone.
