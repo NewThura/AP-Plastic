@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-22, Thura (Main App Chat): new app: department apps are the same file opened as app/?dept=sales or ?dept=production, so every app update reaches them. The main app writes customers, products and each department's tabs to the shared folder; the department app follows the tabs and asks Accept or Skip for each change. Settings has a Department apps panel to choose tabs and open each app.
 - 2026-11-21, Thura with Claude: new app (`app/`): Overview graphs are titled by month ("November sales",
   "November income", "Customers' debt" ...). Sales graphs show an orange dashed prediction line (this month at
   today's pace, next month from the 6-month trend). Sales tab has a line graph per product; tap a name to hide it.
