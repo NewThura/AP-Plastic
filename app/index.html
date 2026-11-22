@@ -360,7 +360,7 @@ const svg=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
    Main copy: a records file on this computer's drive (Chrome / Edge, File System Access).
    Working copy: the browser (IndexedDB), so the app opens fast and still works without the file.
    File format: {app, saved, records:[{col,id,data}]} */
-/* the Sales app's kinds (E:\AP-Sales\DATA.md), fetched from the cloud and kept here as they are */
+/* the Sales app's kinds (E:\AP\AP Sales\DATA.md), fetched from the cloud and kept here as they are */
 const SALES_COLS=["users","receipts","receiptPayments","receiptReturns","productList","salesOrders","salesQuotes","computers","appSettings","shop","customerEdits","receiptFixes"];
 const COLS=["products","customers","sales","payments","materials","matMoves","made","waste","outbox",...SALES_COLS];
 let DBV=0;   // goes up on every change, so views of the records can be kept until something changes

@@ -24,6 +24,12 @@ molds, electricity, sales, customers, orders, bills, buying and suppliers. Myanm
 7. Save with `git add <the files you changed>`, then `git commit`, then `git push`. Never `git add -A` / `git add .`.
 8. If `git pull` reports a conflict, stop and tell the person; don't guess which side to keep.
 
+## Where everything is (since 2026-11-23)
+All AP folders are in `E:\AP`: `AP Main` (this project, branch `new-app`, the new main app in `app/`),
+`Old AP app` (the same project on branch `main`, the old app that is live online), `AP Sales` (the Sales app,
+its own chat), `AP Sales Data` (the Sales app's records) and `AP Records` (the main app's records folder).
+The desktop shortcut "AP Plastic" opens `E:\AP\AP Mainpp\index.html` in its own window.
+
 ## Working on now
 Write your name, the part, and the date. Remove your line when you are done.
 
@@ -60,7 +66,7 @@ only a few days, or not at all); the app makes the monthly copies itself. Choose
 database when it is not used for a while.
 
 **The cloud (Cloudflare, set up 2026-11-22; the new main app links to it from Settings > Cloud, the Sales app not yet). The main app keeps the Sales
-app's kinds as they come (SALES_COLS, shapes in E:\AP-Sales\DATA.md) and shows receipts, payments and returns through
+app's kinds as they come (SALES_COLS, shapes in E:\AP\AP Sales\DATA.md) and shows receipts, payments and returns through
 `salesView()` as read-only sales and payments; Settings > Sales app writes `appSettings`/`sales` {tabs, locked}.** Code in `cloud/`: a Worker
 (`src/worker.js`) and a D1 database `ap-records` in Asia (`schema.sql`), at https://ap-plastic-cloud.applastic.workers.dev .
 Table `records` (col, id, data, deleted, updated_at, updated_by) holds every app's records in the same shape as on
