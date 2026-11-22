@@ -51,13 +51,20 @@ and only updates its own copy after someone presses Accept. Refuse leaves its co
 connected when there is a cloud again; until then the outbox only fills up. Sales and payments are not shared.
 The main app shows as little explaining text as possible: no hint lines, short buttons, short messages.
 
-**Cloud plan (decided 2026-11-21, not built yet: no cloud rented).** Records are kept in two places: the cloud
+**Cloud plan (decided 2026-11-21).** Records are kept in two places: the cloud
 and the office computer's folder. Neither replaces the other; the folder saving stays as it is. The cloud must
 keep at least one year of records: every record stays (nothing is cleared after a time limit), and the cloud also
 keeps one copy for each month, the same as `ap-records-YYYY-MM.json` on the computer, never deleting a month that
 is less than 12 months old. Don't count on the cloud company's own backups for this (on cheap plans they are kept
 only a few days, or not at all); the app makes the monthly copies itself. Choose a plan that does not pause the
 database when it is not used for a while.
+
+**The cloud (Cloudflare, set up 2026-11-22; the apps are not linked to it yet).** Code in `cloud/`: a Worker
+(`src/worker.js`) and a D1 database `ap-records` in Asia (`schema.sql`), at https://ap-plastic-cloud.applastic.workers.dev .
+Table `records` (col, id, data, deleted, updated_at, updated_by) holds every app's records in the same shape as on
+the PC; table `monthly` gets a copy of every record on the 1st of each month and is never cleared. Each app sends its
+own key in the `X-AP-Key` header (MAIN_KEY, SALES_KEY: Cloudflare secrets, also in the owner's
+Documents\AP cloud keys.txt). **Never put a key in this project.** Publish a change with `npx wrangler@4 deploy` in `cloud/`.
 
 ## How the code is laid out (old app)
 Everything is in `index.html` (one file, no build step): styles at the top, then the page, then one script.

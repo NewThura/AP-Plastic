@@ -1,0 +1,14 @@
+# AP Plastic cloud: one Worker and one D1 database on Cloudflare.
+# The keys (MAIN_KEY, SALES_KEY) are Cloudflare secrets, set with "wrangler secret put", never written here.
+name = "ap-plastic-cloud"
+main = "src/worker.js"
+compatibility_date = "2026-11-01"
+
+# monthly copy: 00:05 UTC on the 1st (06:35 in Myanmar), for the month that ended
+[triggers]
+crons = ["5 0 1 * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ap-records"
+database_id = "9237ce8e-591d-4a35-b03b-8eb3379bb99b"

@@ -23,3 +23,8 @@ __pycache__/
 ap-sales-records*.json
 ap-sales-backup*.json
 ap-records*.json
+
+# Cloudflare: local tool files and local secrets (the keys live only on Cloudflare and in the owner's Documents folder)
+.wrangler/
+.dev.vars
+*keys*.txt
