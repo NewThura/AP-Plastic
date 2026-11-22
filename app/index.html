@@ -171,18 +171,6 @@ svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
 .bnav button{position:relative}
 .bnav .count{position:absolute;top:4px;left:calc(50% + 6px);background:var(--bad);color:#fff;font:600 10px var(--f-data);border-radius:8px;padding:0 5px}
 .nsum{display:flex;flex-wrap:wrap;gap:8px}
-.dapps{display:flex;flex-direction:column;gap:12px}
-.dapp{display:grid;grid-template-columns:110px 1fr auto;gap:12px;align-items:center}
-.dapp .legend{margin:0}
-.dapp .lg[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft);font-weight:600}
-.dapp .lg[aria-pressed="false"]{color:var(--muted);text-decoration:line-through}
-@media (max-width:600px){.dapp{grid-template-columns:1fr auto}.dapp .legend{grid-column:1/-1;grid-row:2}}
-.chg{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
-.chgh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-.chgf{display:flex;justify-content:space-between;gap:10px;font-size:13px}
-.chgf>span:first-child{color:var(--muted)}
-.chgf s{color:var(--muted)}
-.chgb{display:flex;justify-content:flex-end;gap:8px}
 .charts.ovg{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
 .panel.ov>h2{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px 8px 16px}
 .ovnow{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;font-size:12px;color:var(--muted)}
@@ -308,7 +296,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","Department apps":"ဌာန အက်ပ်များ","Changes from the main app":"ပင်မ အက်ပ်မှ ပြောင်းလဲမှုများ","The main app sent changes":"ပင်မ အက်ပ်မှ ပြောင်းလဲမှု ပို့ထားသည်","See":"ကြည့်မည်","Accept":"လက်ခံမည်","Accept all":"အားလုံး လက်ခံမည်","Skip":"မယူပါ","New":"အသစ်","Changed":"ပြင်ထားသည်","Removed":"ဖျက်ထားသည်","No tabs given by the main app":"ပင်မ အက်ပ်မှ စာမျက်နှာ မပေးရသေးပါ","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
+ "Edit":"ပြင်မည်","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
  "{m} production (dz)":"{m} ထုတ်လုပ်မှု (ဒါဇင်)","{m} waste (lb)":"{m} အပျက် (ပေါင်)","Expected":"ခန့်မှန်း","Expected by month end":"လကုန် ခန့်မှန်း","Sales by product, last 6 months":"ကုန်ပစ္စည်းအလိုက် အရောင်း၊ နောက်ဆုံး ၆ လ","Money in":"ငွေဝင်","Raw material used":"ကုန်ကြမ်း အသုံး","this month":"ဤလ","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
  "All":"အားလုံး","Bought this month":"ဤလ ဝယ်ယူမှု","customers":"ဦး","All customers":"ဖောက်သည် အားလုံး","Materials":"ကုန်ကြမ်း အမျိုးအစား","Used this month":"ဤလ အသုံး","Low in store":"လက်ကျန် နည်းနေသည်","materials":"မျိုး",
  "Products":"ကုန်ပစ္စည်း","Still sold":"ရောင်းဆဲ","Sold this month":"ဤလ ရောင်းပြီး","products":"မျိုး","In and out":"အဝင်အထွက်","Made":"ထုတ်ပြီး","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
@@ -339,14 +327,8 @@ const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOff
 const ym=d=>String(d||"").slice(0,7);
 const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 function OLD_PAGE(p){return {sales:"receipts",products:"finished"}[p]||p}
-/* One app file for everyone. Opened as app/?dept=sales (or production) it is that department's app:
-   its own records and its own file, only the tabs the main app gives it, and the main app's customers and
-   products arrive through the shared folder (ap-from-main.json), each change asked with "Accept?".
-   Because it is the same file, every improvement to the main app reaches the department apps too. */
-const DEPT=(()=>{const d=new URLSearchParams(location.search).get("dept");return ["sales","production"].includes(d)?d:""})();
-const LSP="ap2."+(DEPT?DEPT+".":"");
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
-const UI={page:OLD_PAGE(ls(LSP+"page")||"overview"),lang:ls(LSP+"lang")||"en",month:ym(today()),q:"",cust:""};
+const UI={page:OLD_PAGE(ls("ap2.page")||"overview"),lang:ls("ap2.lang")||"en",month:ym(today()),q:"",cust:""};
 const t=s=>UI.lang==="my"&&MY[s]?MY[s]:s;          // translate a fixed piece of text
 const T=s=>esc(t(s));                              // translated and safe for HTML
 const monthName=m=>{const [y,mo]=m.split("-");return (UI.lang==="my"?MON_MY:MON_EN)[+mo-1]+" "+y};
@@ -366,8 +348,7 @@ const svg=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
    Main copy: a records file on this computer's drive (Chrome / Edge, File System Access).
    Working copy: the browser (IndexedDB), so the app opens fast and still works without the file.
    File format: {app, saved, records:[{col,id,data}]} */
-const COLS=["products","customers","sales","payments","materials","matMoves","made","waste","outbox","settings"];
-const FROM_MAIN="ap-from-main.json";
+const COLS=["products","customers","sales","payments","materials","matMoves","made","waste","outbox"];
 const DB={};COLS.forEach(c=>DB[c]={});
 const Store={
   idb:null,ready:false,
@@ -375,20 +356,16 @@ const Store={
      ap-records.json holds everything and is updated after every change; ap-records-YYYY-MM.json is the copy for
      each month, started by itself when a new month begins, so every month is kept in its own file. */
   file:{handle:null,name:"",state:"none",err:false,timer:null,saving:false,again:false}, // none | need | on | nosupport
-  MAIN:DEPT?"ap-"+DEPT+".json":"ap-records.json",monthFile:()=>(DEPT?"ap-"+DEPT+"-":"ap-records-")+ym(today())+".json",
-  open(){return new Promise((ok,bad)=>{const r=indexedDB.open(DEPT?"ap-dept-"+DEPT:"ap-sales-app",2);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("records"))d.createObjectStore("records",{keyPath:["col","id"]});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta");if(!d.objectStoreNames.contains("backups"))d.createObjectStore("backups",{keyPath:"day"})};r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)})},
+  MAIN:"ap-records.json",monthFile:()=>"ap-records-"+ym(today())+".json",
+  open(){return new Promise((ok,bad)=>{const r=indexedDB.open("ap-sales-app",2);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("records"))d.createObjectStore("records",{keyPath:["col","id"]});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta");if(!d.objectStoreNames.contains("backups"))d.createObjectStore("backups",{keyPath:"day"})};r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)})},
   tx(store,mode,fn){return new Promise((ok,bad)=>{const x=this.idb.transaction(store,mode);const req=fn(x.objectStore(store));x.oncomplete=()=>ok(req&&req.result);x.onerror=()=>bad(x.error)})},
   all(){const out=[];for(const c of COLS)for(const [id,data] of Object.entries(DB[c]))out.push({col:c,id,data});return out},
   async replaceAll(recs){await this.tx("records","readwrite",st=>{st.clear();recs.forEach(r=>st.put(r))});COLS.forEach(c=>DB[c]={});recs.forEach(r=>{if(DB[r.col])DB[r.col][r.id]=r.data})},
   async readFile(dir){let h;try{h=await dir.getFileHandle(this.MAIN)}catch(e){return null}
     const txt=await (await h.getFile()).text();if(!txt.trim())return [];const j=JSON.parse(txt);return (j.records||[]).filter(r=>r&&COLS.includes(r.col)&&r.id&&r.data)},
   async writeOne(name,body){const h=await this.file.handle.getFileHandle(name,{create:true});const w=await h.createWritable();await w.write(body);await w.close()},
-  // for the department apps: customers, products, what was removed, and which tabs each department has
-  fromMain(){const recs=[];["customers","products"].forEach(c=>Object.entries(DB[c]).forEach(([id,data])=>recs.push({col:c,id,data})));
-    const removed=Object.values(DB.outbox).filter(o=>o.action==="remove"&&!DB[o.what]?.[o.recId]).map(o=>({col:o.what,id:o.recId}));
-    return JSON.stringify({app:"AP Plastic main",saved:new Date().toISOString(),depts:DB.settings.depts||{},records:recs,removed})},
   async writeFile(){const F=this.file;if(F.state!=="on")return;if(F.saving){F.again=true;return}F.saving=true;
-    try{const body=JSON.stringify({app:"AP Plastic",saved:new Date().toISOString(),records:this.all()});await this.writeOne(this.MAIN,body);await this.writeOne(this.monthFile(),body);if(!DEPT)await this.writeOne(FROM_MAIN,this.fromMain());if(F.err){F.err=false;render()}}
+    try{const body=JSON.stringify({app:"AP Plastic",saved:new Date().toISOString(),records:this.all()});await this.writeOne(this.MAIN,body);await this.writeOne(this.monthFile(),body);if(F.err){F.err=false;render()}}
     catch(e){if(!F.err){F.err=true;toast(t("Could not save to the records file"));render()}}
     finally{F.saving=false;if(F.again){F.again=false;this.writeFile()}}},
   soon(){clearTimeout(this.file.timer);this.file.timer=setTimeout(()=>{this.writeFile();this.autoBackup()},300)},
@@ -411,7 +388,6 @@ const Store={
     else{const h=await this.tx("meta","readonly",st=>st.get("folder"));
       if(h){F.handle=h;F.name=h.name;let p="prompt";try{p=await h.queryPermission({mode:"readwrite"})}catch(e){}
         if(p==="granted"){try{const recs=await this.readFile(h);F.state="on";if(recs)await this.replaceAll(recs);else this.soon()}catch(e){F.state="need"}}else F.state="need"}}
-    if(F.state==="on")this.soon();
     try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
     this.ready=true;
     this.autoBackup();
@@ -438,50 +414,10 @@ function outboxEntry(col,id,before,after){
 async function logShared(col,id,before,after){if(!SHARED.includes(col))return;const e=outboxEntry(col,id,before,after);if(e)await Store.put("outbox",uid("o"),e)}
 async function save(col,id,data,msg){if(!Store.canChange())return toast(t("Records file not open"));try{const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.put(col,id,data);await logShared(col,id,before,data);if(msg)toast(t(msg));render()}catch(e){toast(String(e.message||e))}}
 async function remove(col,id,msg){if(!Store.canChange())return;const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.del(col,id);await logShared(col,id,before,null);if(msg)toast(t(msg));render()}
-/* department app: look at the main app's file now and then; tab choices follow at once,
-   changes to customers and products wait for "Accept" (or "Skip", which is not asked again until the main app changes it again) */
-const sameRec=(a,b)=>{const c=o=>JSON.stringify(Object.fromEntries(Object.entries(o||{}).filter(([k])=>k!=="t").sort()));return c(a)===c(b)};
-const Sync={pending:[],saved:"",
-  skip(v){if(v===undefined){try{return JSON.parse(ls(LSP+"skip")||"{}")}catch(e){return {}}}ls(LSP+"skip",JSON.stringify(v))},
-  async check(){if(!DEPT||!Store.ready||Store.file.state!=="on")return;let j;
-    try{const h=await Store.file.handle.getFileHandle(FROM_MAIN);j=JSON.parse(await (await h.getFile()).text())}catch(e){return}
-    if(j.saved===this.saved)return;this.saved=j.saved;
-    if(!sameRec(j.depts||{},DB.settings.depts||{}))await Store.put("settings","depts",j.depts||{});
-    const sk=this.skip(),out=[];
-    (j.records||[]).forEach(r=>{if(!["customers","products"].includes(r.col)||!r.data)return;const mine=DB[r.col][r.id];
-      if(mine&&sameRec(mine,r.data))return;const key=r.col+":"+r.id;if(sk[key]===JSON.stringify(r.data))return;
-      out.push({key,col:r.col,id:r.id,action:mine?"change":"add",before:mine||null,after:r.data})});
-    (j.removed||[]).forEach(r=>{const mine=DB[r.col]?.[r.id];const key=r.col+":"+r.id;if(!mine||sk[key]==="removed")return;
-      out.push({key,col:r.col,id:r.id,action:"remove",before:mine,after:null})});
-    this.pending=out;render();if(form&&form.changes)showChanges()},
-  async answer(i,yes){const c=this.pending[i];if(!c)return;
-    if(yes){if(c.after)await Store.put(c.col,c.id,c.after);else await Store.del(c.col,c.id)}
-    else{const sk=this.skip();sk[c.key]=c.after?JSON.stringify(c.after):"removed";this.skip(sk)}
-    this.pending.splice(i,1);render();showChanges()}};
-const FIELD={name:"Name",no:"Customer number",town:"Town / area",phone:"Phone",bank:"Bank (KBZ, AYA, CB, KBZPay…)",terms:"Payment term",agent:"Agent (if any)",
-  commPct:"Agent commission %",my:"Myanmar name",en:"English name",priceDz:"Price per dozen (Ks)",priceBag:"Price per bag (Ks)",perBag:"Dozens in one bag",
-  active:"Still sold?",openDz:"In store at start (dz)",minDz:"Minimum (dz)",brands:"Buys from these companies"};
-function showChanges(){const ps=Sync.pending;if(!ps.length)return closeForm();form={changes:1};
-  const val=v=>typeof v==="number"?fmt(v):v===true?t("Yes"):v===false?t("No, hide it"):Array.isArray(v)?v.join(", "):String(v??"");
-  const nameOf=c=>{const d=c.after||c.before;return c.col==="products"?prodName(d):d.name||"?"};
-  const rows=ps.map((c,i)=>{let det="";
-    if(c.action==="change"){const keys=[...new Set(Object.keys(c.before).concat(Object.keys(c.after)))].filter(k=>k!=="t"&&JSON.stringify(c.before[k]??"")!==JSON.stringify(c.after[k]??""));
-      det=keys.map(k=>`<div class="chgf"><span>${T(FIELD[k]||k)}</span><span class="notr"><s>${esc(val(c.before[k]))}</s> → <b>${esc(val(c.after[k]))}</b></span></div>`).join("")}
-    return `<div class="chg"><div class="chgh"><b class="notr">${esc(nameOf(c))}</b><span class="chip">${T(c.col==="products"?"Product":"Customer")} · ${T({add:"New",change:"Changed",remove:"Removed"}[c.action])}</span></div>${det}
-      <div class="chgb"><button class="btn sm" data-skip="${i}">${T("Skip")}</button><button class="btn sm primary" data-yes="${i}">${T("Accept")}</button></div></div>`}).join("");
-  $("#drawer").innerHTML=`<div class="scrim" id="scrim"><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="dT">
-   <header><h2 id="dT">${T("Changes from the main app")}</h2><button class="btn sm" id="dX">${T("Close")}</button></header>
-   <div class="body">${rows}</div>
-   <footer><div></div><button class="btn primary" id="dAll">${T("Accept all")}</button></footer></div></div>`;
-  $("#scrim").onclick=e=>{if(e.target.id==="scrim")closeForm()};$("#dX").onclick=closeForm;
-  $$("[data-yes]").forEach(b=>b.onclick=()=>Sync.answer(+b.dataset.yes,true));
-  $$("[data-skip]").forEach(b=>b.onclick=()=>Sync.answer(+b.dataset.skip,false));
-  $("#dAll").onclick=async()=>{while(Sync.pending.length){const c=Sync.pending.shift();if(c.after)await Store.put(c.col,c.id,c.after);else await Store.del(c.col,c.id)}toast(t("Saved"));render();closeForm()}}
-if(DEPT){setInterval(()=>Sync.check(),15000);window.addEventListener("focus",()=>Sync.check())}
 async function fileAction(kind){
   try{if(kind==="open"&&Store.file.state==="need"){if(!(await Store.reopen()))return toast(t("The file was not allowed"))}
     else await Store.chooseFolder();
-    toast(t("Saved"));render();Sync.check()}
+    toast(t("Saved"));render()}
   catch(e){if(e&&e.name==="AbortError")return;toast(t("Could not use the file")+": "+(e&&e.message||e))}}
 
 window.apBackups=async()=>(await Store.tx("backups","readonly",st=>st.getAll())||[]).map(b=>({day:b.day,saved:b.saved,records:b.records.length}));
@@ -759,7 +695,7 @@ V.sales=()=>{const m=UI.month,q=UI.q.toLowerCase();
   const ready=list("customers").length&&list("products").length;
   const kpis=salesKpis(m);
   const bar=`<div class="bar"><div class="left">${monthPicker()}<input class="search" id="q" placeholder="${T("Find customer or product")}" value="${esc(UI.q)}"></div><button class="btn primary" id="add" ${ready?"":"disabled"}>${T("New receipt")}</button></div>`;
-  if(!ready)return bar+kpis+`<div class="panel"><div class="empty"><b>${T("First add a customer and a product.")}</b><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn" data-go="customers">${T("Customers")}</button>${DEPT?"":`<button class="btn" data-go="products">${T("Products")}</button>`}</div></div></div>`;
+  if(!ready)return bar+kpis+`<div class="panel"><div class="empty"><b>${T("First add a customer and a product.")}</b><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn" data-go="customers">${T("Customers")}</button><button class="btn" data-go="products">${T("Products")}</button></div></div></div>`;
   const charts=salesCharts(m);
   if(!inM.length)return bar+kpis+charts+empty("No receipts this month","","New receipt","add2");
   const st=s=>{const o=saleOwed(s);return o>0.5?`<span class="chip warn">${T("Owed")} ${fmt(o)}</span>`:`<span class="chip good">${T("Paid in full")}</span>`};
@@ -981,16 +917,8 @@ V.settings=()=>{const F=Store.file;
   const fileBox=F.state==="nosupport"?`<div class="muted">${T("Use Chrome or Edge to save to a file.")}</div>`
    :`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open")}</button>`:""}<button class="btn ${F.state==="none"?"primary":""}" data-file="pick">${T(F.state==="none"?"Choose folder":"Change folder")}</button>${F.state==="on"?`<span class="chip good">${T("Saved each month")}</span>`:""}</div>`;
   return `<div class="panel"><h2>${T("Records file")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:12px">${fileBox}</div></div>
-   ${DEPT?"":deptBox()}
    <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
-function deptBox(){return `<div class="panel"><h2>${T("Department apps")}</h2><div class="pb dapps">${DEPTS.filter(d=>d.tabs).map(d=>{const on=deptTabs(d.id).map(x=>x[0]);
-    return `<div class="dapp"><b>${T(d.name)}</b><div class="legend">${d.tabs.map(([k,n])=>`<button class="lg" data-dt="${d.id}:${k}" aria-pressed="${on.includes(k)}">${T(n)}</button>`).join("")}</div>
-      <button class="btn sm" data-dopen="${d.id}">${T("Open")}</button></div>`}).join("")}</div></div>`}
-V.settings.bind=()=>{bindLang();
-  $$("[data-dt]").forEach(b=>b.onclick=()=>{const [d,k]=b.dataset.dt.split(":"),all=Object.assign({},DB.settings.depts||{});
-    let on=deptTabs(d).map(x=>x[0]);on=on.includes(k)?on.filter(x=>x!==k):DEPTS.find(x=>x.id===d).tabs.map(x=>x[0]).filter(x=>x===k||on.includes(x));
-    all[d]=on;save("settings","depts",all,"Saved")});
-  $$("[data-dopen]").forEach(b=>b.onclick=()=>window.open(location.pathname+"?dept="+b.dataset.dopen,"_blank"))};
+V.settings.bind=()=>{bindLang()};
 
 /* ================= page frame ================= */
 /* departments, each with its own tabs. UI.page is the tab (or the page, when a department has no tabs). */
@@ -999,11 +927,7 @@ const DEPTS=[
   {id:"sales",name:"Sales",tabs:[["receipts","Receipts"],["payments","Payments"],["customers","Customers"]]},
   {id:"production",name:"Production",tabs:[["raw","Raw materials"],["finished","Finished products"],["waste","Waste products"]]},
   {id:"settings",name:"Settings"}];
-const OLD={products:"finished"};
-// the tabs a department has: all of them, unless the main app turned some off in Settings
-function deptTabs(id){const d=DEPTS.find(x=>x.id===id),on=(DB.settings.depts||{})[id];return (d.tabs||[]).filter(([k])=>!on||on.includes(k))}
-const navDepts=()=>DEPT?[Object.assign({},DEPTS.find(d=>d.id===DEPT),{tabs:deptTabs(DEPT)}),DEPTS.find(d=>d.id==="settings")]:DEPTS;
-V.none=()=>empty("No tabs given by the main app");   // older page names still used in a few places
+const OLD={products:"finished"};   // older page names still used in a few places
 const deptOf=k=>DEPTS.find(d=>d.id===k||(d.tabs||[]).some(x=>x[0]===k))||DEPTS[0];
 /* Every tab is built the same way, top to bottom:
    1. tools: month (and search) on the left, buttons on the right, the main button last and outlined in blue
@@ -1017,12 +941,11 @@ function monthPicker(){return `<span class="seg"><button id="mPrev" aria-label="
 function bindMonth(){$("#mPrev")&&($("#mPrev").onclick=()=>{UI.month=addMonth(UI.month,-1);render()});$("#mNext")&&($("#mNext").onclick=()=>{UI.month=addMonth(UI.month,1);render()})}
 function bindSearch(){const q=$("#q");if(!q)return;q.oninput=()=>{UI.q=q.value;const pos=q.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)}}
 const langSeg=()=>`<span class="seg"><button data-lang="my" aria-pressed="${UI.lang==="my"}">မြန်မာ</button><button data-lang="en" aria-pressed="${UI.lang==="en"}">English</button></span>`;
-function bindLang(){$$("[data-lang]").forEach(b=>b.onclick=()=>{UI.lang=b.dataset.lang;ls(LSP+"lang",UI.lang);render()})}
-function go(p){p=OLD[p]||p;const d=deptOf(p);if(d.id===p&&d.tabs)p=ls(LSP+"tab."+d.id)||d.tabs[0][0];if(d.tabs)ls(LSP+"tab."+d.id,p);UI.page=p;UI.q="";ls(LSP+"page",p);render();window.scrollTo(0,0)}
+function bindLang(){$$("[data-lang]").forEach(b=>b.onclick=()=>{UI.lang=b.dataset.lang;ls("ap2.lang",UI.lang);render()})}
+function go(p){p=OLD[p]||p;const d=deptOf(p);if(d.id===p&&d.tabs)p=ls("ap2.tab."+d.id)||d.tabs[0][0];if(d.tabs)ls("ap2.tab."+d.id,p);UI.page=p;UI.q="";ls("ap2.page",p);render();window.scrollTo(0,0)}
 function fileBanner(){const F=Store.file;if(!Store.ready)return "";
   if(F.state==="need")return `<div class="banner"><span>${T("Records file is closed")}</span><button class="btn sm primary" data-file="open">${T("Open")}</button></div>`;
-  if(DEPT&&F.state==="on"&&Sync.pending.length)return `<div class="banner"><span>${T("The main app sent changes")} · <b class="notr">${Sync.pending.length}</b></span><button class="btn sm primary" id="seeChg">${T("See")}</button></div>`;
-  if(F.state==="none")return `<div class="banner"><span>${T(DEPT?"Choose the main app's folder":"No records file yet")}</span><button class="btn sm primary" data-file="pick">${T("Choose folder")}</button></div>`;
+  if(F.state==="none")return `<div class="banner"><span>${T("No records file yet")}</span><button class="btn sm primary" data-file="pick">${T("Choose folder")}</button></div>`;
   if(F.state==="on"&&F.err)return `<div class="banner bad"><span>${T("Could not save to the records file")}</span><button class="btn sm" data-file="pick">${T("Choose folder")}</button></div>`;
   return ""}
 function syncText(){const F=Store.file;if(!Store.ready)return ["",t("Loading…")];
@@ -1031,12 +954,10 @@ function syncText(){const F=Store.file;if(!Store.ready)return ["",t("Loading…"
 function render(){
   const tp=document.getElementById("tip");if(tp)tp.style.display="none";
   document.documentElement.lang=UI.lang==="my"?"my":"en";
-  const ND=navDepts();const dept=ND.find(d=>d.id===UI.page||(d.tabs||[]).some(x=>x[0]===UI.page))||ND[0];let id=OLD[UI.page]||UI.page;
-  if(DEPT&&dept.tabs&&!dept.tabs.some(x=>x[0]===id))id=dept.tabs.length?dept.tabs[0][0]:"none";
-  if(!V[id])id=dept.tabs?dept.tabs[0][0]:dept.id;const name=dept.name;
+  const dept=deptOf(UI.page);let id=UI.page;if(!V[id])id=dept.tabs?dept.tabs[0][0]:dept.id;const name=dept.name;
   const nAl=Store.ready?alerts().filter(a=>a.sev!=="info").length:0;
   const navBtn=d=>`<button data-go="${d.id}" aria-current="${d.id===dept.id}">${svg(d.id)}<span>${T(d.name)}</span>${d.id==="overview"&&nAl?`<span class="count notr">${nAl}</span>`:""}</button>`;
-  $("#nav").innerHTML=ND.map(navBtn).join("");$("#bnav").innerHTML=ND.map(navBtn).join("");
+  $("#nav").innerHTML=DEPTS.map(navBtn).join("");$("#bnav").innerHTML=DEPTS.map(navBtn).join("");
   $$("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
   $$("[data-t]").forEach(el=>{el.__en=el.__en||el.textContent;el.textContent=t(el.__en)});
   const [cls,txt]=syncText();$("#dot").className="dot "+cls;$("#sync").textContent=txt;
@@ -1048,14 +969,12 @@ function render(){
   if(Store.ready&&V[id].bind)V[id].bind();
   $$("#main [data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
   $$("[data-file]").forEach(b=>b.onclick=()=>fileAction(b.dataset.file==="pick"?"pick":b.dataset.file));
-  if($("#seeChg"))$("#seeChg").onclick=showChanges;
   if(!Store.canChange())$$("#main .btn.primary:not([data-file])").forEach(b=>b.disabled=true);
 }
 
 /* ================= start ================= */
 render();
-if(DEPT)document.title+=" · "+DEPTS.find(d=>d.id===DEPT).name;
-Store.start().then(()=>{render();Sync.check()}).catch(e=>{$("#main").innerHTML=`<div class="banner bad">${esc(String(e&&e.message||e))}</div>`});
+Store.start().then(render).catch(e=>{$("#main").innerHTML=`<div class="banner bad">${esc(String(e&&e.message||e))}</div>`});
 </script>
 </body>
 </html>
