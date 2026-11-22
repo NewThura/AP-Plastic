@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): cloud sign-in for sales computers without a key: /login/salt and /login check a username and password hash against the accounts made in AP Main and give back the Sales key; unknown names get a stable made-up salt; 5 wrong tries in 15 minutes are refused. Asked for by the owner through the Sales app chat.
 - 2026-11-23, Thura (Main App Chat): passcode for important actions (change records folder, link or unlink the cloud, Sales app tabs, accept/lock/remove computers, make or change accounts), set in Settings > Passcode; kept on the PC only as a hash; after a right passcode, one minute without asking again. Asked for by the owner to avoid accidents.
 - 2026-11-23, Thura (Main App Chat): the desktop icon showed garbled (black with blotchy yellow): the icon file now uses the classic picture format Windows reads everywhere, and the installer gives the copied icon a new name when it changes so Windows drops its old saved one.
 - 2026-11-23, Thura (Main App Chat): sharper logo: cut again from the original, trimmed to the gold frame with see-through corners, larger sizes (256 in the app, 512 icon), and a real Windows icon with every size (install/ap-main.ico) for the Desktop and Start menu.

@@ -8,6 +8,14 @@
    POST /records  {records:[{col,id,data,deleted}]} -> {now, saved}
    GET  /months                      -> {months:[{month,count}]}        (the monthly copies kept)
 
+   Sign-in for sales computers (no key needed; accounts are made in AP Main, kind "users"):
+   GET  /login/salt?username=<name>  -> {salt}   the account's salt; for a name that does not exist, a made-up salt
+                                                 that stays the same, so nobody can tell which names exist
+   POST /login {username, hash, code} -> {key}   hash = PBKDF2-SHA256(password, salt as text, 150000, 32 bytes, hex),
+                                                 made on the PC. Right hash of an active account: the Sales key.
+                                                 Wrong: 401. Too many wrong tries (5 in 15 minutes for one name or
+                                                 one address): 429 {error, wait (seconds)}.
+
    On the 1st of every month (cron) the cloud copies every record into "monthly" for the month that ended. */
 
 const CORS = {
@@ -64,6 +72,64 @@ async function getRecords(url, env) {
   });
 }
 
+/* ---------- sign-in ---------- */
+const TRIES = 5, WINDOW = 15 * 60;   // wrong tries allowed, in seconds
+const hex = (buf) => [...new Uint8Array(buf)].map((x) => x.toString(16).padStart(2, "0")).join("");
+const cleanName = (s) => String(s || "").trim().toLowerCase().slice(0, 60);
+async function findUser(env, name) {
+  const r = await env.DB.prepare(
+    "SELECT data FROM records WHERE col='users' AND deleted=0 AND json_extract(data,'$.username')=? LIMIT 1").bind(name).first();
+  return r ? JSON.parse(r.data) : null;
+}
+async function fakeSalt(env, name) {
+  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(env.LOGIN_SECRET || env.SALES_KEY || "x"), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return hex(await crypto.subtle.sign("HMAC", k, new TextEncoder().encode("salt:" + name))).slice(0, 32);
+}
+function sameText(a, b) {   // compares in the same time whatever the text, so timing tells nothing
+  a = String(a || ""); b = String(b || "");
+  let d = a.length ^ b.length;
+  for (let i = 0; i < Math.max(a.length, b.length); i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
+  return d === 0;
+}
+async function blockedFor(env, keys, now) {   // seconds to wait, 0 = may try
+  let wait = 0;
+  for (const k of keys) {
+    const r = await env.DB.prepare("SELECT n, since FROM login_tries WHERE k=?").bind(k).first();
+    if (r && now - r.since < WINDOW && r.n >= TRIES) wait = Math.max(wait, WINDOW - (now - r.since));
+  }
+  return wait;
+}
+async function countFail(env, keys, now) {
+  const st = env.DB.prepare(
+    `INSERT INTO login_tries (k,n,since) VALUES (?,1,?)
+     ON CONFLICT(k) DO UPDATE SET n = CASE WHEN ? - since >= ${WINDOW} THEN 1 ELSE n + 1 END,
+                                  since = CASE WHEN ? - since >= ${WINDOW} THEN ? ELSE since END`);
+  await env.DB.batch(keys.map((k) => st.bind(k, now, now, now, now)));
+}
+async function loginSalt(url, env) {
+  const name = cleanName(url.searchParams.get("username"));
+  if (!name) return json({ error: "username missing" }, 400);
+  const u = await findUser(env, name);
+  return json({ salt: u && u.salt ? u.salt : await fakeSalt(env, name) });
+}
+async function login(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return json({ error: "Not JSON" }, 400); }
+  const name = cleanName(b && b.username), hash = String((b && b.hash) || "").toLowerCase();
+  if (!name || !/^[0-9a-f]{64}$/.test(hash)) return json({ error: "username and hash needed" }, 400);
+  const now = Math.floor(Date.now() / 1000), ip = req.headers.get("CF-Connecting-IP") || "local";
+  const keys = ["user:" + name, "ip:" + ip];
+  const wait = await blockedFor(env, keys, now);
+  if (wait) return json({ error: "Too many wrong tries", wait }, 429);
+  const u = await findUser(env, name);
+  if (u && u.active !== false && u.hash && sameText(u.hash.toLowerCase(), hash)) {
+    await env.DB.prepare("DELETE FROM login_tries WHERE k=?").bind("user:" + name).run();
+    return json({ key: env.SALES_KEY });
+  }
+  await countFail(env, keys, now);
+  return json({ error: "Wrong username or password" }, 401);
+}
+
 // the month that just ended, e.g. run on 2026-12-01 -> "2026-11"
 function lastMonth(d = new Date()) {
   const x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) - 86400000);
@@ -81,6 +147,12 @@ export default {
     const url = new URL(req.url);
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (url.pathname === "/health") return json({ ok: true });
+    try {
+      if (url.pathname === "/login/salt" && req.method === "GET") return await loginSalt(url, env);
+      if (url.pathname === "/login" && req.method === "POST") return await login(req, env);
+    } catch (e) {
+      return json({ error: String((e && e.message) || e) }, 500);
+    }
     const app = who(req, env);
     if (!app) return json({ error: "Wrong or missing key" }, 401);
     try {

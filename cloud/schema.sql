@@ -23,3 +23,11 @@ CREATE TABLE IF NOT EXISTS monthly (
   updated_by TEXT NOT NULL,
   PRIMARY KEY (month, col, id)
 );
+
+-- login_tries: wrong sign-in tries, per username ("user:<name>") and per address ("ip:<address>"),
+-- so the cloud can stop someone guessing passwords (5 wrong tries in 15 minutes).
+CREATE TABLE IF NOT EXISTS login_tries (
+  k TEXT PRIMARY KEY,
+  n INTEGER NOT NULL,                      -- wrong tries in this window
+  since INTEGER NOT NULL                   -- when the window started, seconds since 1970
+);

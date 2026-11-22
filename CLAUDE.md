@@ -70,7 +70,10 @@ cleared (the owner wants at least 12 months kept). Records stay on the PC too; t
 Each app sends its own key in the `X-AP-Key` header (MAIN_KEY, SALES_KEY: Cloudflare secrets, also in the owner's
 `Documents\AP cloud keys.txt`). Only the main key may write `appSettings` and `users`.
 **Never put a key in this project or in a message.** The owner pastes the key into the app himself.
-Publish a cloud change with `npx wrangler@4 deploy` in `cloud/`.
+Sales computers join without a key: `GET /login/salt?username=` then `POST /login {username, hash, code}` returns
+the Sales key for an active account (hash made on the PC; 5 wrong tries in 15 minutes per name or address = 429).
+The secret `LOGIN_SECRET` makes the made-up salts for unknown names. Publish a cloud change with
+`npx wrangler@4 deploy` in `cloud/`.
 
 ## Testing
 - `python -m http.server 8770 --directory "E:/AP/AP Main"`, then open http://127.0.0.1:8770/ .
