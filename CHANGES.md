@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): AP Main holds only its own files now: the old AP ERP's files (old index.html, Supabase settings, installer, receipt maker, test setup, old icons) are taken off this branch; they stay on branch main. The app moved from app/ to the top of the folder. Notes rewritten for AP Main.
 - 2026-11-23, Thura (Main App Chat): all AP folders now live in E:\AP (AP Main, Old AP app, AP Sales, AP Sales Data, AP Records); notes and paths updated.
 - 2026-11-23, Thura (Main App Chat): new app: new gold AP logo (app icon and the mark beside the company name).
 - 2026-11-23, Thura (Main App Chat): new app: Computers page. It lists every computer that opens the Sales app (online now or last seen, code, Windows name, IP, user) with Accept, Lock/Unlock and Remove (appSettings/sales accepted and locked), plus an alert when one is waiting. Accounts tab makes the Sales app's sign-ins (users, password kept only as a PBKDF2 hash). Cloud: only the main key may write users. The app fetches everything again when it learns new kinds of records.
@@ -73,26 +74,3 @@ Newest first. Date, who (and which AI), what changed and why.
   sales with several products in dozens or bags, paid now, later payments, and what each customer still owes.
   Records are kept in a file on the office computer's drive. English and Myanmar, computer and phone. The old
   app stays as it is until the new one is ready.
-
-- 2026-11-21, Thura with Claude: Home is now one list of notifications and alarms (Urgent, To do, For
-  information), each with an Open button; the quick buttons stay on top. New alarms: not enough finished stock
-  for orders, orders due tomorrow, customers owing for more than 30 days, money owed to suppliers. Overview now
-  shows every number for the month in one box per area (money, sales and orders, production, finished stock,
-  raw materials, staff pay, electricity, molds, buying), with arrows against last month. Asked for by the owner:
-  simple and clear.
-
-- 2026-11-21, Thura with Claude: `receipts/ap-receipts.html`, a simple receipt maker for the sales department
-  (published as the "AP Receipts" artifact): form, modern customer receipt (picture or text for Viber), saved
-  receipts for the team. Product names are typed for now; the product list will be made again later.
-
-- 2026-11-16, Thura with Claude: the app can be installed. "Install app" button at the top (Chrome and Edge
-  install it in one click; iPhone, Android and computer steps shown otherwise); sharp new icons at every size;
-  `sw.js` so Chrome offers install and the app opens without internet (always loads the newest version first);
-  Windows setup kept in `install/` for computers without Chrome or Edge. Asked for by the owner.
-
-- 2026-11-16, Thura with Claude: made this project the shared workplace (CLAUDE.md rules, this file, test setup
-  with made-up data in `test/`, `.gitignore` for private files).
-- 2026-11-16, Thura with Claude: new parts. Home page (today's money, orders, what is owed, what is low, quick
-  buttons); Orders (Waiting, Ready, On the way, Delivered, and Delivered records the sale); Bills (print, picture,
-  send to Viber; details in Settings > Bill details); Buying (purchases into raw material stock, suppliers and what
-  is owed, payments to suppliers, daily expenses). Asked for by the owner for the office.
