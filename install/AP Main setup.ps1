@@ -25,16 +25,11 @@ if (-not $same) {
 }
 Say "AP Main is in $dest"
 
-# 3. the icon (made from icon.png)
+# 3. the icon (every size, made from the logo; kept next to this setup as ap-main.ico)
 $iconDir = Join-Path $env:LOCALAPPDATA "AP Main"
 New-Item -ItemType Directory -Force $iconDir | Out-Null
 $ico = Join-Path $iconDir "ap-main.ico"
-Add-Type -AssemblyName System.Drawing
-$png = [System.Drawing.Bitmap]::FromFile((Join-Path $dest "icon.png"))
-$bmp = New-Object System.Drawing.Bitmap $png, 64, 64
-$png.Dispose()
-$icon = [System.Drawing.Icon]::FromHandle($bmp.GetHicon())
-$fs = [System.IO.File]::Create($ico); $icon.Save($fs); $fs.Close()
+Copy-Item (Join-Path $PSScriptRoot "ap-main.ico") $ico -Force
 
 # 4. the browser that opens it: Chrome, else Edge
 $browser = @(
