@@ -25,8 +25,8 @@ molds, electricity, sales, customers, orders, bills, buying and suppliers. Myanm
 8. If `git pull` reports a conflict, stop and tell the person; don't guess which side to keep.
 
 ## Where everything is (since 2026-11-23)
-All AP folders are in `E:\AP`: `AP Main` (this project, branch `new-app`, the new main app in `app/`),
-`Old AP app` (the same project on branch `main`, the old app that is live online), `AP Sales` (the Sales app,
+All AP folders are in `E:\AP`: `AP Main` (this project, branch `new-app`; the new app in `app/` is called **AP Main**, never "ERP"),
+`Old AP app` (the **old AP ERP**: the same project on branch `main`, live online; keep it, never delete it), `AP Sales` (the Sales app,
 its own chat), `AP Sales Data` (the Sales app's records) and `AP Records` (the main app's records folder).
 The desktop shortcut "AP Plastic" opens `E:\AP\AP Mainpp\index.html` in its own window.
 
