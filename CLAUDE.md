@@ -59,7 +59,9 @@ is less than 12 months old. Don't count on the cloud company's own backups for t
 only a few days, or not at all); the app makes the monthly copies itself. Choose a plan that does not pause the
 database when it is not used for a while.
 
-**The cloud (Cloudflare, set up 2026-11-22; the new main app links to it from Settings > Cloud, the Sales app not yet).** Code in `cloud/`: a Worker
+**The cloud (Cloudflare, set up 2026-11-22; the new main app links to it from Settings > Cloud, the Sales app not yet). The main app keeps the Sales
+app's kinds as they come (SALES_COLS, shapes in E:\AP-Sales\DATA.md) and shows receipts, payments and returns through
+`salesView()` as read-only sales and payments; Settings > Sales app writes `appSettings`/`sales` {tabs, locked}.** Code in `cloud/`: a Worker
 (`src/worker.js`) and a D1 database `ap-records` in Asia (`schema.sql`), at https://ap-plastic-cloud.applastic.workers.dev .
 Table `records` (col, id, data, deleted, updated_at, updated_by) holds every app's records in the same shape as on
 the PC; table `monthly` gets a copy of every record on the 1st of each month and is never cleared. Each app sends its

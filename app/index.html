@@ -171,6 +171,12 @@ svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
 .bnav button{position:relative}
 .bnav .count{position:absolute;top:4px;left:calc(50% + 6px);background:var(--bad);color:#fff;font:600 10px var(--f-data);border-radius:8px;padding:0 5px}
 .nsum{display:flex;flex-wrap:wrap;gap:8px}
+.sapp{margin:0}
+.comps{display:flex;flex-direction:column}
+.comp{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.comp:first-child{border-top:0;padding-top:0}
+.compb{display:flex;gap:8px;align-items:center}
+.sapp .lg[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft);font-weight:600}
 .charts.ovg{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
 .panel.ov>h2{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px 8px 16px}
 .ovnow{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;font-size:12px;color:var(--muted)}
@@ -296,7 +302,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","Wrong key":"key မှားနေသည်","Cloud":"cloud","Cloud key":"cloud key","Link":"ချိတ်မည်","Unlink":"ချိတ်ဆက်မှု ဖြုတ်မည်","Tap again to unlink":"ဖြုတ်ရန် ထပ်နှိပ်ပါ","Linked to the cloud":"cloud နှင့် ချိတ်ပြီး","Cloud not reached":"cloud ကို မရောက်ပါ","Sending to the cloud":"cloud သို့ ပို့နေသည်","Saved to the cloud":"cloud တွင် သိမ်းပြီး","Cloud: wrong key":"cloud: key မှားနေသည်","cloud waiting":"cloud စောင့်နေသည်","sending":"ပို့နေသည်","cloud":"cloud","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
+ "Edit":"ပြင်မည်","Unlock":"ဖွင့်မည်","Made in the Sales app. Change it there.":"အရောင်း အက်ပ်တွင် လုပ်ထားသည်။ ထိုတွင် ပြင်ပါ။","Sales app":"အရောင်း အက်ပ်","Link the cloud first.":"cloud နှင့် အရင် ချိတ်ပါ။","Tabs":"စာမျက်နှာများ","Computers":"ကွန်ပျူတာများ","Computer":"ကွန်ပျူတာ","User":"အသုံးပြုသူ","Version":"ဗားရှင်း","Last seen":"နောက်ဆုံး တွေ့ချိန်","Locked":"ပိတ်ထားသည်","Lock":"ပိတ်မည်","No computers yet.":"ကွန်ပျူတာ မရှိသေးပါ။","Keep at least one tab":"စာမျက်နှာ တစ်ခု အနည်းဆုံး ထားပါ","Make receipt":"ပြေစာ ရေးမည်","Past receipts":"ယခင် ပြေစာများ","Quotations":"ဈေးနှုန်း စာများ","Orders":"အော်ဒါများ","Wrong key":"key မှားနေသည်","Cloud":"cloud","Cloud key":"cloud key","Link":"ချိတ်မည်","Unlink":"ချိတ်ဆက်မှု ဖြုတ်မည်","Tap again to unlink":"ဖြုတ်ရန် ထပ်နှိပ်ပါ","Linked to the cloud":"cloud နှင့် ချိတ်ပြီး","Cloud not reached":"cloud ကို မရောက်ပါ","Sending to the cloud":"cloud သို့ ပို့နေသည်","Saved to the cloud":"cloud တွင် သိမ်းပြီး","Cloud: wrong key":"cloud: key မှားနေသည်","cloud waiting":"cloud စောင့်နေသည်","sending":"ပို့နေသည်","cloud":"cloud","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
  "{m} production (dz)":"{m} ထုတ်လုပ်မှု (ဒါဇင်)","{m} waste (lb)":"{m} အပျက် (ပေါင်)","Expected":"ခန့်မှန်း","Expected by month end":"လကုန် ခန့်မှန်း","Sales by product, last 6 months":"ကုန်ပစ္စည်းအလိုက် အရောင်း၊ နောက်ဆုံး ၆ လ","Money in":"ငွေဝင်","Raw material used":"ကုန်ကြမ်း အသုံး","this month":"ဤလ","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
  "All":"အားလုံး","Bought this month":"ဤလ ဝယ်ယူမှု","customers":"ဦး","All customers":"ဖောက်သည် အားလုံး","Materials":"ကုန်ကြမ်း အမျိုးအစား","Used this month":"ဤလ အသုံး","Low in store":"လက်ကျန် နည်းနေသည်","materials":"မျိုး",
  "Products":"ကုန်ပစ္စည်း","Still sold":"ရောင်းဆဲ","Sold this month":"ဤလ ရောင်းပြီး","products":"မျိုး","In and out":"အဝင်အထွက်","Made":"ထုတ်ပြီး","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
@@ -348,7 +354,10 @@ const svg=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
    Main copy: a records file on this computer's drive (Chrome / Edge, File System Access).
    Working copy: the browser (IndexedDB), so the app opens fast and still works without the file.
    File format: {app, saved, records:[{col,id,data}]} */
-const COLS=["products","customers","sales","payments","materials","matMoves","made","waste","outbox"];
+/* the Sales app's kinds (E:\AP-Sales\DATA.md), fetched from the cloud and kept here as they are */
+const SALES_COLS=["receipts","receiptPayments","receiptReturns","productList","salesOrders","salesQuotes","computers","appSettings","shop","customerEdits","receiptFixes"];
+const COLS=["products","customers","sales","payments","materials","matMoves","made","waste","outbox",...SALES_COLS];
+let DBV=0;   // goes up on every change, so views of the records can be kept until something changes
 const DB={};COLS.forEach(c=>DB[c]={});
 const Store={
   idb:null,ready:false,
@@ -360,7 +369,7 @@ const Store={
   open(){return new Promise((ok,bad)=>{const r=indexedDB.open("ap-sales-app",2);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("records"))d.createObjectStore("records",{keyPath:["col","id"]});if(!d.objectStoreNames.contains("meta"))d.createObjectStore("meta");if(!d.objectStoreNames.contains("backups"))d.createObjectStore("backups",{keyPath:"day"})};r.onsuccess=()=>ok(r.result);r.onerror=()=>bad(r.error)})},
   tx(store,mode,fn){return new Promise((ok,bad)=>{const x=this.idb.transaction(store,mode);const req=fn(x.objectStore(store));x.oncomplete=()=>ok(req&&req.result);x.onerror=()=>bad(x.error)})},
   all(){const out=[];for(const c of COLS)for(const [id,data] of Object.entries(DB[c]))out.push({col:c,id,data});return out},
-  async replaceAll(recs){await this.tx("records","readwrite",st=>{st.clear();recs.forEach(r=>st.put(r))});COLS.forEach(c=>DB[c]={});recs.forEach(r=>{if(DB[r.col])DB[r.col][r.id]=r.data})},
+  async replaceAll(recs){await this.tx("records","readwrite",st=>{st.clear();recs.forEach(r=>st.put(r))});COLS.forEach(c=>DB[c]={});recs.forEach(r=>{if(DB[r.col])DB[r.col][r.id]=r.data});DBV++},
   async readFile(dir){let h;try{h=await dir.getFileHandle(this.MAIN)}catch(e){return null}
     const txt=await (await h.getFile()).text();if(!txt.trim())return [];const j=JSON.parse(txt);return (j.records||[]).filter(r=>r&&COLS.includes(r.col)&&r.id&&r.data)},
   async writeOne(name,body){const h=await this.file.handle.getFileHandle(name,{create:true});const w=await h.createWritable();await w.write(body);await w.close()},
@@ -393,8 +402,8 @@ const Store={
     this.autoBackup();
   },
   canChange(){return this.ready&&this.file.state!=="need"},
-  async put(col,id,data,fromCloud){await this.tx("records","readwrite",st=>st.put({col,id,data}));DB[col][id]=data;if(!fromCloud)Cloud.queue(col,id,data);this.soon()},
-  async del(col,id,fromCloud){await this.tx("records","readwrite",st=>st.delete([col,id]));delete DB[col][id];if(!fromCloud)Cloud.queue(col,id,null);this.soon()},
+  async put(col,id,data,fromCloud){await this.tx("records","readwrite",st=>st.put({col,id,data}));DB[col][id]=data;DBV++;if(!fromCloud)Cloud.queue(col,id,data);this.soon()},
+  async del(col,id,fromCloud){await this.tx("records","readwrite",st=>st.delete([col,id]));delete DB[col][id];DBV++;if(!fromCloud)Cloud.queue(col,id,null);this.soon()},
   async reopen(){const F=this.file;const p=await F.handle.requestPermission({mode:"readwrite"});if(p!=="granted")return false;const recs=await this.readFile(F.handle);F.state="on";F.err=false;if(recs)await this.replaceAll(recs);else await this.writeFile();return true},
   // choose the folder once; if it already holds records they are loaded, otherwise the records here are saved into it
   async chooseFolder(){const h=await showDirectoryPicker({id:"ap-records",mode:"readwrite"});const recs=await this.readFile(h);if(recs)await this.replaceAll(recs);await this.link(h);await this.writeFile()}
@@ -473,19 +482,36 @@ window.apRestore=async day=>{const b=await Store.tx("backups","readonly",st=>st.
   await Store.replaceAll(b.records);Store.soon();render();return "Restored "+b.records.length+" records from "+day};
 
 /* ================= reading the records ================= */
-const list=c=>Object.entries(DB[c]).map(([id,d])=>Object.assign({id},d));
+const rawList=c=>Object.entries(DB[c]).map(([id,d])=>Object.assign({id},d));
+/* The Sales app's receipts, payments and returns, turned into the main app's shapes so every page, graph and
+   alert counts them. They can only be changed in the Sales app. Lines become dozens where the size is known
+   (pieces ÷ 12, bags × pieces per bag ÷ 12), keeping the same amount in Kyat. */
+let SV={v:-1};const SALEPN={};
+const PAYWAY={cash:"Cash",kbzpay:"KBZPay",kbz:"Bank",ayapay:"Bank",cbpay:"Bank",wave:"Other",bank:"Bank",other:"Other"};
+function salesView(){if(SV.v===DBV)return SV;
+  const line=l=>{const pl=DB.productList[l.productId]||{},k="pl:"+(l.productId||l.name||"?");SALEPN[k]=pl.name||l.name||"?";
+    const amt=num(l.amount)||num(l.qty)*num(l.shownPrice||l.price);let qty=num(l.qty),unit=l.unit;
+    if(unit==="pc"){qty=qty/12;unit="dz"}else if(unit==="bag"&&num(pl.perBag)){qty=qty*num(pl.perBag)/12;unit="dz"}
+    return {p:k,unit,qty,price:qty?amt/qty:0}};
+  const sales=rawList("receipts").map(r=>({id:"sa:"+r.id,fromSales:1,no:r.no,date:r.date||"",cust:r.customerId||"",lines:(r.lines||[]).map(line),
+    total:num(r.total),paid:num(r.paid),term:r.term,note:r.note}));
+  const pays=rawList("receiptPayments").map(x=>({id:"sp:"+x.id,fromSales:1,no:x.no,date:x.date||"",cust:x.customerId||"",amount:num(x.amount),method:PAYWAY[x.method]||"Other"}));
+  const rets=rawList("receiptReturns").map(x=>({cust:x.customerId||"",amount:num(x.amount)}));
+  SV={v:DBV,sales,pays,rets};return SV}
+const list=c=>c==="sales"?rawList(c).concat(salesView().sales):c==="payments"?rawList(c).concat(salesView().pays):rawList(c);
+const prodLabel=k=>DB.products[k]?prodName(DB.products[k]):(SALEPN[k]||"?");
 const byName=(a,b)=>(a.name||"").localeCompare(b.name||"");
 const prodName=p=>p?(UI.lang==="my"&&p.my?p.my:(p.en||p.my||"?")):"?";
 const custName=id=>DB.customers[id]?.name||t("Walk-in");
 const lineAmt=l=>num(l.qty)*num(l.price);
 const saleGoods=s=>(s.lines||[]).reduce((a,l)=>a+lineAmt(l),0);
-const saleTotal=s=>saleGoods(s)+num(s.delivery);
+const saleTotal=s=>s.fromSales?num(s.total):saleGoods(s)+num(s.delivery);
 const unitWord=(u,q)=>u==="bag"?t(num(q)===1?"Bag":"bags"):t("dz");
-const lineText=lines=>(lines||[]).map(l=>`${prodName(DB.products[l.p])} ${fmt(l.qty,1)} ${unitWord(l.unit,l.qty)}`).join(", ");
-function balances(){const b={};list("sales").forEach(s=>{if(s.cust)b[s.cust]=(b[s.cust]||0)+saleTotal(s)-num(s.paid)});list("payments").forEach(p=>{if(p.cust)b[p.cust]=(b[p.cust]||0)-num(p.amount)});return b}
+const lineText=lines=>(lines||[]).map(l=>`${prodLabel(l.p)} ${fmt(l.qty,1)} ${unitWord(l.unit,l.qty)}`).join(", ");
+function balances(){const b={};list("sales").forEach(s=>{if(s.cust)b[s.cust]=(b[s.cust]||0)+saleTotal(s)-num(s.paid)});list("payments").forEach(p=>{if(p.cust)b[p.cust]=(b[p.cust]||0)-num(p.amount)});salesView().rets.forEach(p=>{if(p.cust)b[p.cust]=(b[p.cust]||0)-p.amount});return b}
 // money received per sale: paid with the sale, plus later payments used for that customer's oldest sales first
 function paidMap(){const pool={},out={};
-  list("payments").forEach(p=>{if(p.cust)pool[p.cust]=(pool[p.cust]||0)+num(p.amount)});
+  list("payments").concat(salesView().rets).forEach(p=>{if(p.cust)pool[p.cust]=(pool[p.cust]||0)+num(p.amount)});
   list("sales").sort((a,b)=>(a.date||"").localeCompare(b.date||"")||num(a.no)-num(b.no)).forEach(s=>{const tot=saleTotal(s);let pd=num(s.paid);
     if(pd<tot&&s.cust&&pool[s.cust]>0){const take=Math.min(pool[s.cust],tot-pd);pd+=take;pool[s.cust]-=take}out[s.id]=pd});return out}
 let PAID={};
@@ -599,7 +625,7 @@ V.customers.bind=()=>{bindSearch();bindTips();["#add","#add2"].forEach(s=>$(s)&&
 const custOpts=()=>[["",t("— choose —")]].concat(list("customers").sort(byName).map(c=>[c.id,c.name]));
 const prodOpts=keep=>[["",t("— choose —")]].concat(list("products").filter(p=>p.active!==false||p.id===keep).sort((a,b)=>prodName(a).localeCompare(prodName(b))).map(p=>[p.id,prodName(p)]));
 const priceFor=(p,u)=>{if(!p)return "";if(u==="bag")return num(p.priceBag)||(num(p.priceDz)&&num(p.perBag)?num(p.priceDz)*num(p.perBag):"");return num(p.priceDz)||""};
-function editSale(id,cust){
+function editSale(id,cust){if(id&&!DB.sales[id])return toast(t("Made in the Sales app. Change it there."));
   const firstCust=DB.customers[cust];
   const s=id?JSON.parse(JSON.stringify(DB.sales[id])):{date:today(),cust:cust||"",lines:[{p:"",unit:"dz",qty:"",price:""}],delivery:firstCust&&num(firstCust.deliveryKs)?num(firstCust.deliveryKs):"",paid:"",method:"Cash",no:list("sales").reduce((a,x)=>Math.max(a,num(x.no)),0)+1};
   if(!s.lines||!s.lines.length)s.lines=[{p:"",unit:"dz",qty:"",price:""}];
@@ -707,7 +733,7 @@ function forecastChart(f,h){const K=" "+t("Kyat");if(!f.pred)return barChart(f.d
 // one line per product, sales in Kyat for the 6 months ending m; at most 8 lines (the rest go into "Other")
 function productLines(m){const months=[];for(let i=5;i>=0;i--)months.push(addMonth(m,-i));const by={};
   list("sales").forEach(s=>{const k=months.indexOf(ym(s.date));if(k<0)return;(s.lines||[]).forEach(l=>{(by[l.p]=by[l.p]||Array(6).fill(0))[k]+=lineAmt(l)})});
-  let rows=Object.entries(by).map(([p,vals])=>({id:p,name:prodName(DB.products[p]),vals,tot:vals.reduce((a,b)=>a+b,0)})).sort((a,b)=>b.tot-a.tot);
+  let rows=Object.entries(by).map(([p,vals])=>({id:p,name:prodLabel(p),vals,tot:vals.reduce((a,b)=>a+b,0)})).sort((a,b)=>b.tot-a.tot);
   if(rows.length>8){const rest=rows.slice(7);rows=rows.slice(0,7).concat([{id:"_other",name:t("Other"),vals:months.map((x,i)=>rest.reduce((a,r)=>a+r.vals[i],0))}])}
   if(!rows.length)return `<div class="muted small">${T("Nothing yet.")}</div>`;
   const hide=UI.hideP||{};rows.forEach((r,i)=>{r.color=PAL[i];r.off=!!hide[r.id]});const K=" "+t("Kyat");
@@ -718,7 +744,7 @@ function salesCharts(m){
   const months=[];for(let i=5;i>=0;i--)months.push(addMonth(m,-i));
   const byMonth=months.map(x=>({l:UI.lang==="my"?(+x.slice(5))+"/"+x.slice(2,4):monthName(x).slice(0,3),m:x,v:list("sales").filter(s=>ym(s.date)===x).reduce((a,s)=>a+saleTotal(s),0)}));
   const prod={};list("sales").forEach(s=>{if(ym(s.date)!==m)return;(s.lines||[]).forEach(l=>{prod[l.p]=(prod[l.p]||0)+lineAmt(l)})});
-  const topP=Object.entries(prod).map(([p,v])=>({l:prodName(DB.products[p]),v})).sort((a,b)=>b.v-a.v).slice(0,6);
+  const topP=Object.entries(prod).map(([p,v])=>({l:prodLabel(p),v})).sort((a,b)=>b.v-a.v).slice(0,6);
   const cust={};list("sales").forEach(s=>{if(ym(s.date)===m)cust[s.cust]=(cust[s.cust]||0)+saleTotal(s)});
   const topC=Object.entries(cust).map(([c,v])=>({l:custName(c),v})).sort((a,b)=>b.v-a.v).slice(0,6);
   const K=" "+t("Kyat");
@@ -758,7 +784,7 @@ V.sales.bind=()=>{bindSearch();bindMonth();bindTips();$$("[data-lg]").forEach(b=
 // Money is overdue when: month-end customers, the month of the sale is over; everyone else, the sale is more than 30 days old.
 // dates are worked out in UTC so the Myanmar time zone (UTC+6:30) cannot move them by a day
 function dueDate(s){const c=DB.customers[s.cust];const [y,mo]=s.date.split("-").map(Number);
-  if(c&&c.terms==="Month-end")return new Date(Date.UTC(y,mo,0)).toISOString().slice(0,10);
+  if((c&&(c.terms==="Month-end"||c.term==="month"))||s.term==="month")return new Date(Date.UTC(y,mo,0)).toISOString().slice(0,10);
   const d=new Date(s.date+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+30);return d.toISOString().slice(0,10)}
 const daysBetween=(a,b)=>Math.round((new Date(b+"T00:00:00Z")-new Date(a+"T00:00:00Z"))/864e5);
 function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
@@ -814,7 +840,7 @@ V.overview=()=>{const al=ALERTS=alerts();const cnt=k=>al.filter(a=>a.sev===k).le
 V.overview.bind=()=>{bindTips();$$("[data-al]").forEach(b=>b.onclick=()=>{const a=ALERTS[+b.dataset.al];if(a)a.go()})};
 
 /* ================= Payments ================= */
-function editPayment(id,cust){const bal=balances();
+function editPayment(id,cust){if(id&&!DB.payments[id])return toast(t("Made in the Sales app. Change it there."));const bal=balances();
   const p=id?DB.payments[id]:{date:today(),cust:cust||"",amount:cust&&bal[cust]>0?Math.round(bal[cust]):"",method:"Cash"};
   openForm({title:id?"Payment":"Record payment",data:p,fields:[
     {k:"date",label:"Date",type:"date",half:1},{k:"cust",label:"Customer",type:"select",opts:custOpts(),half:1},
@@ -968,8 +994,26 @@ V.settings=()=>{const F=Store.file;
    <div class="panel"><h2>${T("Cloud")}</h2><div class="pb" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${Cloud.key
      ?`${cloudChip()}<button class="btn" id="cUnlink">${T("Unlink")}</button>`
      :`<input id="cKey" type="password" autocomplete="off" spellcheck="false" placeholder="${T("Cloud key")}" style="flex:1;min-width:200px;max-width:360px"><button class="btn primary" id="cLink">${T("Link")}</button>`}</div></div>
+   ${salesAppBox()}
    <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
+/* commands to the Sales app, read there from appSettings/sales: which tabs it shows, and which computers are locked */
+const SALES_TABS=[["receipts","Make receipt"],["pastReceipts","Past receipts"],["quotations","Quotations"],["orders","Orders"],["customers","Customers"],["products","Products"]];
+const salesSet=()=>DB.appSettings.sales||{};
+function salesAppBox(){if(!Cloud.key)return `<div class="panel"><h2>${T("Sales app")}</h2><div class="pb muted">${T("Link the cloud first.")}</div></div>`;
+  const st=salesSet(),on=st.tabs&&st.tabs.length?st.tabs:SALES_TABS.map(x=>x[0]),locked=st.locked||[];
+  const when=v=>{if(!v)return "—";const d=new Date(v);return isNaN(d)?"—":d.toLocaleString(UI.lang==="my"?"my-MM":"en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})};
+  const comps=rawList("computers").sort((a,b)=>String(a.letter||a.id).localeCompare(String(b.letter||b.id)));
+  return `<div class="panel"><h2>${T("Sales app")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:14px">
+    <div><div class="muted small" style="margin-bottom:6px">${T("Tabs")}</div><div class="legend sapp">${SALES_TABS.map(([k,n])=>`<button class="lg" data-st="${k}" aria-pressed="${on.includes(k)}">${T(n)}</button>`).join("")}</div></div>
+    <div><div class="muted small" style="margin-bottom:6px">${T("Computers")}</div>${comps.length?`<div class="comps">${comps.map(c=>{const L=String(c.letter||c.id),lk=locked.includes(L);
+      return `<div class="comp"><div><b class="notr">${esc(L)}</b> <span class="notr">${esc(c.user||"")}</span><div class="muted small notr">${esc([c.windowsName||c.pc,c.appVersion&&("v"+c.appVersion)].filter(Boolean).join(" · "))}</div><div class="muted small">${T("Last seen")} <span class="notr">${esc(when(c.seenAt||c.openedAt))}</span></div></div>
+        <div class="compb">${lk?`<span class="chip bad">${T("Locked")}</span>`:""}<button class="btn sm" data-lock="${esc(L)}">${T(lk?"Unlock":"Lock")}</button></div></div>`}).join("")}</div>`:`<div class="muted">${T("No computers yet.")}</div>`}</div>
+  </div></div>`}
+function saveSales(ch){save("appSettings","sales",Object.assign({},salesSet(),ch),"Saved")}
 V.settings.bind=()=>{bindLang();
+  $$("[data-st]").forEach(b=>b.onclick=()=>{const st=salesSet(),all=SALES_TABS.map(x=>x[0]);let on=st.tabs&&st.tabs.length?st.tabs:all;const k=b.dataset.st;
+    on=on.includes(k)?on.filter(x=>x!==k):all.filter(x=>x===k||on.includes(x));if(!on.length)return toast(t("Keep at least one tab"));saveSales({tabs:on})});
+  $$("[data-lock]").forEach(b=>b.onclick=()=>{const L=b.dataset.lock,lk=salesSet().locked||[];saveSales({locked:lk.includes(L)?lk.filter(x=>x!==L):lk.concat([L])})});
   const l=$("#cLink");if(l)l.onclick=async()=>{const k=$("#cKey").value;if(!k.trim())return;l.disabled=true;if(await Cloud.link(k))toast(t("Linked to the cloud"));render()};
   const u=$("#cUnlink");if(u)u.onclick=async()=>{if(!u.classList.contains("arm")){u.classList.add("arm");u.textContent=t("Tap again to unlink");return}await Cloud.unlink();render()}};
 

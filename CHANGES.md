@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-22, Thura (Main App Chat): new app reads the Sales app's records from the cloud (receipts, payments, returns, customers, products, computers): they count on Overview, the Sales tabs, debt and alerts, and can only be changed in the Sales app. Settings > Sales app: choose the Sales app's tabs and lock or unlock sales computers (appSettings/sales). Tested with made-up Sales records on a local test cloud.
 - 2026-11-22, Thura (Main App Chat): cloud: only the main app's key can write appSettings (tabs, locked computers), so a locked sales computer cannot unlock itself.
 - 2026-11-22, Thura (Main App Chat): new app linked to the cloud: paste the key once in Settings > Cloud. Every change is saved on the PC and sent to the cloud (waits and retries without internet); every 30 seconds the app fetches other computers' changes. First link takes the cloud's records first, then sends what only this PC has. Tested against a local test cloud.
 - 2026-11-22, Thura (Main App Chat): cloud on Cloudflare: Worker and D1 database (cloud/), records table plus a monthly copy on the 1st of each month that is never cleared, one secret key per app. Tested with made-up records, then emptied. The apps are not linked yet.
