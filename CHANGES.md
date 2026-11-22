@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): installer in install/: double-click Install AP Main.bat to put AP Main on a computer (E:\AP\AP Main, or LOCALAPPDATA\Programs\AP Main) with the gold AP Plastic icon on the Desktop and in the Start menu; running it again updates the app, records untouched.
 - 2026-11-23, Thura (Main App Chat): AP Main holds only its own files now: the old AP ERP's files (old index.html, Supabase settings, installer, receipt maker, test setup, old icons) are taken off this branch; they stay on branch main. The app moved from app/ to the top of the folder. Notes rewritten for AP Main.
 - 2026-11-23, Thura (Main App Chat): all AP folders now live in E:\AP (AP Main, Old AP app, AP Sales, AP Sales Data, AP Records); notes and paths updated.
 - 2026-11-23, Thura (Main App Chat): new app: new gold AP logo (app icon and the mark beside the company name).

@@ -10,6 +10,10 @@ Myanmar and English. **Its name is "AP Main". It is never called "ERP".**
 
 It is one file, `index.html` (no build step). The desktop shortcut "AP Plastic" opens `E:\AP\AP Main\index.html`
 in its own Chrome window.
+**Installing on a computer:** copy the AP Main folder there and double-click `install\Install AP Main.bat`. It puts
+AP Main in `E:\AP\AP Main` (or `%LOCALAPPDATA%\Programs\AP Main` without a fixed E: drive) and adds the gold
+"AP Plastic" icon to the Desktop and Start menu. Running it again updates the app; records are never touched.
+When you add a file the app needs, add it to `$files` in `install\AP Main setup.ps1`.
 
 ## Keep apart: the old AP ERP
 This project on GitHub (NewThura/AP-Plastic) also holds the **old AP ERP**, a different app, on branch `main`,
