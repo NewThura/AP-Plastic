@@ -1102,7 +1102,7 @@ V.computers=()=>{if(!Cloud.key)return `<div class="panel"><div class="empty"><b>
       kpi("Waiting",fmt(n("waiting")),T("To accept"),n("waiting")?"warn":""),kpi("Locked",fmt(n("locked")),T("Cannot be used"),n("locked")?"bad":"")])
     +`<div class="panel"><h2>${T("Sales app")}</h2><div class="pb">${cs.length?`<div class="comps">${cs.map(card).join("")}</div>`:`<div class="muted">${T("No computers yet.")}</div>`}</div></div>`};
 V.computers.bind=()=>{const st=()=>salesSet(),add=(k,v)=>[...new Set((st()[k]||[]).concat([v]))],del=(k,v)=>(st()[k]||[]).filter(x=>x!==v);
-  $$("[data-acc]").forEach(b=>b.onclick=()=>saveSales({accepted:add("accepted",b.dataset.acc)}));
+  $$("[data-acc]").forEach(b=>b.onclick=async()=>{const id=b.dataset.acc;if(await saveSales({accepted:add("accepted",id)})&&DB.computers[id]?.waiting)save("computers",id,Object.assign({},DB.computers[id],{waiting:false}))});
   $$("[data-unacc]").forEach(b=>b.onclick=()=>{if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent=t("Tap again to remove");return}saveSales({accepted:del("accepted",b.dataset.unacc)})});
   $$("[data-lockc]").forEach(b=>b.onclick=()=>saveSales({locked:add("locked",b.dataset.lockc)}));
   $$("[data-unlockc]").forEach(b=>b.onclick=()=>{const c=DB.computers[b.dataset.unlockc]||{};saveSales({locked:(st().locked||[]).filter(x=>x!==b.dataset.unlockc&&x!==c.letter)})})};
@@ -1138,7 +1138,7 @@ function editAccount(id){const u=id?DB.users[id]:{role:"sales",active:true};
 V.accounts.bind=()=>{["#uAdd","#uAdd2"].forEach(k=>$(k)&&($(k).onclick=()=>editAccount(null)));$$("[data-uedit]").forEach(b=>b.onclick=()=>editAccount(b.dataset.uedit))};
 // the page refreshes itself every minute so "open now" stays true
 setInterval(()=>{if(UI.page==="computers"&&!form)render()},60000);
-async function saveSales(ch){if(!(await askPass()))return;save("appSettings","sales",Object.assign({},salesSet(),ch),"Saved")}
+async function saveSales(ch){if(!(await askPass()))return false;await save("appSettings","sales",Object.assign({},salesSet(),ch),"Saved");return true}
 V.settings.bind=()=>{bindLang();
   passGet().then(pc=>{const c=$("#passNow"),b=$("#passCh");if(!c)return;c.className="chip "+(pc?"good":"warn");c.textContent=t(pc?"On":"Not set");b.textContent=t(pc?"Change passcode":"Set a passcode");
     b.onclick=async()=>{if(pc&&!(await askPass(true)))return;if(await passBox("new"))render()}});

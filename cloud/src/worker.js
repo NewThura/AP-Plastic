@@ -11,10 +11,14 @@
    Sign-in for sales computers (no key needed; accounts are made in AP Main, kind "users"):
    GET  /login/salt?username=<name>  -> {salt}   the account's salt; for a name that does not exist, a made-up salt
                                                  that stays the same, so nobody can tell which names exist
-   POST /login {username, hash, code} -> {key}   hash = PBKDF2-SHA256(password, salt as text, 150000, 32 bytes, hex),
-                                                 made on the PC. Right hash of an active account: the Sales key.
-                                                 Wrong: 401. Too many wrong tries (5 in 15 minutes for one name or
-                                                 one address): 429 {error, wait (seconds)}.
+   POST /login {username, hash, code, windowsName, ip, appVersion}
+                                     hash = PBKDF2-SHA256(password, salt as text, 150000, 32 bytes, hex), made on the PC;
+                                     code = the computer's code, "pc" + 12 hex characters (anything else: 400).
+                                     Wrong password / account off: 401. Right password and the computer is allowed in
+                                     AP Main (appSettings/sales accepted): 200 {key} (the Sales key). Locked: 403 {locked}.
+                                     Not allowed yet: 403 {waiting}, no key, and computers/<code> is written (waiting:true)
+                                     so AP Main shows it. Too many wrong tries (5 in 15 minutes per name, 30 per address):
+                                     429 {error, wait (seconds)}.
 
    On the 1st of every month (cron) the cloud copies every record into "monthly" for the month that ended. */
 
@@ -73,7 +77,9 @@ async function getRecords(url, env) {
 }
 
 /* ---------- sign-in ---------- */
-const TRIES = 5, WINDOW = 15 * 60;   // wrong tries allowed, in seconds
+const TRIES = 5, IP_TRIES = 30, WINDOW = 15 * 60;   // wrong tries allowed per name / per address, in seconds
+const okCode = (c) => /^pc[0-9a-f]{12}$/.test(String(c || ""));
+const showCode = (c) => c.slice(2).toUpperCase().match(/.{4}/g).join("-");   // pc3f9a1c2b7d10 -> 3F9A-1C2B-7D10
 const hex = (buf) => [...new Uint8Array(buf)].map((x) => x.toString(16).padStart(2, "0")).join("");
 const cleanName = (s) => String(s || "").trim().toLowerCase().slice(0, 60);
 async function findUser(env, name) {
@@ -95,7 +101,7 @@ async function blockedFor(env, keys, now) {   // seconds to wait, 0 = may try
   let wait = 0;
   for (const k of keys) {
     const r = await env.DB.prepare("SELECT n, since FROM login_tries WHERE k=?").bind(k).first();
-    if (r && now - r.since < WINDOW && r.n >= TRIES) wait = Math.max(wait, WINDOW - (now - r.since));
+    if (r && now - r.since < WINDOW && r.n >= (k.startsWith("ip:") ? IP_TRIES : TRIES)) wait = Math.max(wait, WINDOW - (now - r.since));
   }
   return wait;
 }
@@ -117,6 +123,8 @@ async function login(req, env) {
   try { b = await req.json(); } catch (e) { return json({ error: "Not JSON" }, 400); }
   const name = cleanName(b && b.username), hash = String((b && b.hash) || "").toLowerCase();
   if (!name || !/^[0-9a-f]{64}$/.test(hash)) return json({ error: "username and hash needed" }, 400);
+  const code = String(b.code || "");
+  if (!okCode(code)) return json({ error: "code must be pc + 12 hex characters" }, 400);
   const now = Math.floor(Date.now() / 1000), ip = req.headers.get("CF-Connecting-IP") || "local";
   const keys = ["user:" + name, "ip:" + ip];
   const wait = await blockedFor(env, keys, now);
@@ -124,7 +132,23 @@ async function login(req, env) {
   const u = await findUser(env, name);
   if (u && u.active !== false && u.hash && sameText(u.hash.toLowerCase(), hash)) {
     await env.DB.prepare("DELETE FROM login_tries WHERE k=?").bind("user:" + name).run();
-    return json({ key: env.SALES_KEY });
+    // the computer must be allowed in AP Main (appSettings/sales accepted) and not locked
+    const sr = await env.DB.prepare("SELECT data FROM records WHERE col='appSettings' AND id='sales' AND deleted=0").first();
+    const st = sr ? JSON.parse(sr.data) : {};
+    const cr = await env.DB.prepare("SELECT data FROM records WHERE col='computers' AND id=?").bind(code).first();
+    const comp = cr ? JSON.parse(cr.data) : {};
+    const locked = st.locked || [];
+    if (locked.includes(code) || (comp.letter && locked.includes(comp.letter))) return json({ locked: true }, 403);
+    if ((st.accepted || []).includes(code)) return json({ key: env.SALES_KEY });
+    // a new computer: note it for AP Main's Computers page, give no key
+    const t = (s, n) => String(s || "").slice(0, n);
+    const rec = Object.assign({}, comp, { code: showCode(code), windowsName: t(b.windowsName, 80) || comp.windowsName || "", ip: t(b.ip, 60) || comp.ip || "",
+      publicIp: t(ip, 60), user: name, appVersion: t(b.appVersion, 40) || comp.appVersion || "", seenAt: Date.now(), waiting: true });
+    await env.DB.prepare(
+      `INSERT INTO records (col,id,data,deleted,updated_at,updated_by) VALUES ('computers',?,?,0,?, 'login')
+       ON CONFLICT(col,id) DO UPDATE SET data=excluded.data, deleted=0, updated_at=excluded.updated_at, updated_by='login'`)
+      .bind(code, JSON.stringify(rec), new Date().toISOString()).run();
+    return json({ waiting: true }, 403);
   }
   await countFail(env, keys, now);
   return json({ error: "Wrong username or password" }, 401);
