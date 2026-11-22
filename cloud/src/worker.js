@@ -29,7 +29,8 @@ function who(req, env) {
 }
 
 const MAX_BATCH = 50;   // the free plan allows 50 database queries per request
-const okName = (s) => typeof s === "string" && s.length > 0 && s.length <= 200;
+const MAIN_ONLY = ["appSettings"];
+const okName =(s) => typeof s === "string" && s.length > 0 && s.length <= 200;
 
 async function saveRecords(req, env, app) {
   let body;
@@ -38,6 +39,8 @@ async function saveRecords(req, env, app) {
   if (!recs) return json({ error: "records missing" }, 400);
   if (recs.length > MAX_BATCH) return json({ error: "At most " + MAX_BATCH + " records at a time" }, 400);
   for (const r of recs) if (!r || !okName(r.col) || !okName(r.id)) return json({ error: "Each record needs col and id" }, 400);
+  // the main app's commands (tabs, locked computers) can only be written with the main key
+  if (app !== "main" && recs.some((r) => MAIN_ONLY.includes(r.col))) return json({ error: "Only the main app can change " + MAIN_ONLY.join(", ") }, 403);
   const now = new Date().toISOString();
   const st = env.DB.prepare(
     `INSERT INTO records (col,id,data,deleted,updated_at,updated_by) VALUES (?,?,?,?,?,?)
