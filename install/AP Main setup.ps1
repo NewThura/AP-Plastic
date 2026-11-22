@@ -28,8 +28,11 @@ Say "AP Main is in $dest"
 # 3. the icon (every size, made from the logo; kept next to this setup as ap-main.ico)
 $iconDir = Join-Path $env:LOCALAPPDATA "AP Main"
 New-Item -ItemType Directory -Force $iconDir | Out-Null
-$ico = Join-Path $iconDir "ap-main.ico"
-Copy-Item (Join-Path $PSScriptRoot "ap-main.ico") $ico -Force
+# the copy's name changes with the icon, so Windows shows a new icon at once instead of its saved old one
+$srcIco = Join-Path $PSScriptRoot "ap-main.ico"
+$ico = Join-Path $iconDir ("ap-main-" + (Get-FileHash $srcIco -Algorithm MD5).Hash.Substring(0, 8) + ".ico")
+Get-ChildItem $iconDir -Filter "ap-main*.ico" | Where-Object { $_.FullName -ne $ico } | Remove-Item -Force -ErrorAction SilentlyContinue
+Copy-Item $srcIco $ico -Force
 
 # 4. the browser that opens it: Chrome, else Edge
 $browser = @(

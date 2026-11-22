@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): the desktop icon showed garbled (black with blotchy yellow): the icon file now uses the classic picture format Windows reads everywhere, and the installer gives the copied icon a new name when it changes so Windows drops its old saved one.
 - 2026-11-23, Thura (Main App Chat): sharper logo: cut again from the original, trimmed to the gold frame with see-through corners, larger sizes (256 in the app, 512 icon), and a real Windows icon with every size (install/ap-main.ico) for the Desktop and Start menu.
 - 2026-11-23, Thura (Main App Chat): installer in install/: double-click Install AP Main.bat to put AP Main on a computer (E:\AP\AP Main, or LOCALAPPDATA\Programs\AP Main) with the gold AP Plastic icon on the Desktop and in the Start menu; running it again updates the app, records untouched.
 - 2026-11-23, Thura (Main App Chat): AP Main holds only its own files now: the old AP ERP's files (old index.html, Supabase settings, installer, receipt maker, test setup, old icons) are taken off this branch; they stay on branch main. The app moved from app/ to the top of the folder. Notes rewritten for AP Main.
