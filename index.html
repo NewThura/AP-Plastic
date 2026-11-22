@@ -172,6 +172,13 @@ svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
 .bnav button{position:relative}
 .bnav .count{position:absolute;top:4px;left:calc(50% + 6px);background:var(--bad);color:#fff;font:600 10px var(--f-data);border-radius:8px;padding:0 5px}
 .nsum{display:flex;flex-wrap:wrap;gap:8px}
+.passwrap{display:flex;align-items:center;justify-content:center;z-index:60}
+.passbox{background:var(--surface,#fff);border-radius:12px;padding:18px;width:min(320px,calc(100vw - 32px));display:flex;flex-direction:column;gap:10px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.passbox h2{margin:0;font-size:17px}
+.passbox input{font-size:20px;letter-spacing:.3em;text-align:center;padding:10px}
+.passbox input::placeholder{letter-spacing:normal;font-size:14px}
+.passerr{color:var(--bad,#c0392b);font-size:13px;min-height:16px}
+.passb{display:flex;justify-content:flex-end;gap:8px}
 .sapp{margin:0}
 .comps{display:flex;flex-direction:column}
 .compi{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -307,7 +314,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","Accounts":"အကောင့်များ","New account":"အကောင့်သစ်","Turned off":"ပိတ်ထားသည်","Username":"အသုံးပြုသူအမည်","No accounts yet":"အကောင့် မရှိသေးပါ","Name (goes on receipts)":"အမည် (ပြေစာတွင် ပါမည်)","Can sign in?":"ဝင်ခွင့် ရှိသလား","No, turn off":"မရှိ၊ ပိတ်မည်","New password (leave empty to keep)":"စကားဝှက်အသစ် (မပြောင်းလျှင် ဗလာထားပါ)","Password":"စကားဝှက်","Password again":"စကားဝှက် ထပ်ရိုက်ပါ","Sales worker":"အရောင်းဝန်ထမ်း","Main office":"ရုံးချုပ်","Username: small letters and numbers only":"အသုံးပြုသူအမည်: အင်္ဂလိပ် စာလုံးသေးနှင့် ဂဏန်းသာ","This username is taken":"ဤအမည် ရှိပြီးသား","Enter a password":"စကားဝှက် ထည့်ပါ","Password: at least 6 characters":"စကားဝှက်: အနည်းဆုံး စာလုံး ၆ လုံး","The two passwords are not the same":"စကားဝှက် နှစ်ခု မတူပါ","Waiting":"စောင့်နေသည်","Accepted":"လက်ခံပြီး","Tap again to remove":"ဖယ်ရန် ထပ်နှိပ်ပါ","Open now":"ယခု ဖွင့်ထားသည်","Not open":"မဖွင့်ထားပါ","Last 7 minutes":"နောက်ဆုံး ၇ မိနစ်","To accept":"လက်ခံရန်","Cannot be used":"သုံး၍ မရပါ","Waiting to be accepted":"လက်ခံရန် စောင့်နေသည်","Accept":"လက်ခံမည်","Brand":"တံဆိပ်","Unlock":"ဖွင့်မည်","Made in the Sales app. Change it there.":"အရောင်း အက်ပ်တွင် လုပ်ထားသည်။ ထိုတွင် ပြင်ပါ။","Sales app":"အရောင်း အက်ပ်","Link the cloud first.":"cloud နှင့် အရင် ချိတ်ပါ။","Tabs":"စာမျက်နှာများ","Computers":"ကွန်ပျူတာများ","Computer":"ကွန်ပျူတာ","User":"အသုံးပြုသူ","Version":"ဗားရှင်း","Last seen":"နောက်ဆုံး တွေ့ချိန်","Locked":"ပိတ်ထားသည်","Lock":"ပိတ်မည်","No computers yet.":"ကွန်ပျူတာ မရှိသေးပါ။","Keep at least one tab":"စာမျက်နှာ တစ်ခု အနည်းဆုံး ထားပါ","Make receipt":"ပြေစာ ရေးမည်","Past receipts":"ယခင် ပြေစာများ","Quotations":"ဈေးနှုန်း စာများ","Orders":"အော်ဒါများ","Wrong key":"key မှားနေသည်","Cloud":"cloud","Cloud key":"cloud key","Link":"ချိတ်မည်","Unlink":"ချိတ်ဆက်မှု ဖြုတ်မည်","Tap again to unlink":"ဖြုတ်ရန် ထပ်နှိပ်ပါ","Linked to the cloud":"cloud နှင့် ချိတ်ပြီး","Cloud not reached":"cloud ကို မရောက်ပါ","Sending to the cloud":"cloud သို့ ပို့နေသည်","Saved to the cloud":"cloud တွင် သိမ်းပြီး","Cloud: wrong key":"cloud: key မှားနေသည်","cloud waiting":"cloud စောင့်နေသည်","sending":"ပို့နေသည်","cloud":"cloud","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
+ "Edit":"ပြင်မည်","Set a passcode":"လျှို့ဝှက်နံပါတ် သတ်မှတ်မည်","Passcode":"လျှို့ဝှက်နံပါတ်","New passcode (4 to 8 numbers)":"နံပါတ်သစ် (ဂဏန်း ၄ မှ ၈ လုံး)","Enter the passcode":"လျှို့ဝှက်နံပါတ် ရိုက်ပါ","Passcode again":"နံပါတ် ထပ်ရိုက်ပါ","OK":"အိုကေ","Use 4 to 8 numbers":"ဂဏန်း ၄ မှ ၈ လုံး သုံးပါ","The two passcodes are not the same":"နံပါတ် နှစ်ခု မတူပါ","Passcode saved":"လျှို့ဝှက်နံပါတ် သိမ်းပြီး","Wrong passcode":"နံပါတ် မှားနေသည်","On":"ဖွင့်ထားသည်","Not set":"မသတ်မှတ်ရသေး","Change passcode":"နံပါတ် ပြောင်းမည်","Accounts":"အကောင့်များ","New account":"အကောင့်သစ်","Turned off":"ပိတ်ထားသည်","Username":"အသုံးပြုသူအမည်","No accounts yet":"အကောင့် မရှိသေးပါ","Name (goes on receipts)":"အမည် (ပြေစာတွင် ပါမည်)","Can sign in?":"ဝင်ခွင့် ရှိသလား","No, turn off":"မရှိ၊ ပိတ်မည်","New password (leave empty to keep)":"စကားဝှက်အသစ် (မပြောင်းလျှင် ဗလာထားပါ)","Password":"စကားဝှက်","Password again":"စကားဝှက် ထပ်ရိုက်ပါ","Sales worker":"အရောင်းဝန်ထမ်း","Main office":"ရုံးချုပ်","Username: small letters and numbers only":"အသုံးပြုသူအမည်: အင်္ဂလိပ် စာလုံးသေးနှင့် ဂဏန်းသာ","This username is taken":"ဤအမည် ရှိပြီးသား","Enter a password":"စကားဝှက် ထည့်ပါ","Password: at least 6 characters":"စကားဝှက်: အနည်းဆုံး စာလုံး ၆ လုံး","The two passwords are not the same":"စကားဝှက် နှစ်ခု မတူပါ","Waiting":"စောင့်နေသည်","Accepted":"လက်ခံပြီး","Tap again to remove":"ဖယ်ရန် ထပ်နှိပ်ပါ","Open now":"ယခု ဖွင့်ထားသည်","Not open":"မဖွင့်ထားပါ","Last 7 minutes":"နောက်ဆုံး ၇ မိနစ်","To accept":"လက်ခံရန်","Cannot be used":"သုံး၍ မရပါ","Waiting to be accepted":"လက်ခံရန် စောင့်နေသည်","Accept":"လက်ခံမည်","Brand":"တံဆိပ်","Unlock":"ဖွင့်မည်","Made in the Sales app. Change it there.":"အရောင်း အက်ပ်တွင် လုပ်ထားသည်။ ထိုတွင် ပြင်ပါ။","Sales app":"အရောင်း အက်ပ်","Link the cloud first.":"cloud နှင့် အရင် ချိတ်ပါ။","Tabs":"စာမျက်နှာများ","Computers":"ကွန်ပျူတာများ","Computer":"ကွန်ပျူတာ","User":"အသုံးပြုသူ","Version":"ဗားရှင်း","Last seen":"နောက်ဆုံး တွေ့ချိန်","Locked":"ပိတ်ထားသည်","Lock":"ပိတ်မည်","No computers yet.":"ကွန်ပျူတာ မရှိသေးပါ။","Keep at least one tab":"စာမျက်နှာ တစ်ခု အနည်းဆုံး ထားပါ","Make receipt":"ပြေစာ ရေးမည်","Past receipts":"ယခင် ပြေစာများ","Quotations":"ဈေးနှုန်း စာများ","Orders":"အော်ဒါများ","Wrong key":"key မှားနေသည်","Cloud":"cloud","Cloud key":"cloud key","Link":"ချိတ်မည်","Unlink":"ချိတ်ဆက်မှု ဖြုတ်မည်","Tap again to unlink":"ဖြုတ်ရန် ထပ်နှိပ်ပါ","Linked to the cloud":"cloud နှင့် ချိတ်ပြီး","Cloud not reached":"cloud ကို မရောက်ပါ","Sending to the cloud":"cloud သို့ ပို့နေသည်","Saved to the cloud":"cloud တွင် သိမ်းပြီး","Cloud: wrong key":"cloud: key မှားနေသည်","cloud waiting":"cloud စောင့်နေသည်","sending":"ပို့နေသည်","cloud":"cloud","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
  "{m} production (dz)":"{m} ထုတ်လုပ်မှု (ဒါဇင်)","{m} waste (lb)":"{m} အပျက် (ပေါင်)","Expected":"ခန့်မှန်း","Expected by month end":"လကုန် ခန့်မှန်း","Sales by product, last 6 months":"ကုန်ပစ္စည်းအလိုက် အရောင်း၊ နောက်ဆုံး ၆ လ","Money in":"ငွေဝင်","Raw material used":"ကုန်ကြမ်း အသုံး","this month":"ဤလ","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
  "All":"အားလုံး","Bought this month":"ဤလ ဝယ်ယူမှု","customers":"ဦး","All customers":"ဖောက်သည် အားလုံး","Materials":"ကုန်ကြမ်း အမျိုးအစား","Used this month":"ဤလ အသုံး","Low in store":"လက်ကျန် နည်းနေသည်","materials":"မျိုး",
  "Products":"ကုန်ပစ္စည်း","Still sold":"ရောင်းဆဲ","Sold this month":"ဤလ ရောင်းပြီး","products":"မျိုး","In and out":"အဝင်အထွက်","Made":"ထုတ်ပြီး","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
@@ -479,7 +486,38 @@ function paint(){const [cls,txt]=syncText();const d=$("#dot"),sy=$("#sync");if(d
 function cloudChip(){const st=Cloud.state,n=Object.keys(Cloud.q).length;
   const [cls,l]=st==="badkey"?["bad","Wrong key"]:st==="offline"?["warn","Cloud not reached"]:n?["","Sending to the cloud"]:["good","Saved to the cloud"];
   return `<span class="chip ${cls}" id="cloudNow">${T(l)}${n&&st!=="badkey"?` · <span class="notr">${n}</span>`:""}</span>`}
+/* Passcode: important actions (records folder, cloud, the Sales app's tabs, computers, accounts) ask for it,
+   so nothing changes by accident. Kept only on this computer, as a PBKDF2 hash (never the passcode itself).
+   After a right passcode, more important actions work for one minute without asking again.
+   Forgotten? In the browser console: apResetPasscode() (then set a new one in Settings). */
+const PASS={okUntil:0,GRACE:60000};
+const passGet=()=>Store.tx("meta","readonly",st=>st.get("passcode"));
+async function passSet(code){const salt=[...crypto.getRandomValues(new Uint8Array(16))].map(x=>x.toString(16).padStart(2,"0")).join("");
+  const hash=await passHash(code,salt);await Store.tx("meta","readwrite",st=>st.put({salt,hash},"passcode"))}
+window.apResetPasscode=async()=>{await Store.tx("meta","readwrite",st=>st.delete("passcode"));PASS.okUntil=0;return "Passcode removed. Set a new one in Settings."};
+// one small box over the page; resolves true (right passcode / new one set) or false (cancel)
+function passBox(mode){return new Promise(done=>{const el=document.createElement("div");el.className="scrim passwrap";
+  const two=mode==="new";
+  el.innerHTML=`<div class="passbox" role="dialog" aria-modal="true" aria-labelledby="pT">
+    <h2 id="pT">${T(two?"Set a passcode":"Passcode")}</h2>
+    <input id="p1" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="${T(two?"New passcode (4 to 8 numbers)":"Enter the passcode")}">
+    ${two?`<input id="p2" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="${T("Passcode again")}">`:""}
+    <div class="passerr" id="pE"></div>
+    <div class="passb"><button class="btn" id="pC">${T("Cancel")}</button><button class="btn primary" id="pO">${T("OK")}</button></div></div>`;
+  document.body.appendChild(el);const q=k=>el.querySelector(k),err=m=>{q("#pE").textContent=t(m);q("#p1").value="";if(q("#p2"))q("#p2").value="";q("#p1").focus()};
+  const end=v=>{el.remove();done(v)};
+  q("#pC").onclick=()=>end(false);el.onclick=e=>{if(e.target===el)end(false)};
+  el.onkeydown=e=>{if(e.key==="Escape")end(false);if(e.key==="Enter")q("#pO").click()};
+  q("#pO").onclick=async()=>{const a=q("#p1").value.trim();
+    if(two){if(!/^\d{4,8}$/.test(a))return err("Use 4 to 8 numbers");if(a!==q("#p2").value.trim())return err("The two passcodes are not the same");
+      await passSet(a);PASS.okUntil=Date.now()+PASS.GRACE;toast(t("Passcode saved"));return end(true)}
+    const pc=await passGet();if(pc&&await passHash(a,pc.salt)===pc.hash){PASS.okUntil=Date.now()+PASS.GRACE;return end(true)}
+    err("Wrong passcode")};
+  setTimeout(()=>q("#p1").focus(),0)})}
+// ask before an important action; with no passcode yet, the owner sets one first
+async function askPass(force){if(!force&&Date.now()<PASS.okUntil)return true;return passBox((await passGet())?"check":"new")}
 async function fileAction(kind){
+  if(kind==="pick"&&Store.file.state!=="none"&&!(await askPass()))return;
   try{if(kind==="open"&&Store.file.state==="need"){if(!(await Store.reopen()))return toast(t("The file was not allowed"))}
     else await Store.chooseFolder();
     toast(t("Saved"));render()}
@@ -1024,6 +1062,7 @@ V.settings=()=>{const F=Store.file;
      ?`${cloudChip()}<button class="btn" id="cUnlink">${T("Unlink")}</button>`
      :`<input id="cKey" type="password" autocomplete="off" spellcheck="false" placeholder="${T("Cloud key")}" style="flex:1;min-width:200px;max-width:360px"><button class="btn primary" id="cLink">${T("Link")}</button>`}</div></div>
    ${salesAppBox()}
+   <div class="panel"><h2>${T("Passcode")}</h2><div class="pb" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="chip" id="passNow"></span><button class="btn" id="passCh"></button></div></div>
    <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
 /* commands to the Sales app, read there from appSettings/sales: which tabs it shows, and which computers are locked */
 const SALES_TABS=[["receipts","Make receipt"],["pastReceipts","Past receipts"],["quotations","Quotations"],["orders","Orders"],["customers","Customers"],["products","Products"]];
@@ -1092,20 +1131,22 @@ function editAccount(id){const u=id?DB.users[id]:{role:"sales",active:true};
    check:d=>!d.name?"Enter a name":!/^[a-z0-9._-]{2,30}$/.test(d.username)?"Username: small letters and numbers only":
      rawList("users").some(x=>x.username===d.username&&x.id!==id)?"This username is taken":
      (!id&&!d.pw)?"Enter a password":(d.pw&&d.pw.length<6)?"Password: at least 6 characters":d.pw!==d.pw2?"The two passwords are not the same":null,
-   onSave:async d=>{const now=Date.now(),rec=Object.assign({},u,{name:d.name,username:d.username,role:d.role,active:!!d.active,updatedBy:"main",updatedAt:now});
+   onSave:async d=>{if(!(await askPass()))return;const now=Date.now(),rec=Object.assign({},u,{name:d.name,username:d.username,role:d.role,active:!!d.active,updatedBy:"main",updatedAt:now});
      if(!id){rec.createdBy="main";rec.createdAt=now}
      if(d.pw){rec.salt=[...crypto.getRandomValues(new Uint8Array(16))].map(x=>x.toString(16).padStart(2,"0")).join("");rec.hash=await passHash(d.pw,rec.salt)}
      save("users",id||uid("u"),rec,"Saved")}})}
 V.accounts.bind=()=>{["#uAdd","#uAdd2"].forEach(k=>$(k)&&($(k).onclick=()=>editAccount(null)));$$("[data-uedit]").forEach(b=>b.onclick=()=>editAccount(b.dataset.uedit))};
 // the page refreshes itself every minute so "open now" stays true
 setInterval(()=>{if(UI.page==="computers"&&!form)render()},60000);
-function saveSales(ch){save("appSettings","sales",Object.assign({},salesSet(),ch),"Saved")}
+async function saveSales(ch){if(!(await askPass()))return;save("appSettings","sales",Object.assign({},salesSet(),ch),"Saved")}
 V.settings.bind=()=>{bindLang();
+  passGet().then(pc=>{const c=$("#passNow"),b=$("#passCh");if(!c)return;c.className="chip "+(pc?"good":"warn");c.textContent=t(pc?"On":"Not set");b.textContent=t(pc?"Change passcode":"Set a passcode");
+    b.onclick=async()=>{if(pc&&!(await askPass(true)))return;if(await passBox("new"))render()}});
   $$("[data-st]").forEach(b=>b.onclick=()=>{const st=salesSet(),all=SALES_TABS.map(x=>x[0]);let on=st.tabs&&st.tabs.length?st.tabs:all;const k=b.dataset.st;
     on=on.includes(k)?on.filter(x=>x!==k):all.filter(x=>x===k||on.includes(x));if(!on.length)return toast(t("Keep at least one tab"));saveSales({tabs:on})});
 
-  const l=$("#cLink");if(l)l.onclick=async()=>{const k=$("#cKey").value;if(!k.trim())return;l.disabled=true;if(await Cloud.link(k))toast(t("Linked to the cloud"));render()};
-  const u=$("#cUnlink");if(u)u.onclick=async()=>{if(!u.classList.contains("arm")){u.classList.add("arm");u.textContent=t("Tap again to unlink");return}await Cloud.unlink();render()}};
+  const l=$("#cLink");if(l)l.onclick=async()=>{const k=$("#cKey").value;if(!k.trim())return;if(!(await askPass()))return;l.disabled=true;if(await Cloud.link(k))toast(t("Linked to the cloud"));render()};
+  const u=$("#cUnlink");if(u)u.onclick=async()=>{if(!u.classList.contains("arm")){u.classList.add("arm");u.textContent=t("Tap again to unlink");return}if(!(await askPass()))return render();await Cloud.unlink();render()}};
 
 /* ================= page frame ================= */
 /* departments, each with its own tabs. UI.page is the tab (or the page, when a department has no tabs). */
