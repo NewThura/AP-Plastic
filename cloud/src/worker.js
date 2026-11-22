@@ -29,7 +29,7 @@ function who(req, env) {
 }
 
 const MAX_BATCH = 50;   // the free plan allows 50 database queries per request
-const MAIN_ONLY = ["appSettings"];
+const MAIN_ONLY = ["appSettings", "users"];   // commands and sign-in accounts: main app only
 const okName =(s) => typeof s === "string" && s.length > 0 && s.length <= 200;
 
 async function saveRecords(req, env, app) {

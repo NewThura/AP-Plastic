@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): new app: Computers page. It lists every computer that opens the Sales app (online now or last seen, code, Windows name, IP, user) with Accept, Lock/Unlock and Remove (appSettings/sales accepted and locked), plus an alert when one is waiting. Accounts tab makes the Sales app's sign-ins (users, password kept only as a PBKDF2 hash). Cloud: only the main key may write users. The app fetches everything again when it learns new kinds of records.
 - 2026-11-22, Thura (Main App Chat): new app: one product list with the Sales app (productList: name, brand, price per piece, pieces per bag). The main app shows it as price per dozen and dozens per bag and keeps its own Myanmar name, start stock and minimum in the same record; its older products move into it once with the same ids. Product form has Brand. Tested on a local test cloud.
 - 2026-11-22, Thura (Main App Chat): new app reads the Sales app's records from the cloud (receipts, payments, returns, customers, products, computers): they count on Overview, the Sales tabs, debt and alerts, and can only be changed in the Sales app. Settings > Sales app: choose the Sales app's tabs and lock or unlock sales computers (appSettings/sales). Tested with made-up Sales records on a local test cloud.
 - 2026-11-22, Thura (Main App Chat): cloud: only the main app's key can write appSettings (tabs, locked computers), so a locked sales computer cannot unlock itself.

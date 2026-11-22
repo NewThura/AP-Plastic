@@ -173,9 +173,13 @@ svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
 .nsum{display:flex;flex-wrap:wrap;gap:8px}
 .sapp{margin:0}
 .comps{display:flex;flex-direction:column}
+.compi{display:flex;flex-direction:column;gap:3px;min-width:0}
+.compt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ondot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.ondot.on{background:var(--good,#1baf7a)}
 .comp{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
 .comp:first-child{border-top:0;padding-top:0}
-.compb{display:flex;gap:8px;align-items:center}
+.compb{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .sapp .lg[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft);font-weight:600}
 .charts.ovg{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
 .panel.ov>h2{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px 8px 16px}
@@ -302,7 +306,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","Brand":"တံဆိပ်","Unlock":"ဖွင့်မည်","Made in the Sales app. Change it there.":"အရောင်း အက်ပ်တွင် လုပ်ထားသည်။ ထိုတွင် ပြင်ပါ။","Sales app":"အရောင်း အက်ပ်","Link the cloud first.":"cloud နှင့် အရင် ချိတ်ပါ။","Tabs":"စာမျက်နှာများ","Computers":"ကွန်ပျူတာများ","Computer":"ကွန်ပျူတာ","User":"အသုံးပြုသူ","Version":"ဗားရှင်း","Last seen":"နောက်ဆုံး တွေ့ချိန်","Locked":"ပိတ်ထားသည်","Lock":"ပိတ်မည်","No computers yet.":"ကွန်ပျူတာ မရှိသေးပါ။","Keep at least one tab":"စာမျက်နှာ တစ်ခု အနည်းဆုံး ထားပါ","Make receipt":"ပြေစာ ရေးမည်","Past receipts":"ယခင် ပြေစာများ","Quotations":"ဈေးနှုန်း စာများ","Orders":"အော်ဒါများ","Wrong key":"key မှားနေသည်","Cloud":"cloud","Cloud key":"cloud key","Link":"ချိတ်မည်","Unlink":"ချိတ်ဆက်မှု ဖြုတ်မည်","Tap again to unlink":"ဖြုတ်ရန် ထပ်နှိပ်ပါ","Linked to the cloud":"cloud နှင့် ချိတ်ပြီး","Cloud not reached":"cloud ကို မရောက်ပါ","Sending to the cloud":"cloud သို့ ပို့နေသည်","Saved to the cloud":"cloud တွင် သိမ်းပြီး","Cloud: wrong key":"cloud: key မှားနေသည်","cloud waiting":"cloud စောင့်နေသည်","sending":"ပို့နေသည်","cloud":"cloud","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
+ "Edit":"ပြင်မည်","Accounts":"အကောင့်များ","New account":"အကောင့်သစ်","Turned off":"ပိတ်ထားသည်","Username":"အသုံးပြုသူအမည်","No accounts yet":"အကောင့် မရှိသေးပါ","Name (goes on receipts)":"အမည် (ပြေစာတွင် ပါမည်)","Can sign in?":"ဝင်ခွင့် ရှိသလား","No, turn off":"မရှိ၊ ပိတ်မည်","New password (leave empty to keep)":"စကားဝှက်အသစ် (မပြောင်းလျှင် ဗလာထားပါ)","Password":"စကားဝှက်","Password again":"စကားဝှက် ထပ်ရိုက်ပါ","Sales worker":"အရောင်းဝန်ထမ်း","Main office":"ရုံးချုပ်","Username: small letters and numbers only":"အသုံးပြုသူအမည်: အင်္ဂလိပ် စာလုံးသေးနှင့် ဂဏန်းသာ","This username is taken":"ဤအမည် ရှိပြီးသား","Enter a password":"စကားဝှက် ထည့်ပါ","Password: at least 6 characters":"စကားဝှက်: အနည်းဆုံး စာလုံး ၆ လုံး","The two passwords are not the same":"စကားဝှက် နှစ်ခု မတူပါ","Waiting":"စောင့်နေသည်","Accepted":"လက်ခံပြီး","Tap again to remove":"ဖယ်ရန် ထပ်နှိပ်ပါ","Open now":"ယခု ဖွင့်ထားသည်","Not open":"မဖွင့်ထားပါ","Last 7 minutes":"နောက်ဆုံး ၇ မိနစ်","To accept":"လက်ခံရန်","Cannot be used":"သုံး၍ မရပါ","Waiting to be accepted":"လက်ခံရန် စောင့်နေသည်","Accept":"လက်ခံမည်","Brand":"တံဆိပ်","Unlock":"ဖွင့်မည်","Made in the Sales app. Change it there.":"အရောင်း အက်ပ်တွင် လုပ်ထားသည်။ ထိုတွင် ပြင်ပါ။","Sales app":"အရောင်း အက်ပ်","Link the cloud first.":"cloud နှင့် အရင် ချိတ်ပါ။","Tabs":"စာမျက်နှာများ","Computers":"ကွန်ပျူတာများ","Computer":"ကွန်ပျူတာ","User":"အသုံးပြုသူ","Version":"ဗားရှင်း","Last seen":"နောက်ဆုံး တွေ့ချိန်","Locked":"ပိတ်ထားသည်","Lock":"ပိတ်မည်","No computers yet.":"ကွန်ပျူတာ မရှိသေးပါ။","Keep at least one tab":"စာမျက်နှာ တစ်ခု အနည်းဆုံး ထားပါ","Make receipt":"ပြေစာ ရေးမည်","Past receipts":"ယခင် ပြေစာများ","Quotations":"ဈေးနှုန်း စာများ","Orders":"အော်ဒါများ","Wrong key":"key မှားနေသည်","Cloud":"cloud","Cloud key":"cloud key","Link":"ချိတ်မည်","Unlink":"ချိတ်ဆက်မှု ဖြုတ်မည်","Tap again to unlink":"ဖြုတ်ရန် ထပ်နှိပ်ပါ","Linked to the cloud":"cloud နှင့် ချိတ်ပြီး","Cloud not reached":"cloud ကို မရောက်ပါ","Sending to the cloud":"cloud သို့ ပို့နေသည်","Saved to the cloud":"cloud တွင် သိမ်းပြီး","Cloud: wrong key":"cloud: key မှားနေသည်","cloud waiting":"cloud စောင့်နေသည်","sending":"ပို့နေသည်","cloud":"cloud","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
  "{m} production (dz)":"{m} ထုတ်လုပ်မှု (ဒါဇင်)","{m} waste (lb)":"{m} အပျက် (ပေါင်)","Expected":"ခန့်မှန်း","Expected by month end":"လကုန် ခန့်မှန်း","Sales by product, last 6 months":"ကုန်ပစ္စည်းအလိုက် အရောင်း၊ နောက်ဆုံး ၆ လ","Money in":"ငွေဝင်","Raw material used":"ကုန်ကြမ်း အသုံး","this month":"ဤလ","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
  "All":"အားလုံး","Bought this month":"ဤလ ဝယ်ယူမှု","customers":"ဦး","All customers":"ဖောက်သည် အားလုံး","Materials":"ကုန်ကြမ်း အမျိုးအစား","Used this month":"ဤလ အသုံး","Low in store":"လက်ကျန် နည်းနေသည်","materials":"မျိုး",
  "Products":"ကုန်ပစ္စည်း","Still sold":"ရောင်းဆဲ","Sold this month":"ဤလ ရောင်းပြီး","products":"မျိုး","In and out":"အဝင်အထွက်","Made":"ထုတ်ပြီး","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
@@ -347,6 +351,7 @@ const ICON={
  payments:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/>',
  customers:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.5-3.5 3-5.5 6-5.5s5.5 2 6 5.5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.5c2.6.2 4.4 2 5 5"/>',
  products:'<path d="M6 4h12l-1.5 16h-9z"/><path d="M5 4h14"/>',
+ computers:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/>',
  settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'};
 const svg=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
 
@@ -355,7 +360,7 @@ const svg=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>`;
    Working copy: the browser (IndexedDB), so the app opens fast and still works without the file.
    File format: {app, saved, records:[{col,id,data}]} */
 /* the Sales app's kinds (E:\AP-Sales\DATA.md), fetched from the cloud and kept here as they are */
-const SALES_COLS=["receipts","receiptPayments","receiptReturns","productList","salesOrders","salesQuotes","computers","appSettings","shop","customerEdits","receiptFixes"];
+const SALES_COLS=["users","receipts","receiptPayments","receiptReturns","productList","salesOrders","salesQuotes","computers","appSettings","shop","customerEdits","receiptFixes"];
 const COLS=["products","customers","sales","payments","materials","matMoves","made","waste","outbox",...SALES_COLS];
 let DBV=0;   // goes up on every change, so views of the records can be kept until something changes
 const DB={};COLS.forEach(c=>DB[c]={});
@@ -434,6 +439,8 @@ const Cloud={
   key:"",since:"",q:{},state:"off",  // off | ok | sending | offline | badkey
   last:"",timer:null,busy:false,
   async load(){const g=k=>Store.tx("meta","readonly",st=>st.get(k));this.key=(await g("cloudKey"))||"";this.since=(await g("cloudSince"))||"";this.q=(await g("cloudQ"))||{};
+    // when the app learns new kinds of records, fetch everything once more so the older ones of those kinds arrive too
+    const sig=COLS.join(",");if(this.key&&(await g("cloudCols"))!==sig){this.since="";await this.setMeta("cloudCols",sig)}
     if(this.key){this.state="ok";this.run()}},
   setMeta(k,v){return Store.tx("meta","readwrite",st=>st.put(v,k))},
   queue(col,id,data){if(!this.key)return;this.q[col+"\u0001"+id]={col,id,data:data||{},deleted:!data};this.setMeta("cloudQ",this.q);
@@ -460,7 +467,7 @@ const Cloud={
     try{const j=await this.call("/records");this.q={};await this.apply(j.records||[]);
       const inCloud=new Set((j.records||[]).map(r=>r.col+"\u0001"+r.id));
       Store.all().forEach(r=>{if(!inCloud.has(r.col+"\u0001"+r.id))this.q[r.col+"\u0001"+r.id]={col:r.col,id:r.id,data:r.data,deleted:false}});
-      this.since=j.now;await this.setMeta("cloudKey",this.key);await this.setMeta("cloudSince",this.since);await this.setMeta("cloudQ",this.q);
+      this.since=j.now;await this.setMeta("cloudCols",COLS.join(","));await this.setMeta("cloudKey",this.key);await this.setMeta("cloudSince",this.since);await this.setMeta("cloudQ",this.q);
       this.state="ok";await moveOldProducts();await this.run();return true}
     catch(e){this.key=was;this.state=was?this.state:"off";toast(t(e.badkey?"Wrong key":"Cloud not reached"));return false}},
   async unlink(){this.key="";this.since="";this.q={};this.state="off";for(const k of ["cloudKey","cloudSince","cloudQ"])await Store.tx("meta","readwrite",st=>st.delete(k))}};
@@ -830,6 +837,7 @@ function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
   out.push({sev:"info",area:"Sales",go:()=>go("receipts"),txt:tdS.length?`${t("Today")}: ${tdS.length} ${t(tdS.length===1?"sale":"sales")}, ${fmt(tdS.reduce((a,s)=>a+saleTotal(s),0))}${K}`:t("No sales written today yet.")});
   const noPhone=list("customers").filter(c=>!c.phone);
   if(noPhone.length)out.push({sev:"info",area:"Customers",go:()=>go("customers"),txt:`${t("No phone number")}: ${noPhone.map(c=>c.name).join(", ")}`});
+  const wc=Cloud.key?waitingComps():[];if(wc.length)out.push({sev:"warn",area:"Computers",go:()=>go("computers"),txt:`${t("Waiting to be accepted")}: ${wc.map(c=>c.windowsName||c.code||c.id).join(", ")}`});
   if(F.state==="nosupport")out.push({sev:"info",area:"Settings",go:()=>go("settings"),txt:t("Use Chrome or Edge to save to a file.")});
   return out}
 const SEV=[["bad","Urgent"],["warn","To do"],["info","For information"]];
@@ -853,7 +861,7 @@ function overviewCharts(){const m=ym(today()),K=" "+t("Kyat"),L=" "+t("lb"),D=" 
    ${six("{m} production (dz)","finished",list("made"),x=>dzOf(PRODS()[x.p],x.unit,x.qty),D,1)}
    ${six("{m} waste (lb)","waste",list("waste").filter(x=>x.kind==="waste"),x=>num(x.qty),L,1)}</div>`}
 V.overview=()=>{const al=ALERTS=alerts();const cnt=k=>al.filter(a=>a.sev===k).length;
-  const icon={Settings:"settings",Customers:"customers",Sales:"sales","Finished products":"products","Raw materials":"production","Waste products":"production",Payments:"payments"};
+  const icon={Computers:"computers",Settings:"settings",Customers:"customers",Sales:"sales","Finished products":"products","Raw materials":"production","Waste products":"production",Payments:"payments"};
   const item=(a,i)=>`<button class="nitem ${a.sev}" data-al="${i}"><span class="nic">${svg(icon[a.area]||"sales")}</span><span class="nbody"><span class="narea">${T(a.area)}${a.head?` · <b class="notr">${esc(a.head)}</b>`:""}</span><span class="ntext notr">${esc(a.txt)}</span></span><span class="ngo">${T("Open")}</span></button>`;
   const groups=SEV.map(([k,l])=>{const xs=al.map((a,i)=>[a,i]).filter(([a])=>a.sev===k);return xs.length?`<section class="ngroup ${k}"><h3><i></i><span>${T(l)}</span><span class="notr ncount">${xs.length}</span></h3><div class="nlist">${xs.map(([a,i])=>item(a,i)).join("")}</div></section>`:""}).join("");
   return `<div class="nsum">${SEV.map(([k,l])=>`<span class="nchip ${k}"><b class="notr">${cnt(k)}</b> <span>${T(l)}</span></span>`).join("")}</div>${overviewCharts()}${groups}`};
@@ -1025,15 +1033,76 @@ function salesAppBox(){if(!Cloud.key)return `<div class="panel"><h2>${T("Sales a
   const comps=rawList("computers").sort((a,b)=>String(a.letter||a.id).localeCompare(String(b.letter||b.id)));
   return `<div class="panel"><h2>${T("Sales app")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:14px">
     <div><div class="muted small" style="margin-bottom:6px">${T("Tabs")}</div><div class="legend sapp">${SALES_TABS.map(([k,n])=>`<button class="lg" data-st="${k}" aria-pressed="${on.includes(k)}">${T(n)}</button>`).join("")}</div></div>
-    <div><div class="muted small" style="margin-bottom:6px">${T("Computers")}</div>${comps.length?`<div class="comps">${comps.map(c=>{const L=String(c.letter||c.id),lk=locked.includes(L);
-      return `<div class="comp"><div><b class="notr">${esc(L)}</b> <span class="notr">${esc(c.user||"")}</span><div class="muted small notr">${esc([c.windowsName||c.pc,c.appVersion&&("v"+c.appVersion)].filter(Boolean).join(" · "))}</div><div class="muted small">${T("Last seen")} <span class="notr">${esc(when(c.seenAt||c.openedAt))}</span></div></div>
-        <div class="compb">${lk?`<span class="chip bad">${T("Locked")}</span>`:""}<button class="btn sm" data-lock="${esc(L)}">${T(lk?"Unlock":"Lock")}</button></div></div>`}).join("")}</div>`:`<div class="muted">${T("No computers yet.")}</div>`}</div>
   </div></div>`}
+/* Computers: every computer that opens a department app (today: AP Sales) writes a "computers" record
+   (id = its code) every 5 minutes. A computer works only after it is accepted here (appSettings/sales accepted),
+   and stops at once when locked (appSettings/sales locked, by code or letter). */
+const ONLINE_MS=7*60*1000;
+const compSeen=c=>num(c.seenAt)||num(c.openedAt)||0;
+function compState(c){const st=salesSet(),L=c.letter||"";
+  if((st.locked||[]).includes(c.id)||(L&&(st.locked||[]).includes(L)))return "locked";
+  return (st.accepted||[]).includes(c.id)?"accepted":"waiting"}
+const waitingComps=()=>rawList("computers").filter(c=>compState(c)==="waiting");
+V.computers=()=>{if(!Cloud.key)return `<div class="panel"><div class="empty"><b>${T("Link the cloud first.")}</b><button class="btn primary" data-go="settings">${T("Settings")}</button></div></div>`;
+  const cs=rawList("computers"),now=Date.now(),on=c=>now-compSeen(c)<ONLINE_MS;
+  const order={waiting:0,accepted:1,locked:2};cs.sort((a,b)=>order[compState(a)]-order[compState(b)]||compSeen(b)-compSeen(a));
+  const n=k=>cs.filter(c=>compState(c)===k).length;
+  const when=v=>{if(!v)return "—";const d=new Date(v);return d.toLocaleString(UI.lang==="my"?"my-MM":"en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})};
+  const card=c=>{const st=compState(c),code=c.code||c.id;
+    const chip=st==="waiting"?`<span class="chip warn">${T("Waiting")}</span>`:st==="locked"?`<span class="chip bad">${T("Locked")}</span>`:`<span class="chip good">${T("Accepted")}</span>`;
+    const btns=st==="waiting"?`<button class="btn sm primary" data-acc="${esc(c.id)}">${T("Accept")}</button>`
+      :st==="accepted"?`<button class="btn sm" data-lockc="${esc(c.id)}">${T("Lock")}</button><button class="btn sm" data-unacc="${esc(c.id)}">${T("Remove")}</button>`
+      :`<button class="btn sm primary" data-unlockc="${esc(c.id)}">${T("Unlock")}</button>`;
+    return `<div class="comp"><div class="compi">
+      <div class="compt"><span class="ondot ${on(c)?"on":""}" title="${T(on(c)?"Open now":"Not open")}"></span><b class="notr">${esc(c.windowsName||code)}</b>${c.letter?` <span class="chip mute notr">${esc(c.letter)}</span>`:""} ${chip}</div>
+      <div class="muted small"><span>${T("Sales app")}</span> · <span class="notr">${esc(code)}</span>${c.ip?` · <span class="notr">${esc(c.ip)}</span>`:""}${c.appVersion?` · <span class="notr">v${esc(c.appVersion)}</span>`:""}</div>
+      <div class="muted small">${c.user?`<span class="notr">${esc(c.user)}</span> · `:""}${T(on(c)?"Open now":"Last seen")}${on(c)?"":` <span class="notr">${esc(when(compSeen(c)))}</span>`}</div></div>
+      <div class="compb">${btns}</div></div>`};
+  return kpiRow([kpi("Computers",fmt(cs.length),T("All")),kpi("Open now",fmt(cs.filter(on).length),T("Last 7 minutes")),
+      kpi("Waiting",fmt(n("waiting")),T("To accept"),n("waiting")?"warn":""),kpi("Locked",fmt(n("locked")),T("Cannot be used"),n("locked")?"bad":"")])
+    +`<div class="panel"><h2>${T("Sales app")}</h2><div class="pb">${cs.length?`<div class="comps">${cs.map(card).join("")}</div>`:`<div class="muted">${T("No computers yet.")}</div>`}</div></div>`};
+V.computers.bind=()=>{const st=()=>salesSet(),add=(k,v)=>[...new Set((st()[k]||[]).concat([v]))],del=(k,v)=>(st()[k]||[]).filter(x=>x!==v);
+  $$("[data-acc]").forEach(b=>b.onclick=()=>saveSales({accepted:add("accepted",b.dataset.acc)}));
+  $$("[data-unacc]").forEach(b=>b.onclick=()=>{if(!b.classList.contains("arm")){b.classList.add("arm");b.textContent=t("Tap again to remove");return}saveSales({accepted:del("accepted",b.dataset.unacc)})});
+  $$("[data-lockc]").forEach(b=>b.onclick=()=>saveSales({locked:add("locked",b.dataset.lockc)}));
+  $$("[data-unlockc]").forEach(b=>b.onclick=()=>{const c=DB.computers[b.dataset.unlockc]||{};saveSales({locked:(st().locked||[]).filter(x=>x!==b.dataset.unlockc&&x!==c.letter)})})};
+/* Accounts for the Sales app: made only here (the Sales app reads them from the cloud).
+   The password is never kept: hash = PBKDF2-SHA256(password, salt as text), 150000 rounds, 32 bytes, hex.
+   office = the main office's computer (products, prices, credit limits, letter, cloud key); sales = makes receipts. */
+async function passHash(pw,salt){const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
+  const b=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:new TextEncoder().encode(salt),iterations:150000},k,256);
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+const ROLES=[["sales","Sales worker"],["office","Main office"]];
+V.accounts=()=>{if(!Cloud.key)return `<div class="panel"><div class="empty"><b>${T("Link the cloud first.")}</b><button class="btn primary" data-go="settings">${T("Settings")}</button></div></div>`;
+  const us=rawList("users").sort((a,b)=>(b.active!==false)-(a.active!==false)||String(a.name).localeCompare(String(b.name)));
+  const role=r=>T((ROLES.find(x=>x[0]===r)||ROLES[0])[1]);
+  return `<div class="bar"><div class="left"></div><div class="left"><button class="btn primary" id="uAdd">${T("New account")}</button></div></div>
+   <div class="panel"><h2>${T("Sales app")}</h2><div class="pb">${us.length?`<div class="comps">${us.map(u=>`<div class="comp"><div class="compi">
+     <div class="compt"><b class="notr">${esc(u.name||u.username)}</b> ${u.active===false?`<span class="chip mute">${T("Turned off")}</span>`:`<span class="chip ${u.role==="office"?"warn":"good"}">${role(u.role)}</span>`}</div>
+     <div class="muted small"><span>${T("Username")}</span> <span class="notr">${esc(u.username)}</span></div></div>
+     <div class="compb"><button class="btn sm" data-uedit="${esc(u.id)}">${T("Edit")}</button></div></div>`).join("")}</div>`
+     :`<div class="empty"><b>${T("No accounts yet")}</b><button class="btn primary" id="uAdd2">${T("New account")}</button></div>`}</div></div>`};
+function editAccount(id){const u=id?DB.users[id]:{role:"sales",active:true};
+  openForm({title:id?(u.name||u.username):"New account",data:{name:u.name||"",username:u.username||"",role:u.role||"sales",active:u.active===false?"":"1",pw:"",pw2:""},fields:[
+    {k:"name",label:"Name (goes on receipts)",half:1},{k:"username",label:"Username",half:1},
+    {k:"role",label:"Kind",type:"select",opts:ROLES.map(([k,l])=>[k,t(l)]),half:1},{k:"active",label:"Can sign in?",type:"select",opts:[["1",t("Yes")],["",t("No, turn off")]],half:1},
+    {k:"pw",label:id?"New password (leave empty to keep)":"Password",type:"password",half:1},{k:"pw2",label:"Password again",type:"password",half:1}],
+   collect:d=>{d.name=String(d.name||"").trim();d.username=String(d.username||"").trim().toLowerCase()},
+   check:d=>!d.name?"Enter a name":!/^[a-z0-9._-]{2,30}$/.test(d.username)?"Username: small letters and numbers only":
+     rawList("users").some(x=>x.username===d.username&&x.id!==id)?"This username is taken":
+     (!id&&!d.pw)?"Enter a password":(d.pw&&d.pw.length<6)?"Password: at least 6 characters":d.pw!==d.pw2?"The two passwords are not the same":null,
+   onSave:async d=>{const now=Date.now(),rec=Object.assign({},u,{name:d.name,username:d.username,role:d.role,active:!!d.active,updatedBy:"main",updatedAt:now});
+     if(!id){rec.createdBy="main";rec.createdAt=now}
+     if(d.pw){rec.salt=[...crypto.getRandomValues(new Uint8Array(16))].map(x=>x.toString(16).padStart(2,"0")).join("");rec.hash=await passHash(d.pw,rec.salt)}
+     save("users",id||uid("u"),rec,"Saved")}})}
+V.accounts.bind=()=>{["#uAdd","#uAdd2"].forEach(k=>$(k)&&($(k).onclick=()=>editAccount(null)));$$("[data-uedit]").forEach(b=>b.onclick=()=>editAccount(b.dataset.uedit))};
+// the page refreshes itself every minute so "open now" stays true
+setInterval(()=>{if(UI.page==="computers"&&!form)render()},60000);
 function saveSales(ch){save("appSettings","sales",Object.assign({},salesSet(),ch),"Saved")}
 V.settings.bind=()=>{bindLang();
   $$("[data-st]").forEach(b=>b.onclick=()=>{const st=salesSet(),all=SALES_TABS.map(x=>x[0]);let on=st.tabs&&st.tabs.length?st.tabs:all;const k=b.dataset.st;
     on=on.includes(k)?on.filter(x=>x!==k):all.filter(x=>x===k||on.includes(x));if(!on.length)return toast(t("Keep at least one tab"));saveSales({tabs:on})});
-  $$("[data-lock]").forEach(b=>b.onclick=()=>{const L=b.dataset.lock,lk=salesSet().locked||[];saveSales({locked:lk.includes(L)?lk.filter(x=>x!==L):lk.concat([L])})});
+
   const l=$("#cLink");if(l)l.onclick=async()=>{const k=$("#cKey").value;if(!k.trim())return;l.disabled=true;if(await Cloud.link(k))toast(t("Linked to the cloud"));render()};
   const u=$("#cUnlink");if(u)u.onclick=async()=>{if(!u.classList.contains("arm")){u.classList.add("arm");u.textContent=t("Tap again to unlink");return}await Cloud.unlink();render()}};
 
@@ -1043,6 +1112,7 @@ const DEPTS=[
   {id:"overview",name:"Overview"},
   {id:"sales",name:"Sales",tabs:[["receipts","Receipts"],["payments","Payments"],["customers","Customers"]]},
   {id:"production",name:"Production",tabs:[["raw","Raw materials"],["finished","Finished products"],["waste","Waste products"]]},
+  {id:"computers",name:"Computers",tabs:[["computers","Computers"],["accounts","Accounts"]]},
   {id:"settings",name:"Settings"}];
 const OLD={products:"finished"};   // older page names still used in a few places
 const deptOf=k=>DEPTS.find(d=>d.id===k||(d.tabs||[]).some(x=>x[0]===k))||DEPTS[0];
