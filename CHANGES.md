@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-22, Thura (Main App Chat): new app linked to the cloud: paste the key once in Settings > Cloud. Every change is saved on the PC and sent to the cloud (waits and retries without internet); every 30 seconds the app fetches other computers' changes. First link takes the cloud's records first, then sends what only this PC has. Tested against a local test cloud.
 - 2026-11-22, Thura (Main App Chat): cloud on Cloudflare: Worker and D1 database (cloud/), records table plus a monthly copy on the 1st of each month that is never cleared, one secret key per app. Tested with made-up records, then emptied. The apps are not linked yet.
 - 2026-11-22, Thura (Main App Chat): new app: took out the department mode added the same day. The Sales app is made in its own chat and will connect to the main app through the cloud later.
 - 2026-11-21, Thura with Claude: new app (`app/`): Overview graphs are titled by month ("November sales",

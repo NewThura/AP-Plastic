@@ -296,7 +296,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Edit":"ပြင်မည်","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
+ "Edit":"ပြင်မည်","Wrong key":"key မှားနေသည်","Cloud":"cloud","Cloud key":"cloud key","Link":"ချိတ်မည်","Unlink":"ချိတ်ဆက်မှု ဖြုတ်မည်","Tap again to unlink":"ဖြုတ်ရန် ထပ်နှိပ်ပါ","Linked to the cloud":"cloud နှင့် ချိတ်ပြီး","Cloud not reached":"cloud ကို မရောက်ပါ","Sending to the cloud":"cloud သို့ ပို့နေသည်","Saved to the cloud":"cloud တွင် သိမ်းပြီး","Cloud: wrong key":"cloud: key မှားနေသည်","cloud waiting":"cloud စောင့်နေသည်","sending":"ပို့နေသည်","cloud":"cloud","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
  "{m} production (dz)":"{m} ထုတ်လုပ်မှု (ဒါဇင်)","{m} waste (lb)":"{m} အပျက် (ပေါင်)","Expected":"ခန့်မှန်း","Expected by month end":"လကုန် ခန့်မှန်း","Sales by product, last 6 months":"ကုန်ပစ္စည်းအလိုက် အရောင်း၊ နောက်ဆုံး ၆ လ","Money in":"ငွေဝင်","Raw material used":"ကုန်ကြမ်း အသုံး","this month":"ဤလ","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
  "All":"အားလုံး","Bought this month":"ဤလ ဝယ်ယူမှု","customers":"ဦး","All customers":"ဖောက်သည် အားလုံး","Materials":"ကုန်ကြမ်း အမျိုးအစား","Used this month":"ဤလ အသုံး","Low in store":"လက်ကျန် နည်းနေသည်","materials":"မျိုး",
  "Products":"ကုန်ပစ္စည်း","Still sold":"ရောင်းဆဲ","Sold this month":"ဤလ ရောင်းပြီး","products":"မျိုး","In and out":"အဝင်အထွက်","Made":"ထုတ်ပြီး","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
@@ -393,8 +393,8 @@ const Store={
     this.autoBackup();
   },
   canChange(){return this.ready&&this.file.state!=="need"},
-  async put(col,id,data){await this.tx("records","readwrite",st=>st.put({col,id,data}));DB[col][id]=data;this.soon()},
-  async del(col,id){await this.tx("records","readwrite",st=>st.delete([col,id]));delete DB[col][id];this.soon()},
+  async put(col,id,data,fromCloud){await this.tx("records","readwrite",st=>st.put({col,id,data}));DB[col][id]=data;if(!fromCloud)Cloud.queue(col,id,data);this.soon()},
+  async del(col,id,fromCloud){await this.tx("records","readwrite",st=>st.delete([col,id]));delete DB[col][id];if(!fromCloud)Cloud.queue(col,id,null);this.soon()},
   async reopen(){const F=this.file;const p=await F.handle.requestPermission({mode:"readwrite"});if(p!=="granted")return false;const recs=await this.readFile(F.handle);F.state="on";F.err=false;if(recs)await this.replaceAll(recs);else await this.writeFile();return true},
   // choose the folder once; if it already holds records they are loaded, otherwise the records here are saved into it
   async chooseFolder(){const h=await showDirectoryPicker({id:"ap-records",mode:"readwrite"});const recs=await this.readFile(h);if(recs)await this.replaceAll(recs);await this.link(h);await this.writeFile()}
@@ -414,6 +414,54 @@ function outboxEntry(col,id,before,after){
 async function logShared(col,id,before,after){if(!SHARED.includes(col))return;const e=outboxEntry(col,id,before,after);if(e)await Store.put("outbox",uid("o"),e)}
 async function save(col,id,data,msg){if(!Store.canChange())return toast(t("Records file not open"));try{const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.put(col,id,data);await logShared(col,id,before,data);if(msg)toast(t(msg));render()}catch(e){toast(String(e.message||e))}}
 async function remove(col,id,msg){if(!Store.canChange())return;const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.del(col,id);await logShared(col,id,before,null);if(msg)toast(t(msg));render()}
+/* ================= the cloud (Cloudflare) =================
+   Records are kept on this computer (above) AND in the cloud. Every change waits in a queue (kept in the browser,
+   so nothing is lost without internet) and is sent within a few seconds; every 30 seconds the app fetches what
+   other computers changed. The key is pasted once in Settings and kept only on this computer.
+   First link: the cloud's records come first (so an older computer never overwrites newer records),
+   then the records only this computer has are sent up. */
+const Cloud={
+  URL:ls("ap2.cloudUrl")||"https://ap-plastic-cloud.applastic.workers.dev",
+  key:"",since:"",q:{},state:"off",  // off | ok | sending | offline | badkey
+  last:"",timer:null,busy:false,
+  async load(){const g=k=>Store.tx("meta","readonly",st=>st.get(k));this.key=(await g("cloudKey"))||"";this.since=(await g("cloudSince"))||"";this.q=(await g("cloudQ"))||{};
+    if(this.key){this.state="ok";this.run()}},
+  setMeta(k,v){return Store.tx("meta","readwrite",st=>st.put(v,k))},
+  queue(col,id,data){if(!this.key)return;this.q[col+"\u0001"+id]={col,id,data:data||{},deleted:!data};this.setMeta("cloudQ",this.q);
+    clearTimeout(this.timer);this.timer=setTimeout(()=>this.run(),2000)},
+  async call(path,body){const r=await fetch(this.URL+path,{method:body?"POST":"GET",headers:{"X-AP-Key":this.key,"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
+    if(r.status===401){const e=new Error("badkey");e.badkey=true;throw e}if(!r.ok)throw new Error("HTTP "+r.status);return r.json()},
+  // records from the cloud: saved here without going back into the queue; a change still waiting here wins
+  async apply(recs){let n=0;for(const r of recs){if(!COLS.includes(r.col)||this.q[r.col+"\u0001"+r.id])continue;
+      if(r.deleted){if(DB[r.col][r.id]){await Store.del(r.col,r.id,true);n++}}
+      else if(JSON.stringify(DB[r.col][r.id])!==JSON.stringify(r.data)){await Store.put(r.col,r.id,r.data,true);n++}}
+    if(n){clearTimeout(Store.file.timer);await Store.writeFile()}   // into the records file at once, so closing the app straight after loses nothing
+    return n},
+  async send(){const keys=Object.keys(this.q);for(let i=0;i<keys.length;i+=40){const part=keys.slice(i,i+40);
+      await this.call("/records",{records:part.map(k=>this.q[k])});part.forEach(k=>delete this.q[k]);await this.setMeta("cloudQ",this.q)}},
+  async run(){if(!this.key||this.busy)return;this.busy=true;const was=this.state;
+    try{if(Object.keys(this.q).length){this.state="sending";paint()}
+      await this.send();
+      const j=await this.call("/records"+(this.since?"?since="+encodeURIComponent(this.since):""));
+      const n=await this.apply(j.records||[]);this.since=j.now;await this.setMeta("cloudSince",this.since);
+      this.state="ok";this.last=new Date().toISOString();if(n)render()}
+    catch(e){this.state=e.badkey?"badkey":"offline"}
+    finally{this.busy=false;if(this.state!==was||this.state!=="ok")paint()}},
+  async link(key){const was=this.key;this.key=key.trim();
+    try{const j=await this.call("/records");this.q={};await this.apply(j.records||[]);
+      const inCloud=new Set((j.records||[]).map(r=>r.col+"\u0001"+r.id));
+      Store.all().forEach(r=>{if(!inCloud.has(r.col+"\u0001"+r.id))this.q[r.col+"\u0001"+r.id]={col:r.col,id:r.id,data:r.data,deleted:false}});
+      this.since=j.now;await this.setMeta("cloudKey",this.key);await this.setMeta("cloudSince",this.since);await this.setMeta("cloudQ",this.q);
+      this.state="ok";await this.run();return true}
+    catch(e){this.key=was;this.state=was?this.state:"off";toast(t(e.badkey?"Wrong key":"Cloud not reached"));return false}},
+  async unlink(){this.key="";this.since="";this.q={};this.state="off";for(const k of ["cloudKey","cloudSince","cloudQ"])await Store.tx("meta","readwrite",st=>st.delete(k))}};
+setInterval(()=>Cloud.run(),30000);
+window.addEventListener("online",()=>Cloud.run());
+// the save status in the corner, without drawing the whole page again
+function paint(){const [cls,txt]=syncText();const d=$("#dot"),sy=$("#sync");if(d)d.className="dot "+cls;if(sy)sy.textContent=txt;const c=$("#cloudNow");if(c)c.outerHTML=cloudChip()}
+function cloudChip(){const st=Cloud.state,n=Object.keys(Cloud.q).length;
+  const [cls,l]=st==="badkey"?["bad","Wrong key"]:st==="offline"?["warn","Cloud not reached"]:n?["","Sending to the cloud"]:["good","Saved to the cloud"];
+  return `<span class="chip ${cls}" id="cloudNow">${T(l)}${n&&st!=="badkey"?` · <span class="notr">${n}</span>`:""}</span>`}
 async function fileAction(kind){
   try{if(kind==="open"&&Store.file.state==="need"){if(!(await Store.reopen()))return toast(t("The file was not allowed"))}
     else await Store.chooseFolder();
@@ -917,8 +965,13 @@ V.settings=()=>{const F=Store.file;
   const fileBox=F.state==="nosupport"?`<div class="muted">${T("Use Chrome or Edge to save to a file.")}</div>`
    :`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${F.state==="need"?`<button class="btn primary" data-file="open">${T("Open")}</button>`:""}<button class="btn ${F.state==="none"?"primary":""}" data-file="pick">${T(F.state==="none"?"Choose folder":"Change folder")}</button>${F.state==="on"?`<span class="chip good">${T("Saved each month")}</span>`:""}</div>`;
   return `<div class="panel"><h2>${T("Records file")}</h2><div class="pb" style="display:flex;flex-direction:column;gap:12px">${fileBox}</div></div>
+   <div class="panel"><h2>${T("Cloud")}</h2><div class="pb" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${Cloud.key
+     ?`${cloudChip()}<button class="btn" id="cUnlink">${T("Unlink")}</button>`
+     :`<input id="cKey" type="password" autocomplete="off" spellcheck="false" placeholder="${T("Cloud key")}" style="flex:1;min-width:200px;max-width:360px"><button class="btn primary" id="cLink">${T("Link")}</button>`}</div></div>
    <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
-V.settings.bind=()=>{bindLang()};
+V.settings.bind=()=>{bindLang();
+  const l=$("#cLink");if(l)l.onclick=async()=>{const k=$("#cKey").value;if(!k.trim())return;l.disabled=true;if(await Cloud.link(k))toast(t("Linked to the cloud"));render()};
+  const u=$("#cUnlink");if(u)u.onclick=async()=>{if(!u.classList.contains("arm")){u.classList.add("arm");u.textContent=t("Tap again to unlink");return}await Cloud.unlink();render()}};
 
 /* ================= page frame ================= */
 /* departments, each with its own tabs. UI.page is the tab (or the page, when a department has no tabs). */
@@ -948,7 +1001,11 @@ function fileBanner(){const F=Store.file;if(!Store.ready)return "";
   if(F.state==="none")return `<div class="banner"><span>${T("No records file yet")}</span><button class="btn sm primary" data-file="pick">${T("Choose folder")}</button></div>`;
   if(F.state==="on"&&F.err)return `<div class="banner bad"><span>${T("Could not save to the records file")}</span><button class="btn sm" data-file="pick">${T("Choose folder")}</button></div>`;
   return ""}
-function syncText(){const F=Store.file;if(!Store.ready)return ["",t("Loading…")];
+function syncText(){const r=fileSyncText();if(!Store.ready||!Cloud.key)return r;
+  if(Cloud.state==="badkey")return ["bad",t("Cloud: wrong key")];
+  if(Cloud.state==="offline")return [r[0]==="bad"?"bad":"",r[1]+" · "+t("cloud waiting")];
+  return [r[0],r[1]+(Object.keys(Cloud.q).length?" · "+t("sending"):" · "+t("cloud"))]}
+function fileSyncText(){const F=Store.file;if(!Store.ready)return ["",t("Loading…")];
   if(F.state==="on")return F.err?["bad",t("Not saved")]:["on",t("Saved")];
   if(F.state==="need")return ["",t("Records file is closed")];return ["",t("Saved")]}
 function render(){
@@ -974,7 +1031,7 @@ function render(){
 
 /* ================= start ================= */
 render();
-Store.start().then(render).catch(e=>{$("#main").innerHTML=`<div class="banner bad">${esc(String(e&&e.message||e))}</div>`});
+Store.start().then(()=>Cloud.load()).then(render).catch(e=>{$("#main").innerHTML=`<div class="banner bad">${esc(String(e&&e.message||e))}</div>`});
 </script>
 </body>
 </html>
