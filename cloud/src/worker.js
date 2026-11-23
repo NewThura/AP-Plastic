@@ -259,6 +259,34 @@ async function getUpdate(env, name) {
   return new Response(results.map((r) => r.data).join(""), { headers: { "Content-Type": "application/json", "Cache-Control": "no-store", ...CORS } });
 }
 
+/* Payment photos (proof of payment, the owner 2026-11-23; AP Sales DATA.md): a photo of each non-cash transfer.
+   POST /photos {id, type, data (base64)} with any valid key; GET /photos/<id> -> {id, type, data}.
+   Kept in app_files (parts) as "photo:<id>", never in records. A photo is never replaced once saved, so a proof
+   cannot be swapped later: sending the same id again only answers 200. */
+const PHOTO_ID = /^[A-Za-z0-9_-]{4,60}$/, PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"], PHOTO_MAX = 2800000;   // about 2 MB of image as base64
+async function savePhoto(req, env, app) {
+  let b; try { b = await req.json(); } catch (e) { return json({ error: "Not JSON" }, 400); }
+  const id = b && b.id, type = b && b.type, data = b && b.data;
+  if (!PHOTO_ID.test(String(id || ""))) return json({ error: "Bad photo id" }, 400);
+  if (!PHOTO_TYPES.includes(type) || typeof data !== "string" || !data || data.length > PHOTO_MAX || !/^[A-Za-z0-9+/=\s]+$/.test(data)) return json({ error: "Bad photo" }, 400);
+  await updTables(env);
+  const name = "photo:" + id;
+  if (await updMeta(env, name)) return json({ id, kept: true });
+  const parts = []; for (let i = 0; i < data.length; i += UPD_PART) parts.push(data.slice(i, i + UPD_PART));
+  await env.DB.batch([
+    ...parts.map((p, i) => env.DB.prepare("INSERT OR IGNORE INTO app_files (name, part, data) VALUES (?,?,?)").bind(name, i, p)),
+    env.DB.prepare("INSERT OR IGNORE INTO app_meta (name, meta) VALUES (?,?)").bind(name, JSON.stringify({ type, size: data.length, at: new Date().toISOString(), by: app }))]);
+  return json({ id });
+}
+async function getPhoto(env, id) {
+  if (!PHOTO_ID.test(id)) return json({ error: "Bad photo id" }, 400);
+  const m = await updMeta(env, "photo:" + id);
+  if (!m) return json({ error: "No such photo" }, 404);
+  const { results } = await env.DB.prepare("SELECT data FROM app_files WHERE name=? ORDER BY part").bind("photo:" + id).all();
+  return new Response(JSON.stringify({ id, type: m.type, data: results.map((r) => r.data).join("") }),
+    { headers: { "Content-Type": "application/json", "Cache-Control": "private, max-age=86400", ...CORS } });
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
@@ -275,6 +303,8 @@ export default {
     try {
       if (url.pathname === "/records" && req.method === "GET") return await getRecords(url, env);
       if (url.pathname === "/records" && req.method === "POST") return await saveRecords(req, env, app);
+      if (url.pathname === "/photos" && req.method === "POST") return await savePhoto(req, env, app);
+      if (url.pathname.startsWith("/photos/") && req.method === "GET") return await getPhoto(env, decodeURIComponent(url.pathname.slice(8)));
       if (url.pathname === "/app/sales" && req.method === "POST") return await uploadUpdate(req, env, app, "sales");
       if (url.pathname === "/app/sales" && req.method === "GET") return await getUpdate(env, "sales");
       if (url.pathname === "/app/sales/version" && req.method === "GET") {

@@ -78,6 +78,8 @@ Each app sends its own key in the `X-AP-Key` header (MAIN_KEY, SALES_KEY: Cloudf
 such records sent with the Sales key are left out and the rest of the batch is saved.
 A customer saved with the Sales key keeps the cloud's agentId (agents are linked only in AP Main).
 **Never put a key in this project or in a message.** The owner pastes the key into the app himself.
+Payment photos: `POST /photos {id, type, data}` (any valid key; a saved photo is never replaced), `GET /photos/<id>`;
+kept in `app_files` as `photo:<id>`. Alerts about a reference used twice are `paymentAlerts` (Permissions page).
 Sales app updates: AP Main uploads the signed `.apsu` file (`POST /app/sales`, main key only); sales computers read
 `GET /app/sales/version` and `GET /app/sales`. Stored whole in D1 tables `app_files` (parts) and `app_meta`, not in records.
 Sales computers join without a key: `GET /login/salt?username=` then `POST /login {username, hash, code}` returns
