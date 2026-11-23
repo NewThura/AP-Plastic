@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): removed New receipt, Record payment and Add customer from AP Main (Receipts, Payments, Customers and the customer panel). Receipts, payments and new customers are made in the Sales app; AP Main shows and checks them. Older ones made in AP Main still show, open and count, and customers can still be edited. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): receipt form: each product line shows its amount in its own box (Amount column) instead of a grey number under the line. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): new Permissions page in the left menu: everything waiting for the owner's yes in one place (new computers: accept or refuse; receipt corrections from the Sales app: approve or refuse with a note; computers that tried to sign in outside the allowed places: add the place). Its alerts open it, and the menu shows how many are waiting. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): passcode box: "Forgot passcode?" (tap twice, then set a new one), a Show button, Myanmar numbers count the same as English ones, spaces are ignored, and a long number (like a phone number) also matches when the old box had cut it to 8. The owner's right passcode was refused.

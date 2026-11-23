@@ -667,8 +667,8 @@ function editCustomer(id){const c=id?DB.customers[id]:{no:list("customers").redu
    onDelete:id?()=>{if(list("sales").some(s=>s.cust===id)||list("payments").some(p=>p.cust===id))return toast(t("This customer has sales or payments, so it is kept"));remove("customers",id,"Deleted")}:null})}
 V.customers=()=>{const q=UI.q.toLowerCase(),bal=balances();
   const cs=list("customers").filter(c=>!q||[c.name,c.town,c.phone,c.agent,c.no].join(" ").toLowerCase().includes(q)).sort((a,b)=>(num(a.no)||1e9)-(num(b.no)||1e9)||byName(a,b));
-  const bar=`<div class="bar"><div class="left"><input class="search" id="q" placeholder="${T("Find name, town or phone")}" value="${esc(UI.q)}"></div><button class="btn primary" id="add">${T("Add customer")}</button></div>`;
-  if(!list("customers").length)return bar+empty("No customers yet","","Add customer","add2");
+  const bar=`<div class="bar"><div class="left"><input class="search" id="q" placeholder="${T("Find name, town or phone")}" value="${esc(UI.q)}"></div></div>`;
+  if(!list("customers").length)return bar+empty("No customers yet");
   const owe=id=>{const v=bal[id]||0;return v>0.5?`<span class="chip warn">${fmt(v)}</span>`:"–"};
   const cur=DB.customers[UI.cust]?UI.cust:"";
   return bar+custKpis(bal)+custCharts(bal)+`<div class="panel">${listTitle("All customers")}${cs.length?`<div class="tw"><table><thead><tr><th class="n">${T("No")}</th><th>${T("Name")}</th><th>${T("Town / area")}</th><th>${T("Phone")}</th><th>${T("Payment term")}</th><th class="n">${T("Owes you")}</th><th></th></tr></thead><tbody>
@@ -685,7 +685,7 @@ function custDetail(id){const c=DB.customers[id];const ev=[];
   return `<div class="panel" id="custPanel"><h2><span class="notr">${esc(c.name)}</span>${c.no?` <span class="muted notr">#${esc(c.no)}</span>`:""}</h2><div class="pb" style="display:flex;flex-direction:column;gap:14px">
    <div class="infos">${info("Town / area",c.town)}${info("Phone",c.phone)}${info("Address",c.address)}${info("Bank (KBZ, AYA, CB, KBZPay…)",c.bank)}${info("Payment term",c.terms,1)}${info("Agent (if any)",c.agent)}${info("Agent commission %",c.commPct?fmt(c.commPct,2)+"%":"")}${info("Usual delivery charge (Ks)",c.deliveryKs?fmt(c.deliveryKs):"")}${info("Buys from these companies",(c.brands||[]).join(", "))}${info("Note",c.note)}</div>
    <div class="kpis"><div class="kpi"><span class="l">${T("Owes you")}</span><span class="v notr ${bal>0.5?"warn":""}">${fmt(bal)}</span><span class="d">${T("Kyat")}</span></div><div class="kpi"><span class="l">${T("Bought, all time")}</span><span class="v notr">${fmt(sold)}</span><span class="d">${T("Kyat")}</span></div><div class="kpi"><span class="l">${T("Last sale")}</span><span class="v notr" style="font-size:17px">${esc(last||"–")}</span><span class="d"><span class="notr">${ev.filter(e=>e.k===0).length}</span> ${T("sales")}</span></div></div>
-   <div class="bar"><div class="left"><button class="btn" id="hEdit">${T("Edit")}</button></div><div class="left"><button class="btn" id="hPay">${T("Record payment")}</button><button class="btn primary" id="hSale">${T("New receipt")}</button></div></div>
+   <div class="bar"><div class="left"><button class="btn" id="hEdit">${T("Edit")}</button></div></div>
    ${ev.length?`<div style="overflow-x:auto"><table><thead><tr><th>${T("Date")}</th><th>${T("Items")}</th><th class="n">${T("Sold")}</th><th class="n">${T("Paid")}</th><th class="n">${T("Balance")}</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="muted">${T("Nothing yet.")}</div>`}</div></div>`}
 function openCustomer(id){UI.cust=id;go("customers",true);const p=$("#custPanel");if(p)p.scrollIntoView({behavior:"smooth",block:"start"})}
 function custKpis(bal){const m=ym(today()),owe=Object.entries(bal).filter(([c,v])=>c&&v>0.5);
@@ -696,11 +696,11 @@ function custCharts(bal){const K=" "+t("Kyat"),from=addMonth(ym(today()),-5);
   const owe=Object.entries(bal).filter(([c,v])=>c&&v>0.5).map(([c,v])=>({l:custName(c),v})).sort((a,b)=>b.v-a.v).slice(0,8);
   const bought=topBy(list("sales").filter(s=>s.cust&&ym(s.date)>=from),s=>s.cust,saleTotal,custName,8);
   return chartSet(UI.month,{lists:[{title:"Owe you the most",rows:owe,u:K},{title:"Bought the most, last 6 months",rows:bought,u:K}]})}
-V.customers.bind=()=>{bindSearch();bindTips();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editCustomer(null)));
+V.customers.bind=()=>{bindSearch();bindTips();
   $$("button[data-edit]").forEach(b=>b.onclick=e=>{e.stopPropagation();editCustomer(b.dataset.edit)});
   $$("[data-hist]").forEach(b=>b.onclick=e=>{if(e.target.closest("button[data-edit]"))return;UI.cust=UI.cust===b.dataset.hist?"":b.dataset.hist;render();const p=$("#custPanel");if(p)p.scrollIntoView({behavior:"smooth",block:"start"})});
   $$("[data-sale]").forEach(r=>r.onclick=()=>editSale(r.dataset.sale));$$("[data-pay]").forEach(r=>r.onclick=()=>editPayment(r.dataset.pay));
-  $("#hEdit")&&($("#hEdit").onclick=()=>editCustomer(UI.cust));$("#hPay")&&($("#hPay").onclick=()=>editPayment(null,UI.cust));$("#hSale")&&($("#hSale").onclick=()=>editSale(null,UI.cust))};
+  $("#hEdit")&&($("#hEdit").onclick=()=>editCustomer(UI.cust))};
 
 /* ================= Sales ================= */
 const custOpts=()=>[["",t("— choose —")]].concat(list("customers").sort(byName).map(c=>[c.id,c.name]));
@@ -850,19 +850,17 @@ function salesKpis(m){const td=today(),all=list("sales"),inM=all.filter(s=>ym(s.
 V.sales=()=>{const m=UI.month,q=UI.q.toLowerCase();
   const inM=list("sales").filter(s=>ym(s.date)===m);const sumOf=xs=>xs.reduce((a,s)=>a+saleTotal(s),0);
   const shown=inM.filter(s=>!q||[custName(s.cust),lineText(s.lines),s.no].join(" ").toLowerCase().includes(q)).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||num(b.no)-num(a.no));
-  const ready=list("customers").length&&prodList().length;
   const kpis=salesKpis(m);
-  const bar=`<div class="bar"><div class="left">${monthPicker()}<input class="search" id="q" placeholder="${T("Find customer or product")}" value="${esc(UI.q)}"></div><button class="btn primary" id="add" ${ready?"":"disabled"}>${T("New receipt")}</button></div>`;
-  if(!ready)return bar+kpis+`<div class="panel"><div class="empty"><b>${T("First add a customer and a product.")}</b><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn" data-go="customers">${T("Customers")}</button><button class="btn" data-go="products">${T("Products")}</button></div></div></div>`;
+  const bar=`<div class="bar"><div class="left">${monthPicker()}<input class="search" id="q" placeholder="${T("Find customer or product")}" value="${esc(UI.q)}"></div></div>`;
   const charts=salesCharts(m);
-  if(!inM.length)return bar+kpis+charts+empty("No receipts this month","","New receipt","add2");
+  if(!inM.length)return bar+kpis+charts+empty("No receipts this month");
   const st=s=>{const o=saleOwed(s);return o>0.5?`<span class="chip warn">${T("Owed")} ${fmt(o)}</span>`:`<span class="chip good">${T("Paid in full")}</span>`};
   return bar+kpis+charts+`<div class="panel">${listTitle("Receipts",m)}${shown.length?`<div class="tw"><table><thead><tr><th>${T("Date")}</th><th class="n">${T("No")}</th><th>${T("Customer")}</th><th>${T("Items")}</th><th class="n">${T("Total")}</th><th class="n">${T("Paid")}</th><th></th></tr></thead><tbody>
    ${shown.map(s=>`<tr class="click" data-edit="${s.id}"><td class="notr">${esc(s.date)}</td><td class="n">${esc(s.no||"")}</td><td class="notr">${esc(custName(s.cust))}</td><td class="notr">${esc(lineText(s.lines))}</td><td class="n">${fmt(saleTotal(s))}</td><td class="n">${fmt(PAID[s.id])}</td><td>${st(s)}</td></tr>`).join("")}</tbody>
    <tfoot><tr><td colspan="4">${T("Total")}</td><td class="n">${fmt(sumOf(shown))}</td><td class="n">${fmt(shown.reduce((a,s)=>a+num(PAID[s.id]),0))}</td><td></td></tr></tfoot></table></div>
    <div class="cards">${shown.map(s=>`<button class="card" data-edit="${s.id}"><span class="r1"><span class="notr">${esc(custName(s.cust))}</span><span class="n">${fmt(saleTotal(s))}</span></span><span class="r2"><span class="notr">${esc(s.date)} · #${esc(s.no||"")} · ${esc(lineText(s.lines))}</span></span><span>${st(s)}</span></button>`).join("")}</div>`
    :`<div class="empty">${T("Nothing found")}</div>`}</div>`};
-V.sales.bind=()=>{bindSearch();bindMonth();bindTips();$$("[data-lg]").forEach(b=>b.onclick=()=>{UI.hideP=UI.hideP||{};UI.hideP[b.dataset.lg]=!UI.hideP[b.dataset.lg];render()});["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editSale(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editSale(r.dataset.edit))};
+V.sales.bind=()=>{bindSearch();bindMonth();bindTips();$$("[data-lg]").forEach(b=>b.onclick=()=>{UI.hideP=UI.hideP||{};UI.hideP[b.dataset.lg]=!UI.hideP[b.dataset.lg];render()});$$("[data-edit]").forEach(r=>r.onclick=()=>editSale(r.dataset.edit))};
 
 /* ================= Overview: notifications and alarms ================= */
 // Money is overdue when: month-end customers, the month of the sale is over; everyone else, the sale is more than 30 days old.
@@ -941,8 +939,8 @@ function editPayment(id,cust){if(id&&!DB.payments[id])return toast(madeIn(DB.rec
    onSave:d=>{d.amount=num(d.amount);d.t=d.t||Date.now();save("payments",id||uid("y"),d,"Payment saved")},
    onDelete:id?()=>remove("payments",id,"Deleted"):null})}
 V.payments=()=>{const m=UI.month;const ps=list("payments").filter(p=>ym(p.date)===m).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.t||0)-(a.t||0));
-  const bar=`<div class="bar"><div class="left">${monthPicker()}</div><button class="btn primary" id="add" ${list("customers").length?"":"disabled"}>${T("Record payment")}</button></div>`;
-  if(!ps.length)return bar+payKpis(m)+(list("payments").length?payCharts(m):"")+empty("No payments this month","",list("customers").length?"Record payment":null,"add2");
+  const bar=`<div class="bar"><div class="left">${monthPicker()}</div></div>`;
+  if(!ps.length)return bar+payKpis(m)+(list("payments").length?payCharts(m):"")+empty("No payments this month");
   const tot=ps.reduce((a,p)=>a+num(p.amount),0);
   return bar+payKpis(m)+payCharts(m)+`<div class="panel">${listTitle("Payments",m)}<div class="tw"><table><thead><tr><th>${T("Date")}</th><th>${T("Customer")}</th><th>${T("Paid by")}</th><th>${T("Note")}</th><th class="n">${T("Amount")}</th></tr></thead><tbody>
    ${ps.map(p=>`<tr class="click" data-edit="${p.id}"><td class="notr">${esc(p.date)}</td><td class="notr">${esc(custName(p.cust))}</td><td>${T(p.method||"Cash")}</td><td class="notr">${esc(p.note||"")}</td><td class="n">${fmt(p.amount)}</td></tr>`).join("")}</tbody>
@@ -955,7 +953,7 @@ function payKpis(m){const td=today(),all=list("payments"),inM=all.filter(p=>ym(p
 function payCharts(m){const K=" "+t("Kyat"),all=list("payments"),amt=p=>num(p.amount),inM=all.filter(p=>ym(p.date)===m);
   return chartSet(m,{day:{title:"Payments each day",data:perDay(m,all,amt),u:K},month:{title:"Payments, last 6 months",data:perMonth(m,all,amt),u:K},
     lists:[{title:"Paid by, this month",rows:topBy(inM,p=>p.method||"Cash",amt,k=>t(k)),u:K}]})}
-V.payments.bind=()=>{bindMonth();bindTips();["#add","#add2"].forEach(s=>$(s)&&($(s).onclick=()=>editPayment(null)));$$("[data-edit]").forEach(r=>r.onclick=()=>editPayment(r.dataset.edit))};
+V.payments.bind=()=>{bindMonth();bindTips();$$("[data-edit]").forEach(r=>r.onclick=()=>editPayment(r.dataset.edit))};
 
 /* tab names */
 V.receipts=V.sales;
