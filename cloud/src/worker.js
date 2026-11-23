@@ -208,6 +208,43 @@ async function monthlyCopy(env, month = lastMonth()) {
   return month;
 }
 
+/* Sales app updates (the owner, 2026-11-23): AP Main uploads the signed update file (.apsu, JSON
+   {format:"apsales-update-1", version, made, program, files:[{path, sha256, data}], sig}); sales computers fetch it.
+   The cloud only stores it: the signature is checked by AP Sales.exe on each computer.
+   Kept whole, outside "records", in the D1 table app_files split in parts (a D1 row holds at most 2 MB),
+   with {version, size, at, by} in app_meta. Uploading replaces the old file in one transaction. */
+const UPD_PART = 700000, UPD_MAX = 8000000;
+async function updTables(env) {
+  await env.DB.batch([
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS app_files (name TEXT NOT NULL, part INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY (name, part))"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS app_meta (name TEXT PRIMARY KEY, meta TEXT NOT NULL)")]);
+}
+async function updMeta(env, name) {
+  try { const r = await env.DB.prepare("SELECT meta FROM app_meta WHERE name=?").bind(name).first(); return r ? JSON.parse(r.meta) : null; }
+  catch (e) { return null; }   // no table yet: nothing uploaded
+}
+async function uploadUpdate(req, env, app, name) {
+  if (!TOP.includes(app)) return json({ error: "Only the main app can upload an update" }, 403);
+  const text = await req.text();
+  if (!text || text.length > UPD_MAX) return json({ error: "The file is empty or too big" }, 400);
+  let f; try { f = JSON.parse(text); } catch (e) { return json({ error: "Not an update file" }, 400); }
+  if (!f || f.format !== "apsales-update-1" || typeof f.version !== "string" || !f.version || f.version.length > 40
+    || !Array.isArray(f.files) || !f.files.length || typeof f.sig !== "string") return json({ error: "Not an AP Sales update file" }, 400);
+  await updTables(env);
+  const meta = { version: f.version, made: typeof f.made === "string" ? f.made.slice(0, 40) : "", program: !!f.program, size: text.length, at: new Date().toISOString(), by: app };
+  const parts = []; for (let i = 0; i < text.length; i += UPD_PART) parts.push(text.slice(i, i + UPD_PART));
+  await env.DB.batch([
+    env.DB.prepare("DELETE FROM app_files WHERE name=?").bind(name),
+    ...parts.map((p, i) => env.DB.prepare("INSERT INTO app_files (name, part, data) VALUES (?,?,?)").bind(name, i, p)),
+    env.DB.prepare("INSERT INTO app_meta (name, meta) VALUES (?,?) ON CONFLICT(name) DO UPDATE SET meta=excluded.meta").bind(name, JSON.stringify(meta))]);
+  return json(meta);
+}
+async function getUpdate(env, name) {
+  if (!(await updMeta(env, name))) return json({ error: "No update uploaded" }, 404);
+  const { results } = await env.DB.prepare("SELECT data FROM app_files WHERE name=? ORDER BY part").bind(name).all();
+  return new Response(results.map((r) => r.data).join(""), { headers: { "Content-Type": "application/json", "Cache-Control": "no-store", ...CORS } });
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
@@ -224,6 +261,12 @@ export default {
     try {
       if (url.pathname === "/records" && req.method === "GET") return await getRecords(url, env);
       if (url.pathname === "/records" && req.method === "POST") return await saveRecords(req, env, app);
+      if (url.pathname === "/app/sales" && req.method === "POST") return await uploadUpdate(req, env, app, "sales");
+      if (url.pathname === "/app/sales" && req.method === "GET") return await getUpdate(env, "sales");
+      if (url.pathname === "/app/sales/version" && req.method === "GET") {
+        const m = await updMeta(env, "sales");
+        return m ? json(m) : json({ error: "No update uploaded" }, 404);
+      }
       if (url.pathname === "/months" && req.method === "GET") {
         const { results } = await env.DB.prepare("SELECT month, COUNT(*) AS count FROM monthly GROUP BY month ORDER BY month").all();
         return json({ months: results });

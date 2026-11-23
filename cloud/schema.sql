@@ -31,3 +31,7 @@ CREATE TABLE IF NOT EXISTS login_tries (
   n INTEGER NOT NULL,                      -- wrong tries in this window
   since INTEGER NOT NULL                   -- when the window started, seconds since 1970
 );
+
+-- Sales app update file (made by the Worker itself on the first upload; here for reference)
+CREATE TABLE IF NOT EXISTS app_files (name TEXT NOT NULL, part INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY (name, part));
+CREATE TABLE IF NOT EXISTS app_meta (name TEXT PRIMARY KEY, meta TEXT NOT NULL);

@@ -73,6 +73,8 @@ Each app sends its own key in the `X-AP-Key` header (MAIN_KEY, SALES_KEY: Cloudf
 `Documents\AP cloud keys.txt`). Only the main key (or Thura's) may write `appSettings`, `users` and `productList` (prices: the owner, 2026-11-23);
 such records sent with the Sales key are left out and the rest of the batch is saved.
 **Never put a key in this project or in a message.** The owner pastes the key into the app himself.
+Sales app updates: AP Main uploads the signed `.apsu` file (`POST /app/sales`, main key only); sales computers read
+`GET /app/sales/version` and `GET /app/sales`. Stored whole in D1 tables `app_files` (parts) and `app_meta`, not in records.
 Sales computers join without a key: `GET /login/salt?username=` then `POST /login {username, hash, code}` returns
 the Sales key for an active account (hash made on the PC; 5 wrong tries in 15 minutes per name or address = 429).
 The secret `LOGIN_SECRET` makes the made-up salts for unknown names. Publish a cloud change with
