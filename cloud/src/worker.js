@@ -1,6 +1,8 @@
 /* AP Plastic cloud (Cloudflare Worker + D1).
    The apps send and fetch records here. Every request carries a key in the "X-AP-Key" header.
-   The keys are Cloudflare secrets (MAIN_KEY, SALES_KEY), never in this project.
+   The keys are Cloudflare secrets (MAIN_KEY, SALES_KEY, THURA_KEY), never in this project.
+   THURA_KEY is the master key, held only by the owner's Thura's Code (through the AP link helper on his PC):
+   it can do everything the main app can, and its changes are marked "thura".
 
    GET  /health                      -> {ok:true}                       (no key needed)
    GET  /records?since=<ISO time>    -> {now, records:[{col,id,data,deleted,updated_at,updated_by}]}
@@ -31,17 +33,19 @@ const CORS = {
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", ...CORS } });
 
-// which app is asking: "main", "sales", or null
+// which app is asking: "main", "sales", "thura" (the master key), or null
 function who(req, env) {
   const k = req.headers.get("X-AP-Key") || "";
   if (!k) return null;
   if (env.MAIN_KEY && k === env.MAIN_KEY) return "main";
   if (env.SALES_KEY && k === env.SALES_KEY) return "sales";
+  if (env.THURA_KEY && k === env.THURA_KEY) return "thura";
   return null;
 }
 
 const MAX_BATCH = 50;   // the free plan allows 50 database queries per request
-const MAIN_ONLY = ["appSettings", "users"];   // commands and sign-in accounts: main app only
+const MAIN_ONLY = ["appSettings", "users"];   // commands and sign-in accounts: main app (and the master key) only
+const TOP = ["main", "thura"];
 const okName =(s) => typeof s === "string" && s.length > 0 && s.length <= 200;
 
 async function saveRecords(req, env, app) {
@@ -52,7 +56,7 @@ async function saveRecords(req, env, app) {
   if (recs.length > MAX_BATCH) return json({ error: "At most " + MAX_BATCH + " records at a time" }, 400);
   for (const r of recs) if (!r || !okName(r.col) || !okName(r.id)) return json({ error: "Each record needs col and id" }, 400);
   // the main app's commands (tabs, locked computers) can only be written with the main key
-  if (app !== "main" && recs.some((r) => MAIN_ONLY.includes(r.col))) return json({ error: "Only the main app can change " + MAIN_ONLY.join(", ") }, 403);
+  if (!TOP.includes(app) && recs.some((r) => MAIN_ONLY.includes(r.col))) return json({ error: "Only the main app can change " + MAIN_ONLY.join(", ") }, 403);
   const now = new Date().toISOString();
   const st = env.DB.prepare(
     `INSERT INTO records (col,id,data,deleted,updated_at,updated_by) VALUES (?,?,?,?,?,?)

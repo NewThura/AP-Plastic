@@ -75,6 +75,15 @@ the Sales key for an active account (hash made on the PC; 5 wrong tries in 15 mi
 The secret `LOGIN_SECRET` makes the made-up salts for unknown names. Publish a cloud change with
 `npx wrangler@4 deploy` in `cloud/`.
 
+## Thura's Code (the master key)
+The owner's Thura's Code sees and controls AP through `thura-link/ap-link.js` (README there), a small helper on the
+owner's PC following the Thura App Link standard (HTTPS on 127.0.0.1:47840, pinned certificate, signed requests,
+Thura's SDK loaded from Thura's folder, never copied here). It uses the cloud secret `THURA_KEY`: the highest
+authority, may write everything the main key may, changes marked "thura". Reading is free for Thura; every change
+(computers, accounts, Sales tabs, any record) is "high" risk, so Thura asks the owner each time. Its private files
+are in `%LOCALAPPDATA%\AP Main\thura-link\`, and the link file in Thura's `Data\module-data\thura-applink\links\ap.json`.
+Test it against a local test cloud with made-up keys only.
+
 ## Testing
 - `python -m http.server 8770 --directory "E:/AP/AP Main"`, then open http://127.0.0.1:8770/ .
 - Without the real cloud: `cloud/.dev.vars` with made-up keys, `npx wrangler@4 dev --port 8788` in `cloud/`, and in
