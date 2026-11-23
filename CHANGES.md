@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): Sales app receipts and payments open as a read-only page (lines, discount, tax, total, paid, returned, still owed, credit limit, made without internet, corrections, which invoices a payment paid). A return counts on its own receipt first, as in the Sales app. The customer panel shows changes made in the Sales app (customerEdits, marked seen once shown). Customers changed in AP Main carry changedBy/changedAt. The unused outbox is removed. Agreed with the Sales app chat during the joint review.
 - 2026-11-23, Thura (Main App Chat): Settings > Sales app has a Tax box (appSettings/sales taxPct, used by new Sales app receipts, orders and quotes). Editing a customer uses the address in parts like the Sales app (addr; address and area kept in step). Agreed with the Sales app chat.
 - 2026-11-23, Thura (Main App Chat): removed New receipt, Record payment and Add customer from AP Main (Receipts, Payments, Customers and the customer panel). Receipts, payments and new customers are made in the Sales app; AP Main shows and checks them. Older ones made in AP Main still show, open and count, and customers can still be edited. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): receipt form: each product line shows its amount in its own box (Amount column) instead of a grey number under the line. Asked for by the owner.

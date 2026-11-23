@@ -179,6 +179,8 @@ svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
 .passbox input::placeholder{letter-spacing:normal;font-size:14px}
 .passerr{color:var(--bad,#c0392b);font-size:13px;min-height:16px}
 .fixcols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}@media(max-width:520px){.fixcols{grid-template-columns:1fr}}
+.vrows{display:flex;flex-direction:column;gap:4px;margin:8px 0}.vrow{display:flex;justify-content:space-between;gap:10px}.vrow>span:first-child{color:var(--muted)}.vrow.big{font-weight:700;font-size:16px}.vrow.warn>span:last-child{color:var(--warn,#b26a00);font-weight:600}
+.vt{width:100%;font-size:13px;margin:6px 0}.vt th,.vt td{padding:4px 2px}
 .passb{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
 .passrow{display:flex;gap:6px}.passrow input{flex:1;min-width:0}
 .passb .link{margin-right:auto;background:none;border:0;color:var(--muted,#667);padding:6px 0;font-size:13px}.passb .link.arm{color:var(--bad,#c0392b)}
@@ -322,7 +324,7 @@ const MY={
  "Allowed places":"ခွင့်ပြုထားသော နေရာများ","Map":"မြေပုံ","No places yet. Sales computers work anywhere.":"နေရာ မသတ်မှတ်ရသေးပါ။ အရောင်း ကွန်ပျူတာများ ဘယ်နေရာမှာမဆို သုံးနိုင်သည်။","Add place":"နေရာ ထည့်မည်",
  "Name (for example: Office, Shop)":"အမည် (ဥပမာ: ရုံး၊ ဆိုင်)","Place: paste from Google Maps (16.8409, 96.1735) or a map link":"နေရာ: Google Maps မှ ကူးထည့်ပါ (16.8409, 96.1735) သို့မဟုတ် မြေပုံ link","How far from it, in metres":"ထိုနေရာမှ အကွာအဝေး (မီတာ)",
  "Enter a name":"အမည် ထည့်ပါ","Paste the place from Google Maps":"Google Maps မှ နေရာကို ကူးထည့်ပါ","At least 20 metres":"အနည်းဆုံး မီတာ ၂၀","Inside":"နေရာအတွင်း","Outside the allowed places":"ခွင့်ပြုနေရာ အပြင်ဘက်","Place not found":"နေရာ ရှာမတွေ့ပါ","Add as allowed place":"ခွင့်ပြုနေရာအဖြစ် ထည့်မည်",
- "Edit":"ပြင်မည်","Set a passcode":"လျှို့ဝှက်နံပါတ် သတ်မှတ်မည်","Passcode":"လျှို့ဝှက်နံပါတ်","New passcode (4 to 8 numbers)":"နံပါတ်သစ် (ဂဏန်း ၄ မှ ၈ လုံး)","Enter the passcode":"လျှို့ဝှက်နံပါတ် ရိုက်ပါ","Passcode again":"နံပါတ် ထပ်ရိုက်ပါ","OK":"အိုကေ","Use 4 to 8 numbers":"ဂဏန်း ၄ မှ ၈ လုံး သုံးပါ","The two passcodes are not the same":"နံပါတ် နှစ်ခု မတူပါ","Passcode saved":"လျှို့ဝှက်နံပါတ် သိမ်းပြီး","Wrong passcode":"နံပါတ် မှားနေသည်","Permissions":"ခွင့်ပြုချက်များ","Wants to join":"ချိတ်ဆက်ခွင့် တောင်းနေသည်","Refuse":"ငြင်းမည်","Tap again to refuse":"ငြင်းရန် ထပ်နှိပ်ပါ","Correct a receipt":"ဘောင်ချာ ပြင်ရန်","Now":"လက်ရှိ","Asked for":"တောင်းဆိုထားသည်","Receipt not found":"ဘောင်ချာ မတွေ့ပါ","Approve":"ခွင့်ပြုမည်","Nothing is waiting for your permission.":"ခွင့်ပြုချက် စောင့်နေသည့်အရာ မရှိပါ။","New computers":"ကွန်ပျူတာ အသစ်များ","Receipt corrections":"ဘောင်ချာ ပြင်ဆင်ချက်များ","Signing in outside the allowed places":"ခွင့်ပြုထားသောနေရာ အပြင်မှ ဝင်ရောက်ခြင်း","Receipt corrections to approve":"ခွင့်ပြုရန် ဘောင်ချာ ပြင်ဆင်ချက်များ","Tried to sign in outside the allowed places":"ခွင့်ပြုထားသောနေရာ အပြင်မှ ဝင်ရန် ကြိုးစားခဲ့သည်","Refuse the correction":"ပြင်ဆင်ချက်ကို ငြင်းမည်","Why (the salesperson sees this)":"အကြောင်းရင်း (အရောင်းဝန်ထမ်း မြင်ရမည်)","Approved":"ခွင့်ပြုပြီး","Refused":"ငြင်းပြီး","House no.":"အိမ်အမှတ်","Street":"လမ်း","Ward":"ရပ်ကွက်","Township":"မြို့နယ်","City / region":"မြို့ / တိုင်း","Near (landmark)":"အနီး (မှတ်သားစရာ)","Tax":"အခွန်","No tax":"အခွန် မရှိ","Tax % (0 = no tax)":"အခွန် % (0 = အခွန် မရှိ)","Show":"ပြရန်","Hide":"ဖျောက်ရန်","Forgot passcode?":"လျှို့ဝှက်နံပါတ် မေ့သွားပြီလား","Tap again to remove it":"ဖယ်ရန် ထပ်နှိပ်ပါ","On":"ဖွင့်ထားသည်","Not set":"မသတ်မှတ်ရသေး","Change passcode":"နံပါတ် ပြောင်းမည်","Accounts":"အကောင့်များ","New account":"အကောင့်သစ်","Turned off":"ပိတ်ထားသည်","Username":"အသုံးပြုသူအမည်","No accounts yet":"အကောင့် မရှိသေးပါ","Name (goes on receipts)":"အမည် (ပြေစာတွင် ပါမည်)","Can sign in?":"ဝင်ခွင့် ရှိသလား","No, turn off":"မရှိ၊ ပိတ်မည်","New password (leave empty to keep)":"စကားဝှက်အသစ် (မပြောင်းလျှင် ဗလာထားပါ)","Password":"စကားဝှက်","Password again":"စကားဝှက် ထပ်ရိုက်ပါ","Sales person":"အရောင်းဝန်ထမ်း","Sales manager":"အရောင်း မန်နေဂျာ","Username: small letters and numbers only":"အသုံးပြုသူအမည်: အင်္ဂလိပ် စာလုံးသေးနှင့် ဂဏန်းသာ","This username is taken":"ဤအမည် ရှိပြီးသား","Enter a password":"စကားဝှက် ထည့်ပါ","Password: at least 6 characters":"စကားဝှက်: အနည်းဆုံး စာလုံး ၆ လုံး","The two passwords are not the same":"စကားဝှက် နှစ်ခု မတူပါ","Waiting":"စောင့်နေသည်","Accepted":"လက်ခံပြီး","Tap again to remove":"ဖယ်ရန် ထပ်နှိပ်ပါ","Open now":"ယခု ဖွင့်ထားသည်","Not open":"မဖွင့်ထားပါ","Last 7 minutes":"နောက်ဆုံး ၇ မိနစ်","To accept":"လက်ခံရန်","Cannot be used":"သုံး၍ မရပါ","Waiting to be accepted":"လက်ခံရန် စောင့်နေသည်","Accept":"လက်ခံမည်","Brand":"တံဆိပ်","Unlock":"ဖွင့်မည်","Made in the Sales app. Change it there.":"အရောင်း အက်ပ်တွင် လုပ်ထားသည်။ ထိုတွင် ပြင်ပါ။","Sales app":"အရောင်း အက်ပ်","Link the cloud first.":"cloud နှင့် အရင် ချိတ်ပါ။","Tabs":"စာမျက်နှာများ","Computers":"ကွန်ပျူတာများ","Computer":"ကွန်ပျူတာ","User":"အသုံးပြုသူ","Version":"ဗားရှင်း","Last seen":"နောက်ဆုံး တွေ့ချိန်","Locked":"ပိတ်ထားသည်","Lock":"ပိတ်မည်","No computers yet.":"ကွန်ပျူတာ မရှိသေးပါ။","Keep at least one tab":"စာမျက်နှာ တစ်ခု အနည်းဆုံး ထားပါ","Make receipt":"ပြေစာ ရေးမည်","Past receipts":"ယခင် ပြေစာများ","Quotations":"ဈေးနှုန်း စာများ","Orders":"အော်ဒါများ","Wrong key":"key မှားနေသည်","Cloud":"cloud","Cloud key":"cloud key","Link":"ချိတ်မည်","Unlink":"ချိတ်ဆက်မှု ဖြုတ်မည်","Tap again to unlink":"ဖြုတ်ရန် ထပ်နှိပ်ပါ","Linked to the cloud":"cloud နှင့် ချိတ်ပြီး","Cloud not reached":"cloud ကို မရောက်ပါ","Sending to the cloud":"cloud သို့ ပို့နေသည်","Saved to the cloud":"cloud တွင် သိမ်းပြီး","Cloud: wrong key":"cloud: key မှားနေသည်","cloud waiting":"cloud စောင့်နေသည်","sending":"ပို့နေသည်","cloud":"cloud","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
+ "Edit":"ပြင်မည်","Set a passcode":"လျှို့ဝှက်နံပါတ် သတ်မှတ်မည်","Passcode":"လျှို့ဝှက်နံပါတ်","New passcode (4 to 8 numbers)":"နံပါတ်သစ် (ဂဏန်း ၄ မှ ၈ လုံး)","Enter the passcode":"လျှို့ဝှက်နံပါတ် ရိုက်ပါ","Passcode again":"နံပါတ် ထပ်ရိုက်ပါ","OK":"အိုကေ","Use 4 to 8 numbers":"ဂဏန်း ၄ မှ ၈ လုံး သုံးပါ","The two passcodes are not the same":"နံပါတ် နှစ်ခု မတူပါ","Passcode saved":"လျှို့ဝှက်နံပါတ် သိမ်းပြီး","Wrong passcode":"နံပါတ် မှားနေသည်","Permissions":"ခွင့်ပြုချက်များ","Wants to join":"ချိတ်ဆက်ခွင့် တောင်းနေသည်","Refuse":"ငြင်းမည်","Tap again to refuse":"ငြင်းရန် ထပ်နှိပ်ပါ","Correct a receipt":"ဘောင်ချာ ပြင်ရန်","Now":"လက်ရှိ","Asked for":"တောင်းဆိုထားသည်","Receipt not found":"ဘောင်ချာ မတွေ့ပါ","Approve":"ခွင့်ပြုမည်","Nothing is waiting for your permission.":"ခွင့်ပြုချက် စောင့်နေသည့်အရာ မရှိပါ။","New computers":"ကွန်ပျူတာ အသစ်များ","Receipt corrections":"ဘောင်ချာ ပြင်ဆင်ချက်များ","Signing in outside the allowed places":"ခွင့်ပြုထားသောနေရာ အပြင်မှ ဝင်ရောက်ခြင်း","Receipt corrections to approve":"ခွင့်ပြုရန် ဘောင်ချာ ပြင်ဆင်ချက်များ","Tried to sign in outside the allowed places":"ခွင့်ပြုထားသောနေရာ အပြင်မှ ဝင်ရန် ကြိုးစားခဲ့သည်","Refuse the correction":"ပြင်ဆင်ချက်ကို ငြင်းမည်","Why (the salesperson sees this)":"အကြောင်းရင်း (အရောင်းဝန်ထမ်း မြင်ရမည်)","Approved":"ခွင့်ပြုပြီး","Refused":"ငြင်းပြီး","House no.":"အိမ်အမှတ်","Street":"လမ်း","Ward":"ရပ်ကွက်","Township":"မြို့နယ်","City / region":"မြို့ / တိုင်း","Near (landmark)":"အနီး (မှတ်သားစရာ)","Tax":"အခွန်","No tax":"အခွန် မရှိ","Tax % (0 = no tax)":"အခွန် % (0 = အခွန် မရှိ)","Saved over the credit limit":"အကြွေးကန့်သတ်ချက် ကျော်၍ သိမ်းထားသည်","Made without internet":"အင်တာနက်မရှိဘဲ ပြုလုပ်ထားသည်","From order":"အော်ဒါမှ","From quotation":"ဈေးနှုန်းစာမှ","Subtotal":"စုစုပေါင်း (မလျှော့မီ)","Discount":"လျှော့ငွေ","Paid now":"ယခု ပေးငွေ","Returned":"ပြန်အပ်ငွေ","Delivery (our cost)":"ပို့ခ (ကုမ္ပဏီ ကုန်ကျစရိတ်)","in the prices":"ဈေးထဲ ထည့်ထားသည်","Corrections":"ပြင်ဆင်ချက်များ","Paid in advance":"ကြိုပေးငွေ","Owed before":"ယခင် ပေးရန်","Owed after":"ယခု ပေးရန်","Paid for":"ပေးချေသည့် ဘောင်ချာ","With the invoice":"ဘောင်ချာနှင့်အတူ","Total before":"ယခင် စုစုပေါင်း","Changed in the Sales app":"အရောင်း App တွင် ပြင်ထားသည်","New":"အသစ်","Show":"ပြရန်","Hide":"ဖျောက်ရန်","Forgot passcode?":"လျှို့ဝှက်နံပါတ် မေ့သွားပြီလား","Tap again to remove it":"ဖယ်ရန် ထပ်နှိပ်ပါ","On":"ဖွင့်ထားသည်","Not set":"မသတ်မှတ်ရသေး","Change passcode":"နံပါတ် ပြောင်းမည်","Accounts":"အကောင့်များ","New account":"အကောင့်သစ်","Turned off":"ပိတ်ထားသည်","Username":"အသုံးပြုသူအမည်","No accounts yet":"အကောင့် မရှိသေးပါ","Name (goes on receipts)":"အမည် (ပြေစာတွင် ပါမည်)","Can sign in?":"ဝင်ခွင့် ရှိသလား","No, turn off":"မရှိ၊ ပိတ်မည်","New password (leave empty to keep)":"စကားဝှက်အသစ် (မပြောင်းလျှင် ဗလာထားပါ)","Password":"စကားဝှက်","Password again":"စကားဝှက် ထပ်ရိုက်ပါ","Sales person":"အရောင်းဝန်ထမ်း","Sales manager":"အရောင်း မန်နေဂျာ","Username: small letters and numbers only":"အသုံးပြုသူအမည်: အင်္ဂလိပ် စာလုံးသေးနှင့် ဂဏန်းသာ","This username is taken":"ဤအမည် ရှိပြီးသား","Enter a password":"စကားဝှက် ထည့်ပါ","Password: at least 6 characters":"စကားဝှက်: အနည်းဆုံး စာလုံး ၆ လုံး","The two passwords are not the same":"စကားဝှက် နှစ်ခု မတူပါ","Waiting":"စောင့်နေသည်","Accepted":"လက်ခံပြီး","Tap again to remove":"ဖယ်ရန် ထပ်နှိပ်ပါ","Open now":"ယခု ဖွင့်ထားသည်","Not open":"မဖွင့်ထားပါ","Last 7 minutes":"နောက်ဆုံး ၇ မိနစ်","To accept":"လက်ခံရန်","Cannot be used":"သုံး၍ မရပါ","Waiting to be accepted":"လက်ခံရန် စောင့်နေသည်","Accept":"လက်ခံမည်","Brand":"တံဆိပ်","Unlock":"ဖွင့်မည်","Made in the Sales app. Change it there.":"အရောင်း အက်ပ်တွင် လုပ်ထားသည်။ ထိုတွင် ပြင်ပါ။","Sales app":"အရောင်း အက်ပ်","Link the cloud first.":"cloud နှင့် အရင် ချိတ်ပါ။","Tabs":"စာမျက်နှာများ","Computers":"ကွန်ပျူတာများ","Computer":"ကွန်ပျူတာ","User":"အသုံးပြုသူ","Version":"ဗားရှင်း","Last seen":"နောက်ဆုံး တွေ့ချိန်","Locked":"ပိတ်ထားသည်","Lock":"ပိတ်မည်","No computers yet.":"ကွန်ပျူတာ မရှိသေးပါ။","Keep at least one tab":"စာမျက်နှာ တစ်ခု အနည်းဆုံး ထားပါ","Make receipt":"ပြေစာ ရေးမည်","Past receipts":"ယခင် ပြေစာများ","Quotations":"ဈေးနှုန်း စာများ","Orders":"အော်ဒါများ","Wrong key":"key မှားနေသည်","Cloud":"cloud","Cloud key":"cloud key","Link":"ချိတ်မည်","Unlink":"ချိတ်ဆက်မှု ဖြုတ်မည်","Tap again to unlink":"ဖြုတ်ရန် ထပ်နှိပ်ပါ","Linked to the cloud":"cloud နှင့် ချိတ်ပြီး","Cloud not reached":"cloud ကို မရောက်ပါ","Sending to the cloud":"cloud သို့ ပို့နေသည်","Saved to the cloud":"cloud တွင် သိမ်းပြီး","Cloud: wrong key":"cloud: key မှားနေသည်","cloud waiting":"cloud စောင့်နေသည်","sending":"ပို့နေသည်","cloud":"cloud","{m} sales":"{m} အရောင်း","{m} income":"{m} ဝင်ငွေ","Customers' debt":"ဖောက်သည် အကြွေး","Raw material used in {m} (lb)":"{m} ကုန်ကြမ်း အသုံး (ပေါင်)",
  "{m} production (dz)":"{m} ထုတ်လုပ်မှု (ဒါဇင်)","{m} waste (lb)":"{m} အပျက် (ပေါင်)","Expected":"ခန့်မှန်း","Expected by month end":"လကုန် ခန့်မှန်း","Sales by product, last 6 months":"ကုန်ပစ္စည်းအလိုက် အရောင်း၊ နောက်ဆုံး ၆ လ","Money in":"ငွေဝင်","Raw material used":"ကုန်ကြမ်း အသုံး","this month":"ဤလ","Payments today":"ယနေ့ ငွေလက်ခံ","Payments this month":"ဤလ ငွေလက်ခံ","payment":"ကြိမ်","payments":"ကြိမ်","Customers who owe":"အကြွေးရှိသော ဖောက်သည်","All months":"လအားလုံး",
  "All":"အားလုံး","Bought this month":"ဤလ ဝယ်ယူမှု","customers":"ဦး","All customers":"ဖောက်သည် အားလုံး","Materials":"ကုန်ကြမ်း အမျိုးအစား","Used this month":"ဤလ အသုံး","Low in store":"လက်ကျန် နည်းနေသည်","materials":"မျိုး",
  "Products":"ကုန်ပစ္စည်း","Still sold":"ရောင်းဆဲ","Sold this month":"ဤလ ရောင်းပြီး","products":"မျိုး","In and out":"အဝင်အထွက်","Made":"ထုတ်ပြီး","Payments each day":"နေ့စဉ် ငွေလက်ခံ","Payments, last 6 months":"ငွေလက်ခံ၊ နောက်ဆုံး ၆ လ","Paid by, this month":"ဤလ ပေးချေပုံ",
@@ -430,21 +432,8 @@ const Store={
   // choose the folder once; if it already holds records they are loaded, otherwise the records here are saved into it
   async chooseFolder(){const h=await showDirectoryPicker({id:"ap-records",mode:"readwrite"});const recs=await this.readFile(h);if(recs)await this.replaceAll(recs);await this.link(h);await this.writeFile()}
 };
-/* changes to share with other apps (not shown here). Every add, change or removal of a customer or a
-   product is written to "outbox" with what it was before and what it is now. When there is a cloud,
-   these go to the other apps, which ask "The main app changed this. Accept?" before updating. */
-const SHARED=["customers","products"];
-function outboxEntry(col,id,before,after){
-  const action=!before?"add":!after?"remove":"change";
-  const keys=[...new Set(Object.keys(before||{}).concat(Object.keys(after||{})))].filter(k=>k!=="t");
-  const changed=keys.filter(k=>JSON.stringify((before||{})[k]??"")!==JSON.stringify((after||{})[k]??""));
-  if(action==="change"&&!changed.length)return null;
-  const pick=o=>o?Object.fromEntries(changed.map(k=>[k,o[k]??""])):null;
-  return {at:new Date().toISOString(),what:col,recId:id,name:(after||before).name||(after||before).en||(after||before).my||"",action,
-    before:action==="add"?null:action==="remove"?before:pick(before),after:action==="remove"?null:action==="add"?after:pick(after),status:"waiting"}}
-async function logShared(col,id,before,after){if(!SHARED.includes(col))return;const e=outboxEntry(col,id,before,after);if(e)await Store.put("outbox",uid("o"),e)}
-async function save(col,id,data,msg){if(!Store.canChange())return toast(t("Records file not open"));try{const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.put(col,id,data);await logShared(col,id,before,data);if(msg)toast(t(msg));render()}catch(e){toast(String(e.message||e))}}
-async function remove(col,id,msg){if(!Store.canChange())return;const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.del(col,id);await logShared(col,id,before,null);if(msg)toast(t(msg));render()}
+async function save(col,id,data,msg){if(!Store.canChange())return toast(t("Records file not open"));try{const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.put(col,id,data);if(msg)toast(t(msg));render()}catch(e){toast(String(e.message||e))}}
+async function remove(col,id,msg){if(!Store.canChange())return;const before=DB[col][id]?JSON.parse(JSON.stringify(DB[col][id])):null;await Store.del(col,id);if(msg)toast(t(msg));render()}
 /* ================= the cloud (Cloudflare) =================
    Records are kept on this computer (above) AND in the cloud. Every change waits in a queue (kept in the browser,
    so nothing is lost without internet) and is sent within a few seconds; every 30 seconds the app fetches what
@@ -557,7 +546,7 @@ function salesView(){if(SV.v===DBV)return SV;
   const sales=rawList("receipts").map(r=>({id:"sa:"+r.id,fromSales:1,no:r.no,date:r.date||"",cust:r.customerId||"",lines:(r.lines||[]).map(line),
     total:num(r.total),paid:num(r.paid),term:r.term,note:r.note}));
   const pays=rawList("receiptPayments").map(x=>({id:"sp:"+x.id,fromSales:1,no:x.no,date:x.date||"",cust:x.customerId||"",amount:num(x.amount),method:PAYWAY[x.method]||"Other"}));
-  const rets=rawList("receiptReturns").map(x=>({cust:x.customerId||"",amount:num(x.amount)}));
+  const rets=rawList("receiptReturns").map(x=>({cust:x.customerId||"",amount:num(x.amount),sale:x.receiptId?"sa:"+x.receiptId:""}));
   SV={v:DBV,sales,pays,rets};return SV}
 const list=c=>c==="sales"?rawList(c).concat(salesView().sales):c==="payments"?rawList(c).concat(salesView().pays):rawList(c);
 /* ONE product list for the main app and the Sales app: the Sales app's "productList"
@@ -591,9 +580,12 @@ const unitWord=(u,q)=>u==="bag"?t(num(q)===1?"Bag":"bags"):t("dz");
 const lineText=lines=>(lines||[]).map(l=>`${prodLabel(l.p)} ${fmt(l.qty,1)} ${unitWord(l.unit,l.qty)}`).join(", ");
 function balances(){const b={};list("sales").forEach(s=>{if(s.cust)b[s.cust]=(b[s.cust]||0)+saleTotal(s)-num(s.paid)});list("payments").forEach(p=>{if(p.cust)b[p.cust]=(b[p.cust]||0)-num(p.amount)});salesView().rets.forEach(p=>{if(p.cust)b[p.cust]=(b[p.cust]||0)-p.amount});return b}
 // money received per sale: paid with the sale, plus later payments used for that customer's oldest sales first
-function paidMap(){const pool={},out={};
-  list("payments").concat(salesView().rets).forEach(p=>{if(p.cust)pool[p.cust]=(pool[p.cust]||0)+num(p.amount)});
-  list("sales").sort((a,b)=>(a.date||"").localeCompare(b.date||"")||num(a.no)-num(b.no)).forEach(s=>{const tot=saleTotal(s);let pd=num(s.paid);
+function paidMap(){const pool={},out={},own={},sales=list("sales"),ids=new Set(sales.map(s=>s.id));
+  salesView().rets.forEach(r=>{if(r.sale&&ids.has(r.sale))own[r.sale]=(own[r.sale]||0)+num(r.amount)});
+  list("payments").concat(salesView().rets.filter(r=>!(r.sale&&ids.has(r.sale)))).forEach(p=>{if(p.cust)pool[p.cust]=(pool[p.cust]||0)+num(p.amount)});
+  // a return bigger than its receipt's balance: the rest goes to the customer's other receipts
+  sales.forEach(s=>{if(own[s.id]){const room=Math.max(0,saleTotal(s)-num(s.paid)),x=Math.max(0,own[s.id]-room);if(x&&s.cust)pool[s.cust]=(pool[s.cust]||0)+x;own[s.id]-=x}});
+  sales.sort((a,b)=>(a.date||"").localeCompare(b.date||"")||num(a.no)-num(b.no)).forEach(s=>{const tot=saleTotal(s);let pd=num(s.paid)+(own[s.id]||0);
     if(pd<tot&&s.cust&&pool[s.cust]>0){const take=Math.min(pool[s.cust],tot-pd);pd+=take;pool[s.cust]-=take}out[s.id]=pd});return out}
 let PAID={};
 const saleOwed=s=>Math.max(0,saleTotal(s)-(PAID[s.id]??num(s.paid)));
@@ -616,9 +608,10 @@ function drawForm(){const o=form;if(!o)return;
   $("#drawer").innerHTML=`<div class="scrim" id="scrim"><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="dT">
    <header><h2 id="dT">${T(o.title)}</h2><button class="btn sm" id="dX">${T("Close")}</button></header>
    <div class="body">${rows}${o.extra?`<div id="dExtra">${o.extra()}</div>`:""}${rowsAfter}</div>
-   <footer><div>${o.onDelete?`<button class="btn danger" id="dDel">${T("Delete")}</button>`:""}</div><div style="display:flex;gap:8px"><button class="btn" id="dCancel">${T("Cancel")}</button><button class="btn primary" id="dSave">${T("Save")}</button></div></footer></div></div>`;
+   ${o.view?`<footer><div></div><button class="btn" id="dCancel">${T("Close")}</button></footer></div></div>`:`<footer><div>${o.onDelete?`<button class="btn danger" id="dDel">${T("Delete")}</button>`:""}</div><div style="display:flex;gap:8px"><button class="btn" id="dCancel">${T("Cancel")}</button><button class="btn primary" id="dSave">${T("Save")}</button></div></footer></div></div>`}`;
   $("#scrim").onclick=e=>{if(e.target.id==="scrim")closeForm()};$("#dX").onclick=closeForm;$("#dCancel").onclick=closeForm;
   if(o.bind)o.bind();
+  if(o.view)return;
   $("#dSave").onclick=()=>{const d=Object.assign({},o.data);o.fields.forEach(f=>{let v=$("#f_"+f.k).value;if(f.type==="num")v=v===""?"":num(v);d[f.k]=v});
     if(o.collect)o.collect(d);const err=o.check&&o.check(d);if(err)return toast(t(err));o.onSave(d);closeForm()};
   const del=$("#dDel");if(del)del.onclick=()=>{if(!del.classList.contains("arm")){del.classList.add("arm");del.textContent=t("Tap again to delete");return}o.onDelete();closeForm()};
@@ -671,7 +664,7 @@ function editCustomer(id){const c0=id?DB.customers[id]:{no:list("customers").red
    extra:brHTML,bind:()=>$$("[data-br]").forEach(x=>x.onchange=()=>{br=BRANDS.filter(b=>$(`[data-br="${b}"]`).checked)}),
    collect:d=>{d.name=String(d.name||"").trim();d.brands=br;const a={};ADDR.forEach(([k])=>{const v=String(d["a_"+k]||"").trim();if(v)a[k]=v;delete d["a_"+k]});
      if(Object.keys(a).length||c0.addr){d.addr=a;d.address=addrJoin(a);d.area=a.township||a.city||""}},check:d=>!d.name?"Enter a name":null,
-   onSave:d=>save("customers",id||uid("c"),d,"Customer saved"),
+   onSave:d=>{d.changedBy="main";d.changedAt=Date.now();save("customers",id||uid("c"),d,"Customer saved")},
    onDelete:id?()=>{if(list("sales").some(s=>s.cust===id)||list("payments").some(p=>p.cust===id))return toast(t("This customer has sales or payments, so it is kept"));remove("customers",id,"Deleted")}:null})}
 V.customers=()=>{const q=UI.q.toLowerCase(),bal=balances();
   const cs=list("customers").filter(c=>!q||[c.name,c.town,c.phone,c.agent,c.no].join(" ").toLowerCase().includes(q)).sort((a,b)=>(num(a.no)||1e9)-(num(b.no)||1e9)||byName(a,b));
@@ -694,7 +687,17 @@ function custDetail(id){const c=DB.customers[id];const ev=[];
    <div class="infos">${info("Town / area",c.town)}${info("Phone",c.phone)}${info("Address",c.address)}${info("Bank (KBZ, AYA, CB, KBZPay…)",c.bank)}${info("Payment term",c.terms,1)}${info("Agent (if any)",c.agent)}${info("Agent commission %",c.commPct?fmt(c.commPct,2)+"%":"")}${info("Usual delivery charge (Ks)",c.deliveryKs?fmt(c.deliveryKs):"")}${info("Buys from these companies",(c.brands||[]).join(", "))}${info("Note",c.note)}</div>
    <div class="kpis"><div class="kpi"><span class="l">${T("Owes you")}</span><span class="v notr ${bal>0.5?"warn":""}">${fmt(bal)}</span><span class="d">${T("Kyat")}</span></div><div class="kpi"><span class="l">${T("Bought, all time")}</span><span class="v notr">${fmt(sold)}</span><span class="d">${T("Kyat")}</span></div><div class="kpi"><span class="l">${T("Last sale")}</span><span class="v notr" style="font-size:17px">${esc(last||"–")}</span><span class="d"><span class="notr">${ev.filter(e=>e.k===0).length}</span> ${T("sales")}</span></div></div>
    <div class="bar"><div class="left"><button class="btn" id="hEdit">${T("Edit")}</button></div></div>
+   ${custEditsHTML(id)}
    ${ev.length?`<div style="overflow-x:auto"><table><thead><tr><th>${T("Date")}</th><th>${T("Items")}</th><th class="n">${T("Sold")}</th><th class="n">${T("Paid")}</th><th class="n">${T("Balance")}</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="muted">${T("Nothing yet.")}</div>`}</div></div>`}
+const custEdits=id=>rawList("customerEdits").filter(e=>e.customerId===id).sort((a,b)=>num(b.at)-num(a.at));
+function custEditsHTML(id){const es=custEdits(id);if(!es.length)return "";
+  const when=v=>new Date(num(v)).toLocaleString(UI.lang==="my"?"my-MM":"en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+  const diff=e=>["name","phone","address"].filter(k=>String((e.before||{})[k]||"")!==String((e.after||{})[k]||"")).map(k=>
+    `<div class="small"><span>${T(k==="name"?"Name":k==="phone"?"Phone":"Address")}</span>: <span class="notr">${esc((e.before||{})[k]||"–")} → ${esc((e.after||{})[k]||"–")}</span></div>`).join("");
+  return `<div><div class="muted small" style="margin-bottom:6px">${T("Changed in the Sales app")}</div><div class="comps">${es.slice(0,10).map(e=>`<div class="comp"><div class="compi">
+    <div class="compt"><span class="notr">${esc(e.by||"")}</span> · <span class="muted small notr">${esc(when(e.at))}</span>${e.seen?"":` <span class="chip warn">${T("New")}</span>`}</div>${diff(e)}</div></div>`).join("")}</div></div>`}
+// mark this customer's Sales app changes as seen (once), after the panel has shown them
+function seeCustEdits(id){if(!Cloud.key)return;custEdits(id).filter(e=>!e.seen).forEach(e=>{const x=Object.assign({},DB.customerEdits[e.id],{seen:true,seenAt:Date.now()});Store.put("customerEdits",e.id,x)})}
 function openCustomer(id){UI.cust=id;go("customers",true);const p=$("#custPanel");if(p)p.scrollIntoView({behavior:"smooth",block:"start"})}
 function custKpis(bal){const m=ym(today()),owe=Object.entries(bal).filter(([c,v])=>c&&v>0.5);
   const buyers=new Set(list("sales").filter(s=>s.cust&&ym(s.date)===m).map(s=>s.cust)).size;
@@ -708,16 +711,43 @@ V.customers.bind=()=>{bindSearch();bindTips();
   $$("button[data-edit]").forEach(b=>b.onclick=e=>{e.stopPropagation();editCustomer(b.dataset.edit)});
   $$("[data-hist]").forEach(b=>b.onclick=e=>{if(e.target.closest("button[data-edit]"))return;UI.cust=UI.cust===b.dataset.hist?"":b.dataset.hist;render();const p=$("#custPanel");if(p)p.scrollIntoView({behavior:"smooth",block:"start"})});
   $$("[data-sale]").forEach(r=>r.onclick=()=>editSale(r.dataset.sale));$$("[data-pay]").forEach(r=>r.onclick=()=>editPayment(r.dataset.pay));
-  $("#hEdit")&&($("#hEdit").onclick=()=>editCustomer(UI.cust))};
+  $("#hEdit")&&($("#hEdit").onclick=()=>editCustomer(UI.cust));if(UI.cust&&$("#custPanel"))setTimeout(()=>seeCustEdits(UI.cust),4000);};
 
 /* ================= Sales ================= */
 const custOpts=()=>[["",t("— choose —")]].concat(list("customers").sort(byName).map(c=>[c.id,c.name]));
 const prodOpts=keep=>[["",t("— choose —")]].concat(prodList().filter(p=>p.active!==false||p.id===keep).sort((a,b)=>prodName(a).localeCompare(prodName(b))).map(p=>[p.id,prodName(p)]));
 const priceFor=(p,u)=>{if(!p)return "";if(u==="bag")return num(p.priceBag)||(num(p.priceDz)&&num(p.perBag)?num(p.priceDz)*num(p.perBag):"");return num(p.priceDz)||""};
 /* a record made in the Sales app: say who made it and on which computer (pc = the computer's hidden code) */
+/* a Sales app receipt or payment, read-only (it is changed only in the Sales app, or by approving a correction) */
+const TERMN={month:"Month-end",delivery:"On delivery",invoice:"With the invoice"};
+function infoRows(rows){return `<div class="vrows">${rows.filter(r=>r&&r[1]!==""&&r[1]!=null).map(([l,v,cls])=>`<div class="vrow ${cls||""}"><span>${T(l)}</span><span class="notr">${v}</span></div>`).join("")}</div>`}
+function viewReceipt(rid){const r=DB.receipts[rid];if(!r)return;const K=" "+t("Kyat"),sid="sa:"+rid,sv=salesView().sales.find(x=>x.id===sid);
+  const cust=DB.customers[r.customerId],owed=sv?saleOwed(sv):0,rets=rawList("receiptReturns").filter(x=>x.receiptId===rid);
+  const lines=(r.lines||[]).map(l=>{const pl=DB.productList[l.productId]||{};const pr=num(l.shownPrice||l.price);
+    return `<tr><td class="notr">${esc(pl.name||l.name||"?")}</td><td class="n">${fmt(num(l.qty))} ${esc(T(l.unit==="pc"?"pc":l.unit==="bag"?"bags":"dz"))}</td><td class="n">${fmt(pr)}</td><td class="n">${fmt(num(l.amount)||num(l.qty)*pr)}</td></tr>`}).join("");
+  const hist=(r.history||[]).map(h=>`<div class="small"><span class="notr">${esc(new Date(num(h.approvedAt||h.at)).toLocaleString(UI.lang==="my"?"my-MM":"en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}))}</span> · <span class="notr">${esc(h.by||"")}</span> · <span class="notr">${esc(h.reason||"")}</span> · <span>${T("Total before")}</span> <span class="notr">${fmt(num(h.before&&h.before.total))}</span></div>`).join("");
+  openForm({view:1,title:t("Receipt")+" "+(r.no||""),data:{},fields:[],extra:()=>`
+    ${r.overLimit?`<div class="chip bad" style="margin-bottom:6px">${T("Saved over the credit limit")}${r.limitAtSave?` · <span class="notr">${fmt(num(r.limitAtSave))}</span>`:""}</div>`:""}
+    ${r.madeOffline?`<div class="chip warn" style="margin-bottom:6px">${T("Made without internet")}</div>`:""}
+    ${infoRows([["Date",esc(r.date||"")],["Customer",esc(cust?cust.name:r.customer||"")],["Address",esc(r.address||(cust&&cust.address)||"")],["Payment term",r.term?T(TERMN[r.term]||r.term):""],
+      ["From order",esc(r.orderNo||"")],["From quotation",esc(r.quoteNo||"")]])}
+    <table class="vt"><thead><tr><th>${T("Product")}</th><th class="n">${T("Qty")}</th><th class="n">${T("Price (Ks)")}</th><th class="n">${T("Amount")}</th></tr></thead><tbody>${lines}</tbody></table>
+    ${infoRows([["Subtotal",fmt(num(r.subtotal)||num(r.goods)||(r.lines||[]).reduce((a,l)=>a+(num(l.amount)||num(l.qty)*num(l.shownPrice||l.price)),0))],num(r.discount)?["Discount","− "+fmt(num(r.discount))+(r.discountText&&/%/.test(r.discountText)?" ("+esc(r.discountText)+")":"")]:null,
+      num(r.tax)?["Tax","+ "+fmt(num(r.tax))+(num(r.taxPct)?" ("+fmt(num(r.taxPct),2)+"%)":"")]:null,["Total",fmt(num(r.total))+K,"big"],["Paid now",fmt(num(r.paid))],
+      rets.length?["Returned",fmt(rets.reduce((a,x)=>a+num(x.amount),0))]:null,["Still owed",fmt(owed)+K,owed>0.5?"warn":""],
+      num(r.delivery)?["Delivery (our cost)",fmt(num(r.delivery))+(r.feeOut?"":" · "+t("in the prices"))]:null,["Note",esc(r.note||"")]])}
+    ${hist?`<div class="muted small" style="margin-top:10px">${T("Corrections")}</div>${hist}`:""}
+    <div class="muted small" style="margin-top:10px">${esc(madeIn(r))}</div>`})}
+function viewPayment(pid){const p=DB.receiptPayments[pid];if(!p)return;const K=" "+t("Kyat"),cust=DB.customers[p.customerId];
+  const fr=(p.for||[]).map(x=>`<div class="small notr">${x.no?esc(x.no):esc(t("Paid in advance"))} · ${fmt(num(x.amount))}</div>`).join("");
+  openForm({view:1,title:t("Payment")+" "+(p.no||""),data:{},fields:[],extra:()=>`
+    ${infoRows([["Date",esc(p.date||"")],["Customer",esc(cust?cust.name:p.customer||"")],["Amount",fmt(num(p.amount))+K,"big"],["Paid by",T(PAYWAY[p.method]||"Other")],
+      p.balanceBefore!=null?["Owed before",fmt(num(p.balanceBefore))]:null,p.balanceAfter!=null?["Owed after",fmt(num(p.balanceAfter))]:null,["Note",esc(p.note||"")]])}
+    ${fr?`<div class="muted small" style="margin-top:10px">${T("Paid for")}</div>${fr}`:""}
+    <div class="muted small" style="margin-top:10px">${esc(madeIn(p))}</div>`})}
 function madeIn(raw){raw=raw||{};const c=raw.pc&&DB.computers[raw.pc],pc=c?(c.windowsName||c.code||raw.pc):raw.pc?String(raw.pc).slice(2).toUpperCase().match(/.{4}/g).join("-"):"";
   return t("Made in the Sales app. Change it there.")+(raw.by||pc?" · "+[raw.by,pc?t("Computer")+" "+pc:""].filter(Boolean).join(" · "):"")}
-function editSale(id,cust){if(id&&!DB.sales[id])return toast(madeIn(DB.receipts[String(id).replace(/^sa:/,"")]));
+function editSale(id,cust){if(id&&!DB.sales[id])return viewReceipt(String(id).replace(/^sa:/,""));
   const firstCust=DB.customers[cust];
   const s=id?JSON.parse(JSON.stringify(DB.sales[id])):{date:today(),cust:cust||"",lines:[{p:"",unit:"dz",qty:"",price:""}],delivery:firstCust&&num(firstCust.deliveryKs)?num(firstCust.deliveryKs):"",paid:"",method:"Cash",no:list("sales").reduce((a,x)=>Math.max(a,num(x.no)),0)+1};
   if(!s.lines||!s.lines.length)s.lines=[{p:"",unit:"dz",qty:"",price:""}];
@@ -903,6 +933,8 @@ function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
   out.push({sev:"info",area:"Sales",go:()=>go("receipts"),txt:tdS.length?`${t("Today")}: ${tdS.length} ${t(tdS.length===1?"sale":"sales")}, ${fmt(tdS.reduce((a,s)=>a+saleTotal(s),0))}${K}`:t("No sales written today yet.")});
   const noPhone=list("customers").filter(c=>!c.phone);
   if(noPhone.length)out.push({sev:"info",area:"Customers",go:()=>go("customers"),txt:`${t("No phone number")}: ${noPhone.map(c=>c.name).join(", ")}`});
+  const ce=Cloud.key?rawList("customerEdits").filter(e=>!e.seen&&DB.customers[e.customerId]):[];const ceC=[...new Set(ce.map(e=>e.customerId))];
+  if(ceC.length)out.push({sev:"info",area:"Customers",go:()=>openCustomer(ceC[0]),txt:`${t("Changed in the Sales app")}: ${ceC.map(custName).join(", ")}`});
   // everything waiting for the owner's yes opens the Permissions page
   const wc=Cloud.key?waitingComps():[];if(wc.length)out.push({sev:"warn",area:"Permissions",go:()=>go("permissions"),txt:`${t("Waiting to be accepted")}: ${wc.map(c=>c.windowsName||c.code||c.id).join(", ")}`});
   const fx=Cloud.key?pendingFixes():[];if(fx.length)out.push({sev:"warn",area:"Permissions",go:()=>go("permissions"),txt:`${t("Receipt corrections to approve")}: ${fx.map(f=>f.receiptNo).join(", ")}`});
@@ -937,7 +969,7 @@ V.overview=()=>{const al=ALERTS=alerts();const cnt=k=>al.filter(a=>a.sev===k).le
 V.overview.bind=()=>{bindTips();$$("[data-al]").forEach(b=>b.onclick=()=>{const a=ALERTS[+b.dataset.al];if(a)a.go()})};
 
 /* ================= Payments ================= */
-function editPayment(id,cust){if(id&&!DB.payments[id])return toast(madeIn(DB.receiptPayments[String(id).replace(/^sp:/,"")]));const bal=balances();
+function editPayment(id,cust){if(id&&!DB.payments[id])return viewPayment(String(id).replace(/^sp:/,""));const bal=balances();
   const p=id?DB.payments[id]:{date:today(),cust:cust||"",amount:cust&&bal[cust]>0?Math.round(bal[cust]):"",method:"Cash"};
   openForm({title:id?"Payment":"Record payment",data:p,fields:[
     {k:"date",label:"Date",type:"date",half:1},{k:"cust",label:"Customer",type:"select",opts:custOpts(),half:1},
