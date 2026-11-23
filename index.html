@@ -1187,13 +1187,12 @@ V.settings=()=>{const F=Store.file;
    <div class="panel"><h2>${T("Cloud")}</h2><div class="pb" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${Cloud.key
      ?`${cloudChip()}<button class="btn" id="cUnlink">${T("Unlink")}</button>`
      :`<input id="cKey" type="password" autocomplete="off" spellcheck="false" placeholder="${T("Cloud key")}" style="flex:1;min-width:200px;max-width:360px"><button class="btn primary" id="cLink">${T("Link")}</button>`}</div></div>
-   ${salesAppBox()}
    <div class="panel"><h2>${T("Passcode")}</h2><div class="pb" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="chip" id="passNow"></span><button class="btn" id="passCh"></button></div></div>
    <div class="panel"><h2>${T("Language")}</h2><div class="pb">${langSeg()}</div></div>`};
 /* commands to the Sales app, read there from appSettings/sales: which tabs it shows, and which computers are locked */
 const SALES_TABS=[["receipts","Make receipt"],["pastReceipts","Past receipts"],["quotations","Quotations"],["orders","Orders"],["customers","Customers"],["products","Products"]];
 const salesSet=()=>DB.appSettings.sales||{};
-function salesAppBox(){if(!Cloud.key)return `<div class="panel"><h2>${T("Sales app")}</h2><div class="pb muted">${T("Link the cloud first.")}</div></div>`;
+function salesAppBox(){if(!Cloud.key)return `<div class="panel"><div class="empty"><b>${T("Link the cloud first.")}</b><button class="btn primary" data-go="settings">${T("Settings")}</button></div></div>`;
   const st=salesSet(),on=st.tabs&&st.tabs.length?st.tabs:SALES_TABS.map(x=>x[0]),locked=st.locked||[];
   const when=v=>{if(!v)return "—";const d=new Date(v);return isNaN(d)?"—":d.toLocaleString(UI.lang==="my"?"my-MM":"en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})};
   const comps=rawList("computers").sort((a,b)=>String(a.letter||a.id).localeCompare(String(b.letter||b.id)));
@@ -1222,7 +1221,7 @@ function updBox(){const m=UPD.meta,when=v=>new Date(v).toLocaleString(UI.lang===
     ${pcs.length?`<div class="vrows" style="margin-top:8px">${pcs.map(pcLine).join("")}</div>`:""}</div>`}
 async function updLoad(){if(UPD.busy||!Cloud.key)return;UPD.busy=true;
   try{const r=await fetch(Cloud.URL+"/app/sales/version",{headers:{"X-AP-Key":Cloud.key}});UPD.meta=r.ok?await r.json():r.status===404?null:UPD.meta}catch(e){}
-  UPD.busy=false;if(UPD.meta===undefined)UPD.meta=null;if(UI.page==="settings")render()}
+  UPD.busy=false;if(UPD.meta===undefined)UPD.meta=null;if(UI.page==="salesapp")render()}
 async function updUpload(file){let f;const text=await file.text();
   try{f=JSON.parse(text)}catch(e){return toast(t("This is not an AP Sales update file"))}
   if(!f||f.format!=="apsales-update-1"||typeof f.version!=="string"||!Array.isArray(f.files)||!f.files.length||!f.sig)return toast(t("This is not an AP Sales update file"));
@@ -1386,6 +1385,12 @@ async function saveSales(ch){if(!(await askPass()))return false;await save("appS
 V.settings.bind=()=>{bindLang();
   passGet().then(pc=>{const c=$("#passNow"),b=$("#passCh");if(!c)return;c.className="chip "+(pc?"good":"warn");c.textContent=t(pc?"On":"Not set");b.textContent=t(pc?"Change passcode":"Set a passcode");
     b.onclick=async()=>{if(pc&&!(await askPass(true)))return;if(await passBox("new"))render()}});
+  const l=$("#cLink");if(l)l.onclick=async()=>{const k=$("#cKey").value;if(!k.trim())return;if(!(await askPass()))return;l.disabled=true;if(await Cloud.link(k))toast(t("Linked to the cloud"));render()};
+  const u=$("#cUnlink");if(u)u.onclick=async()=>{if(!u.classList.contains("arm")){u.classList.add("arm");u.textContent=t("Tap again to unlink");return}if(!(await askPass()))return render();await Cloud.unlink();render()}};
+
+/* Sales > Sales app: what AP Main sets for the Sales app (tabs, allowed places, tax, updates). Settings is only for AP Main itself. */
+V.salesapp=()=>salesAppBox();
+V.salesapp.bind=()=>{
   $$("[data-st]").forEach(b=>b.onclick=()=>{const st=salesSet(),all=SALES_TABS.map(x=>x[0]);let on=st.tabs&&st.tabs.length?st.tabs:all;const k=b.dataset.st;
     on=on.includes(k)?on.filter(x=>x!==k):all.filter(x=>x===k||on.includes(x));if(!on.length)return toast(t("Keep at least one tab"));saveSales({tabs:on})});
   $$("[data-area]").forEach(b=>b.onclick=()=>editArea(b.dataset.area==="new"?null:+b.dataset.area));
@@ -1393,17 +1398,14 @@ V.settings.bind=()=>{bindLang();
   const up=$("#updPick"),uf=$("#updFile");if(up&&uf){up.onclick=()=>uf.click();uf.onchange=()=>{if(uf.files[0])updUpload(uf.files[0])}}
   if(UPD.meta===undefined&&Cloud.key)updLoad();
   const tx=$("#taxEd");if(tx)tx.onclick=()=>openForm({title:"Tax",data:{taxPct:salesSet().taxPct||""},fields:[{k:"taxPct",label:"Tax % (0 = no tax)",type:"num"}],
-    check:d=>{const v=num(d.taxPct);return v<0||v>100?"Between 0 and 100":null},onSave:d=>saveSales({taxPct:Math.round(num(d.taxPct)*100)/100})});
-
-  const l=$("#cLink");if(l)l.onclick=async()=>{const k=$("#cKey").value;if(!k.trim())return;if(!(await askPass()))return;l.disabled=true;if(await Cloud.link(k))toast(t("Linked to the cloud"));render()};
-  const u=$("#cUnlink");if(u)u.onclick=async()=>{if(!u.classList.contains("arm")){u.classList.add("arm");u.textContent=t("Tap again to unlink");return}if(!(await askPass()))return render();await Cloud.unlink();render()}};
+    check:d=>{const v=num(d.taxPct);return v<0||v>100?"Between 0 and 100":null},onSave:d=>saveSales({taxPct:Math.round(num(d.taxPct)*100)/100})});};
 
 /* ================= page frame ================= */
 /* departments, each with its own tabs. UI.page is the tab (or the page, when a department has no tabs). */
 const DEPTS=[
   {id:"overview",name:"Overview"},
   {id:"permissions",name:"Permissions"},
-  {id:"sales",name:"Sales",tabs:[["receipts","Receipts"],["payments","Payments"],["orders","Orders"],["customers","Customers"]]},
+  {id:"sales",name:"Sales",tabs:[["receipts","Receipts"],["payments","Payments"],["orders","Orders"],["customers","Customers"],["salesapp","Sales app"]]},
   {id:"production",name:"Production",tabs:[["raw","Raw materials"],["finished","Finished products"],["waste","Waste products"]]},
   {id:"computers",name:"Computers",tabs:[["computers","Computers"],["accounts","Accounts"]]},
   {id:"settings",name:"Settings"}];

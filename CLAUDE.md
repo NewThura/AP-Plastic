@@ -56,6 +56,8 @@ Styles at the top, then the page, then one script.
   returns as read-only sales and payments.
 - Computers page: accept / lock the department apps' computers (`appSettings`/`sales` {tabs, accepted, locked});
   Accounts tab: the Sales app's sign-ins (`users`, password kept only as a PBKDF2 hash).
+- Sales > Sales app tab: everything AP Main sets for the Sales app (tabs, allowed places, tax %, uploading updates).
+  Settings is only for AP Main itself (records folder, cloud, passcode, language). The owner, 2026-11-23.
 - Permissions page: everything waiting for the owner's yes (`waitingComps`, `pendingFixes` = Sales app receiptFixes
   with status "pending", `outsideComps`). Any alert about such a request must `go("permissions")`.
 - Passcode: important actions (records folder change, cloud link/unlink, Sales app tabs, computers, accounts) call
