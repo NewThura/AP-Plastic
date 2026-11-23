@@ -13,11 +13,13 @@
    Sign-in for sales computers (no key needed; accounts are made in AP Main, kind "users"):
    GET  /login/salt?username=<name>  -> {salt}   the account's salt; for a name that does not exist, a made-up salt
                                                  that stays the same, so nobody can tell which names exist
-   POST /login {username, hash, code, windowsName, ip, appVersion}
+   POST /login {username, hash, code, windowsName, ip, appVersion, lat, lng, acc}
                                      hash = PBKDF2-SHA256(password, salt as text, 150000, 32 bytes, hex), made on the PC;
                                      code = the computer's code, "pc" + 12 hex characters (anything else: 400).
                                      Wrong password / account off: 401. Right password and the computer is allowed in
                                      AP Main (appSettings/sales accepted): 200 {key} (the Sales key). Locked: 403 {locked}.
+                                     When AP Main has set allowed places (appSettings/sales areas [{name,lat,lng,r}]):
+                                     outside every place 403 {outside}; place not sent or acc > 1000 m 403 {noplace}.
                                      Not allowed yet: 403 {waiting}, no key, and computers/<code> is written (waiting:true)
                                      so AP Main shows it. Too many wrong tries (5 in 15 minutes per name, 30 per address):
                                      429 {error, wait (seconds)}.
@@ -116,6 +118,24 @@ async function countFail(env, keys, now) {
                                   since = CASE WHEN ? - since >= ${WINDOW} THEN ? ELSE since END`);
   await env.DB.batch(keys.map((k) => st.bind(k, now, now, now, now)));
 }
+/* Allowed places, the same rule as the Sales app: inside when, for some area, the distance to (lat, lng)
+   <= r + min(acc, 100) metres. No areas: no check ("off"). No place sent, or acc > 1000 m: "noplace". */
+function metres(a, b, c, d) {
+  const R = 6371000, rad = (x) => (x * Math.PI) / 180, dl = rad(c - a), dn = rad(d - b);
+  const h = Math.sin(dl / 2) ** 2 + Math.cos(rad(a)) * Math.cos(rad(c)) * Math.sin(dn / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function placeCheck(areas, b) {
+  const list = (Array.isArray(areas) ? areas : []).filter((x) => x && isFinite(+x.lat) && isFinite(+x.lng) && +x.r > 0);
+  const n = (v) => (v === "" || v == null ? NaN : Number(v));
+  const lat = n(b.lat), lng = n(b.lng), acc = n(b.acc);
+  const found = isFinite(lat) && isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
+  const place = found ? { lat, lng, acc: isFinite(acc) ? acc : null, at: Date.now() } : null;
+  if (!list.length) return { ok: true, state: "off", area: "", place };
+  if (!found || !isFinite(acc) || acc > 1000) return { ok: false, state: "noplace", area: "", place };
+  const hit = list.find((x) => metres(lat, lng, +x.lat, +x.lng) <= +x.r + Math.min(Math.max(acc, 0), 100));
+  return hit ? { ok: true, state: "in", area: String(hit.name || ""), place } : { ok: false, state: "out", area: "", place };
+}
 async function loginSalt(url, env) {
   const name = cleanName(url.searchParams.get("username"));
   if (!name) return json({ error: "username missing" }, 400);
@@ -143,15 +163,20 @@ async function login(req, env) {
     const comp = cr ? JSON.parse(cr.data) : {};
     const locked = st.locked || [];
     if (locked.includes(code) || (comp.letter && locked.includes(comp.letter))) return json({ locked: true }, 403);
-    if ((st.accepted || []).includes(code)) return json({ key: env.SALES_KEY });
-    // a new computer: note it for AP Main's Computers page, give no key
+    // allowed places (appSettings/sales areas): checked only when AP Main has set at least one
+    const pl = placeCheck(st.areas, b);
+    const accepted = (st.accepted || []).includes(code);
+    if (accepted && pl.ok) return json({ key: env.SALES_KEY });
+    // not allowed yet, or outside the allowed places: note the computer for AP Main's Computers page, give no key
     const t = (s, n) => String(s || "").slice(0, n);
     const rec = Object.assign({}, comp, { code: showCode(code), windowsName: t(b.windowsName, 80) || comp.windowsName || "", ip: t(b.ip, 60) || comp.ip || "",
-      publicIp: t(ip, 60), user: name, appVersion: t(b.appVersion, 40) || comp.appVersion || "", seenAt: Date.now(), waiting: true });
+      publicIp: t(ip, 60), user: name, appVersion: t(b.appVersion, 40) || comp.appVersion || "", seenAt: Date.now(), waiting: !accepted,
+      place: pl.place, placeState: pl.state, placeArea: pl.area });
     await env.DB.prepare(
       `INSERT INTO records (col,id,data,deleted,updated_at,updated_by) VALUES ('computers',?,?,0,?, 'login')
        ON CONFLICT(col,id) DO UPDATE SET data=excluded.data, deleted=0, updated_at=excluded.updated_at, updated_by='login'`)
       .bind(code, JSON.stringify(rec), new Date().toISOString()).run();
+    if (!pl.ok) return json(pl.state === "out" ? { outside: true } : { noplace: true }, 403);
     return json({ waiting: true }, 403);
   }
   await countFail(env, keys, now);
