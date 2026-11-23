@@ -609,8 +609,8 @@ function drawForm(){const o=form;if(!o)return;
   $("#drawer").innerHTML=`<div class="scrim" id="scrim"><div class="drawer" role="dialog" aria-modal="true" aria-labelledby="dT">
    <header><h2 id="dT">${T(o.title)}</h2><button class="btn sm" id="dX">${T("Close")}</button></header>
    <div class="body">${rows}${o.extra?`<div id="dExtra">${o.extra()}</div>`:""}${rowsAfter}</div>
-   ${o.view?`<footer><div></div><button class="btn" id="dCancel">${T("Close")}</button></footer></div></div>`:`<footer><div>${o.onDelete?`<button class="btn danger" id="dDel">${T("Delete")}</button>`:""}</div><div style="display:flex;gap:8px"><button class="btn" id="dCancel">${T("Cancel")}</button><button class="btn primary" id="dSave">${T("Save")}</button></div></footer></div></div>`}`;
-  $("#scrim").onclick=e=>{if(e.target.id==="scrim")closeForm()};$("#dX").onclick=closeForm;$("#dCancel").onclick=closeForm;
+   ${o.view?`</div></div>`:`<footer><div>${o.onDelete?`<button class="btn danger" id="dDel">${T("Delete")}</button>`:""}</div><div style="display:flex;gap:8px"><button class="btn" id="dCancel">${T("Cancel")}</button><button class="btn primary" id="dSave">${T("Save")}</button></div></footer></div></div>`}`;
+  $("#scrim").onclick=e=>{if(e.target.id==="scrim")closeForm()};$("#dX").onclick=closeForm;if($("#dCancel"))$("#dCancel").onclick=closeForm;
   if(o.bind)o.bind();
   if(o.view)return;
   $("#dSave").onclick=()=>{const d=Object.assign({},o.data);o.fields.forEach(f=>{let v=$("#f_"+f.k).value;if(f.type==="num")v=v===""?"":num(v);d[f.k]=v});
