@@ -114,12 +114,12 @@ tfoot td{font-weight:600;background:var(--sunk)}
 .field input:focus,.field select:focus,.field textarea:focus,.ln input:focus,.ln select:focus{outline:2px solid var(--accent);outline-offset:-1px;background:var(--surface)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .lines{display:flex;flex-direction:column;gap:8px}
-.ln{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr) minmax(0,.9fr) minmax(0,1.2fr) 36px;gap:6px;align-items:center}
+.ln{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,.8fr) minmax(0,1.1fr) minmax(0,1.2fr) 36px;gap:6px;align-items:center}
 .ln input.num{text-align:right}
 .lnhead{font-size:12px;font-weight:600;color:var(--muted)}
 .ln .x{all:unset;cursor:pointer;text-align:center;color:var(--muted);font-size:20px;line-height:36px}
 .ln .x:hover{color:var(--bad)}
-.ln .amt{grid-column:1/-1;text-align:right;font:600 13px var(--f-data);color:var(--muted);margin-top:-4px}
+.ln .amt{display:flex;align-items:center;justify-content:flex-end;min-height:40px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--sunk);font-weight:600;min-width:0;overflow:hidden;white-space:nowrap}
 .sums{background:var(--sunk);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-variant-numeric:tabular-nums}
 .sums div{display:flex;justify-content:space-between}
 .sums b{font-family:var(--f-data)}
@@ -240,6 +240,7 @@ svg.chart .hit.on{fill:var(--accent);fill-opacity:.08}
   input.search{min-width:0;flex:1}
   .frow{grid-template-columns:1fr}
   .ln{grid-template-columns:minmax(0,1fr) minmax(0,.9fr) minmax(0,1.2fr) 32px}
+  .ln .amt{grid-column:1/-2;grid-row:3}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .kpi{padding:10px 12px} .kpi .v{font-size:18px}
   .ln>:first-child{grid-column:1/-1}
@@ -715,13 +716,13 @@ function editSale(id,cust){if(id&&!DB.sales[id])return toast(madeIn(DB.receipts[
   const L=s.lines;
   const cur=()=>({lines:L,delivery:$("#f_delivery")?$("#f_delivery").value:s.delivery});
   const linesHTML=()=>`<div class="field"><label>${T("Products")}</label><div class="lines">
-    <div class="ln lnhead"><span>${T("Product")}</span><span>${T("Unit")}</span><span style="text-align:right">${T("Qty")}</span><span style="text-align:right">${T("Price (Ks)")}</span><span></span></div>
+    <div class="ln lnhead"><span>${T("Product")}</span><span>${T("Unit")}</span><span style="text-align:right">${T("Qty")}</span><span style="text-align:right">${T("Price (Ks)")}</span><span style="text-align:right">${T("Amount")}</span><span></span></div>
     ${L.map((l,i)=>`<div class="ln"><select data-i="${i}" data-k="p" aria-label="${T("Product")}">${prodOpts(l.p).map(o=>`<option value="${esc(o[0])}" ${o[0]===l.p?"selected":""}>${esc(o[1])}</option>`).join("")}</select>
       <select data-i="${i}" data-k="unit" aria-label="${T("Unit")}"><option value="dz" ${l.unit!=="bag"?"selected":""}>${T("Dozen")}</option><option value="bag" ${l.unit==="bag"?"selected":""}>${T("Bag")}</option></select>
       <input class="num" data-i="${i}" data-k="qty" inputmode="decimal" placeholder="${T("Qty")}" value="${esc(l.qty)}" aria-label="${T("Qty")}">
       <input class="num" data-i="${i}" data-k="price" inputmode="decimal" placeholder="${T("Price (Ks)")}" value="${esc(l.price)}" aria-label="${T("Price (Ks)")}">
-      <button class="x" data-rm="${i}" aria-label="${T("Remove")}" title="${T("Remove")}">×</button>
-      <span class="amt notr" data-amt="${i}">${lineAmt(l)?fmt(lineAmt(l)):""}</span></div>`).join("")}
+      <output class="amt notr" data-amt="${i}" aria-label="${T("Amount")}">${lineAmt(l)?fmt(lineAmt(l)):""}</output>
+      <button class="x" data-rm="${i}" aria-label="${T("Remove")}" title="${T("Remove")}">×</button></div>`).join("")}
     <button class="btn sm" id="addLn" type="button" style="align-self:flex-start">${T("+ Add product line")}</button></div></div>`;
   const sumsHTML=()=>`<div class="sums" id="sums"></div>`;
   const refresh=()=>{const c=cur(),goods=saleGoods(c),del=num(c.delivery),tot=goods+del,pd=num($("#f_paid").value);
