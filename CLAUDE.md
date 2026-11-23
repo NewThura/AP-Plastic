@@ -70,7 +70,8 @@ https://ap-plastic-cloud.applastic.workers.dev . Table `records` (col, id, data,
 holds every app's records; table `monthly` gets a copy of every record on the 1st of each month and is never
 cleared (the owner wants at least 12 months kept). Records stay on the PC too; the cloud never replaces the folder.
 Each app sends its own key in the `X-AP-Key` header (MAIN_KEY, SALES_KEY: Cloudflare secrets, also in the owner's
-`Documents\AP cloud keys.txt`). Only the main key may write `appSettings` and `users`.
+`Documents\AP cloud keys.txt`). Only the main key (or Thura's) may write `appSettings`, `users` and `productList` (prices: the owner, 2026-11-23);
+such records sent with the Sales key are left out and the rest of the batch is saved.
 **Never put a key in this project or in a message.** The owner pastes the key into the app himself.
 Sales computers join without a key: `GET /login/salt?username=` then `POST /login {username, hash, code}` returns
 the Sales key for an active account (hash made on the PC; 5 wrong tries in 15 minutes per name or address = 429).

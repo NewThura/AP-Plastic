@@ -46,19 +46,23 @@ function who(req, env) {
 }
 
 const MAX_BATCH = 50;   // the free plan allows 50 database queries per request
-const MAIN_ONLY = ["appSettings", "users"];   // commands and sign-in accounts: main app (and the master key) only
+// commands, sign-in accounts and products/prices (the owner, 2026-11-23): main app (and the master key) only
+const MAIN_ONLY = ["appSettings", "users", "productList"];
 const TOP = ["main", "thura"];
 const okName =(s) => typeof s === "string" && s.length > 0 && s.length <= 200;
 
 async function saveRecords(req, env, app) {
   let body;
   try { body = await req.json(); } catch (e) { return json({ error: "Not JSON" }, 400); }
-  const recs = Array.isArray(body && body.records) ? body.records : null;
+  let recs = Array.isArray(body && body.records) ? body.records : null;
   if (!recs) return json({ error: "records missing" }, 400);
   if (recs.length > MAX_BATCH) return json({ error: "At most " + MAX_BATCH + " records at a time" }, 400);
   for (const r of recs) if (!r || !okName(r.col) || !okName(r.id)) return json({ error: "Each record needs col and id" }, 400);
-  // the main app's commands (tabs, locked computers) can only be written with the main key
-  if (!TOP.includes(app) && recs.some((r) => MAIN_ONLY.includes(r.col))) return json({ error: "Only the main app can change " + MAIN_ONLY.join(", ") }, 403);
+  // main-only kinds sent with another key are left out; the rest of the batch is still saved,
+  // so an old Sales app that sends a product change together with receipts loses no receipts
+  const refused = TOP.includes(app) ? [] : recs.filter((r) => MAIN_ONLY.includes(r.col));
+  if (refused.length && refused.length === recs.length) return json({ error: "Only the main app can change " + MAIN_ONLY.join(", ") }, 403);
+  if (refused.length) recs = recs.filter((r) => !MAIN_ONLY.includes(r.col));
   const now = new Date().toISOString();
   const st = env.DB.prepare(
     `INSERT INTO records (col,id,data,deleted,updated_at,updated_by) VALUES (?,?,?,?,?,?)
@@ -66,7 +70,7 @@ async function saveRecords(req, env, app) {
        updated_at=excluded.updated_at, updated_by=excluded.updated_by`);
   if (recs.length)
     await env.DB.batch(recs.map((r) => st.bind(r.col, r.id, JSON.stringify(r.data ?? {}), r.deleted ? 1 : 0, now, app)));
-  return json({ now, saved: recs.length });
+  return json(refused.length ? { now, saved: recs.length, refused: refused.map((r) => r.col + "/" + r.id) } : { now, saved: recs.length });
 }
 
 async function getRecords(url, env) {
