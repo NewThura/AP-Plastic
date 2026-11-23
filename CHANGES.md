@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): Sales app receipts and payments show who printed them and when (printedBy, printedAt from the Sales app's Save and print).
 - 2026-11-23, Thura (Main App Chat): the Permissions page also lists sign-ins the Sales app refused itself (computers.outsideTry, outside or place not found), next to the ones the cloud refused (lastOutside). Agreed with the Sales app chat.
 - 2026-11-23, Thura (Main App Chat): new Sales > Orders tab: orders waiting and ready, open and expired quotations from the Sales app, with lists; an alert for orders past their delivery day (asked for by the owner). The cloud keeps lastOutside {at, lat, lng, acc} on a computer refused outside the allowed places, even when the Sales app rewrites its record, so the Permissions page still lists it (found in the joint test).
 - 2026-11-23, Thura (Main App Chat): only AP Main can change products and prices (the owner's decision): the cloud leaves out productList records sent with the Sales key and still saves the rest of the batch. Customers have a credit limit (creditLimit, limitBy, limitAt) the Sales app warns about.
