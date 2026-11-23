@@ -1,0 +1,9 @@
+# The cloud (cloud/wrangler.toml [assets]) serves AP Main for phones from this folder.
+# Only the page files below are published; everything else here (cloud, keys, tests, notes) never is.
+*
+!index.html
+!manifest.webmanifest
+!sw.js
+!icon.png
+!icon-512.png
+!logo-mark.png

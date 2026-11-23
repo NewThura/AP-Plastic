@@ -89,6 +89,13 @@ the Sales key for an active account (hash made on the PC; 5 wrong tries in 15 mi
 The secret `LOGIN_SECRET` makes the made-up salts for unknown names. Publish a cloud change with
 `npx wrangler@4 deploy` in `cloud/`.
 
+## AP Main on a phone (Android)
+The cloud also serves AP Main's page at https://ap-plastic-cloud.applastic.workers.dev/ (cloud/wrangler.toml `[assets]`,
+directory = this folder). **Only the files allowed in `.assetsignore` are published** (index.html, manifest.webmanifest,
+sw.js, the icons); never add anything private there. The owner opens that address in Chrome on the phone and taps
+Install app. After changing index.html, publish the cloud again (`npx wrangler@4 deploy` in `cloud/`) so phones get it.
+On a phone the records folder is not used; records live in the cloud.
+
 ## Thura's Code (the master key)
 The owner's Thura's Code sees and controls AP through `thura-link/ap-link.js` (README there), a small helper on the
 owner's PC following the Thura App Link standard (HTTPS on 127.0.0.1:47840, pinned certificate, signed requests,
