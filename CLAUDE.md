@@ -76,6 +76,7 @@ cleared (the owner wants at least 12 months kept). Records stay on the PC too; t
 Each app sends its own key in the `X-AP-Key` header (MAIN_KEY, SALES_KEY: Cloudflare secrets, also in the owner's
 `Documents\AP cloud keys.txt`). Only the main key (or Thura's) may write `appSettings`, `users`, `productList`, `agents` and `agentPayouts` (the owner, 2026-11-23);
 such records sent with the Sales key are left out and the rest of the batch is saved.
+A customer saved with the Sales key keeps the cloud's agentId (agents are linked only in AP Main).
 **Never put a key in this project or in a message.** The owner pastes the key into the app himself.
 Sales app updates: AP Main uploads the signed `.apsu` file (`POST /app/sales`, main key only); sales computers read
 `GET /app/sales/version` and `GET /app/sales`. Stored whole in D1 tables `app_files` (parts) and `app_meta`, not in records.

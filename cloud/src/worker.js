@@ -70,6 +70,20 @@ async function saveRecords(req, env, app) {
     const lo = old && JSON.parse(old.data).lastOutside, nw = r.data && r.data.lastOutside;
     if (lo && (!nw || Number(nw.at || 0) < Number(lo.at || 0))) r.data = Object.assign({}, r.data, { lastOutside: lo });
   }
+  // a customer's agent is set only in AP Main (the owner, 2026-11-23): a customer saved with another key keeps the
+  // agentId the cloud already has (or none), whatever it sent. One query for all the batch's customers.
+  const custs = TOP.includes(app) ? [] : recs.filter((r) => r.col === "customers" && !r.deleted);
+  if (custs.length) {
+    const { results } = await env.DB.prepare(
+      "SELECT id, json_extract(data,'$.agentId') AS a FROM records WHERE col='customers' AND id IN (SELECT value FROM json_each(?))")
+      .bind(JSON.stringify(custs.map((r) => r.id))).all();
+    const had = new Map(results.map((x) => [x.id, x.a]));
+    for (const r of custs) {
+      const d = Object.assign({}, r.data || {}), a = had.get(r.id);
+      if (a) d.agentId = a; else delete d.agentId;
+      r.data = d;
+    }
+  }
   const now = new Date().toISOString();
   const st = env.DB.prepare(
     `INSERT INTO records (col,id,data,deleted,updated_at,updated_by) VALUES (?,?,?,?,?,?)
