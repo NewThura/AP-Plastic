@@ -56,6 +56,8 @@ Styles at the top, then the page, then one script.
   returns as read-only sales and payments.
 - Computers page: accept / lock the department apps' computers (`appSettings`/`sales` {tabs, accepted, locked});
   Accounts tab: the Sales app's sign-ins (`users`, password kept only as a PBKDF2 hash).
+- Permissions page: everything waiting for the owner's yes (`waitingComps`, `pendingFixes` = Sales app receiptFixes
+  with status "pending", `outsideComps`). Any alert about such a request must `go("permissions")`.
 - Passcode: important actions (records folder change, cloud link/unlink, Sales app tabs, computers, accounts) call
   `askPass()` first; set in Settings > Passcode, kept on that PC as a PBKDF2 hash, one minute of grace after a right
   passcode. Forgotten: "Forgot passcode?" in the passcode box (tap twice), then set a new one.
