@@ -36,18 +36,36 @@ const json = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", ...CORS } });
 
 // which app is asking: "main", "sales", "thura" (the master key), or null
-function who(req, env) {
+async function who(req, env) {
   const k = req.headers.get("X-AP-Key") || "";
   if (!k) return null;
   if (env.MAIN_KEY && k === env.MAIN_KEY) return "main";
   if (env.SALES_KEY && k === env.SALES_KEY) return "sales";
   if (env.THURA_KEY && k === env.THURA_KEY) return "thura";
+  // a device signed in to AP Main with its own key: works only while that device is accepted (not waiting or blocked)
+  if (/^dv_[0-9a-f]{64}$/.test(k)) {
+    try {
+      const row = await env.DB.prepare("SELECT id FROM main_devices WHERE token=?").bind(await sha(k)).first();
+      if (!row) return null;
+      const rec = await env.DB.prepare("SELECT data FROM records WHERE col='mainDevices' AND id=? AND deleted=0").bind(row.id).first();
+      const d = rec && JSON.parse(rec.data);
+      if (!d || d.state !== "allowed") return null;
+      if (Date.now() - Number(d.lastAt || 0) > 3600000) await putDevice(env, row.id, Object.assign(d, { lastAt: Date.now() }));
+      return "main";
+    } catch (e) { return null; }
+  }
   return null;
+}
+const sha = async (t) => hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)));
+async function putDevice(env, id, d) {
+  await env.DB.prepare(`INSERT INTO records (col,id,data,deleted,updated_at,updated_by) VALUES ('mainDevices',?,?,0,?,'login')
+    ON CONFLICT(col,id) DO UPDATE SET data=excluded.data, deleted=0, updated_at=excluded.updated_at, updated_by='login'`)
+    .bind(id, JSON.stringify(d), new Date().toISOString()).run();
 }
 
 const MAX_BATCH = 50;   // the free plan allows 50 database queries per request
 // commands, sign-in accounts and products/prices (the owner, 2026-11-23): main app (and the master key) only
-const MAIN_ONLY = ["appSettings", "users", "productList", "agents", "agentPayouts"];   // agents and their monthly payouts: the owner, 2026-11-23
+const MAIN_ONLY = ["appSettings", "users", "productList", "agents", "agentPayouts", "owners", "mainDevices"];   // agents and their monthly payouts: the owner, 2026-11-23
 const TOP = ["main", "thura"];
 const okName =(s) => typeof s === "string" && s.length > 0 && s.length <= 200;
 
@@ -94,7 +112,9 @@ async function saveRecords(req, env, app) {
   return json(refused.length ? { now, saved: recs.length, refused: refused.map((r) => r.col + "/" + r.id) } : { now, saved: recs.length });
 }
 
-async function getRecords(url, env) {
+// AP Main's own sign-ins (owners: username, salt, hash) are never sent to sales computers
+const HIDDEN = ["owners", "mainDevices"];
+async function getRecords(url, env, app) {
   const since = url.searchParams.get("since");
   const now = new Date().toISOString();
   const q = since
@@ -103,7 +123,7 @@ async function getRecords(url, env) {
   const { results } = await q.all();
   return json({
     now,
-    records: results.map((r) => ({ col: r.col, id: r.id, data: JSON.parse(r.data), deleted: !!r.deleted, updated_at: r.updated_at, updated_by: r.updated_by })),
+    records: results.filter((r) => TOP.includes(app) || !HIDDEN.includes(r.col)).map((r) => ({ col: r.col, id: r.id, data: JSON.parse(r.data), deleted: !!r.deleted, updated_at: r.updated_at, updated_by: r.updated_by })),
   });
 }
 
@@ -161,10 +181,50 @@ function placeCheck(areas, b) {
   const hit = list.find((x) => metres(lat, lng, +x.lat, +x.lng) <= +x.r + Math.min(Math.max(acc, 0), 100));
   return hit ? { ok: true, state: "in", area: String(hit.name || ""), place } : { ok: false, state: "out", area: "", place };
 }
+/* AP Main sign-in (the owner, 2026-11-23): owners {username, salt, hash = PBKDF2(password, salt), active}, made in AP Main.
+   POST /login/main {username, hash, device, deviceName} -> {key: a key for this device only}, or 403 {waiting} until the
+   device is accepted in AP Main (mainDevices state "allowed"), or 403 {blocked}. The key stops working at once when the
+   device is blocked. The device stays signed in until it signs out.
+   Same wrong-try limits as the Sales app's sign-in. */
+async function findOwner(env, name) {
+  const r = await env.DB.prepare(
+    "SELECT data FROM records WHERE col='owners' AND deleted=0 AND json_extract(data,'$.username')=? LIMIT 1").bind(name).first();
+  return r ? JSON.parse(r.data) : null;
+}
+async function loginMain(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return json({ error: "Not JSON" }, 400); }
+  const name = cleanName(b && b.username), hash = String((b && b.hash) || "").toLowerCase();
+  if (!name || !/^[0-9a-f]{64}$/.test(hash)) return json({ error: "username and hash needed" }, 400);
+  const now = Math.floor(Date.now() / 1000), ip = req.headers.get("CF-Connecting-IP") || "local";
+  const keys = ["owner:" + name, "ip:" + ip];
+  const wait = await blockedFor(env, keys, now);
+  if (wait) return json({ error: "Too many wrong tries", wait }, 429);
+  const dev = String((b && b.device) || ""), t = (x, n) => String(x || "").slice(0, n);
+  if (!/^dv[0-9a-f]{16}$/.test(dev)) return json({ error: "device must be dv + 16 hex characters" }, 400);
+  const o = await findOwner(env, name);
+  if (o && o.active !== false && o.hash && sameText(o.hash.toLowerCase(), hash)) {
+    await env.DB.prepare("DELETE FROM login_tries WHERE k=?").bind("owner:" + name).run();
+    // each device must be accepted once in AP Main (or by Thura); a blocked device never gets in
+    const rec = await env.DB.prepare("SELECT data FROM records WHERE col='mainDevices' AND id=? AND deleted=0").bind(dev).first();
+    const d = Object.assign(rec ? JSON.parse(rec.data) : { state: "waiting", firstAt: Date.now() },
+      { user: name, name: t(b.deviceName, 80), ua: t(req.headers.get("User-Agent"), 200), ip: t(ip, 60), lastAt: Date.now() });
+    if (d.state === "blocked") { await putDevice(env, dev, Object.assign(d, { triedAt: Date.now() })); return json({ blocked: true }, 403); }
+    if (d.state !== "allowed") { d.state = "waiting"; await putDevice(env, dev, d); return json({ waiting: true }, 403); }
+    const token = "dv_" + hex(crypto.getRandomValues(new Uint8Array(32)));
+    await env.DB.batch([
+      env.DB.prepare("CREATE TABLE IF NOT EXISTS main_devices (id TEXT PRIMARY KEY, token TEXT NOT NULL)"),
+      env.DB.prepare("INSERT INTO main_devices (id, token) VALUES (?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token").bind(dev, await sha(token))]);
+    await putDevice(env, dev, d);
+    return json({ key: token, username: name });
+  }
+  await countFail(env, keys, now);
+  return json({ error: "Wrong username or password" }, 401);
+}
 async function loginSalt(url, env) {
   const name = cleanName(url.searchParams.get("username"));
   if (!name) return json({ error: "username missing" }, 400);
-  const u = await findUser(env, name);
+  const u = (await findOwner(env, name)) || (await findUser(env, name));
   return json({ salt: u && u.salt ? u.salt : await fakeSalt(env, name) });
 }
 async function login(req, env) {
@@ -295,13 +355,14 @@ export default {
     try {
       if (url.pathname === "/login/salt" && req.method === "GET") return await loginSalt(url, env);
       if (url.pathname === "/login" && req.method === "POST") return await login(req, env);
+      if (url.pathname === "/login/main" && req.method === "POST") return await loginMain(req, env);
     } catch (e) {
       return json({ error: String((e && e.message) || e) }, 500);
     }
-    const app = who(req, env);
+    const app = await who(req, env);
     if (!app) return json({ error: "Wrong or missing key" }, 401);
     try {
-      if (url.pathname === "/records" && req.method === "GET") return await getRecords(url, env);
+      if (url.pathname === "/records" && req.method === "GET") return await getRecords(url, env, app);
       if (url.pathname === "/records" && req.method === "POST") return await saveRecords(req, env, app);
       if (url.pathname === "/photos" && req.method === "POST") return await savePhoto(req, env, app);
       if (url.pathname.startsWith("/photos/") && req.method === "GET") return await getPhoto(env, decodeURIComponent(url.pathname.slice(8)));

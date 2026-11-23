@@ -35,3 +35,6 @@ CREATE TABLE IF NOT EXISTS login_tries (
 -- Sales app update file (made by the Worker itself on the first upload; here for reference)
 CREATE TABLE IF NOT EXISTS app_files (name TEXT NOT NULL, part INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY (name, part));
 CREATE TABLE IF NOT EXISTS app_meta (name TEXT PRIMARY KEY, meta TEXT NOT NULL);
+
+-- AP Main device keys (made by the Worker at the first sign-in; only a SHA-256 of each key is kept)
+CREATE TABLE IF NOT EXISTS main_devices (id TEXT PRIMARY KEY, token TEXT NOT NULL);

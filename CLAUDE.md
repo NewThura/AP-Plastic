@@ -89,6 +89,13 @@ the Sales key for an active account (hash made on the PC; 5 wrong tries in 15 mi
 The secret `LOGIN_SECRET` makes the made-up salts for unknown names. Publish a cloud change with
 `npx wrangler@4 deploy` in `cloud/`.
 
+## AP Main sign-in and devices
+Username and password (Settings > Sign-in; kind `owners` {username, salt, hash}, main-only, never sent to the Sales key).
+`POST /login/main {username, hash, device, deviceName}`: a new device gets 403 {waiting} and a `mainDevices` record
+(state waiting | allowed | blocked); once accepted (Permissions page, or Thura) it gets a key of its own (`dv_` + 64 hex,
+only its SHA-256 kept in D1 table `main_devices`). A blocked device's key stops at once. The device stays signed in
+until Sign out. The Main app key still works as a way in (the owner's first PC).
+
 ## AP Main on a phone (Android)
 The cloud also serves AP Main's page at https://ap-plastic-cloud.applastic.workers.dev/ (cloud/wrangler.toml `[assets]`,
 directory = this folder). **Only the files allowed in `.assetsignore` are published** (index.html, manifest.webmanifest,
