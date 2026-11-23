@@ -314,7 +314,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
- "Letter":"အက္ခရာ","Letter (receipt numbers start with it)":"အက္ခရာ (ပြေစာ နံပါတ်များ ၎င်းဖြင့် စမည်)","Choose a letter":"အက္ခရာ ရွေးပါ","This letter is taken":"ဤအက္ခရာ ယူပြီးသား",
+ "Letter":"အက္ခရာ","Letter (receipt numbers start with it)":"အက္ခရာ (ပြေစာ နံပါတ်များ ၎င်းဖြင့် စမည်)","Choose a letter":"အက္ခရာ ရွေးပါ",
  "Allowed places":"ခွင့်ပြုထားသော နေရာများ","Map":"မြေပုံ","No places yet. Sales computers work anywhere.":"နေရာ မသတ်မှတ်ရသေးပါ။ အရောင်း ကွန်ပျူတာများ ဘယ်နေရာမှာမဆို သုံးနိုင်သည်။","Add place":"နေရာ ထည့်မည်",
  "Name (for example: Office, Shop)":"အမည် (ဥပမာ: ရုံး၊ ဆိုင်)","Place: paste from Google Maps (16.8409, 96.1735) or a map link":"နေရာ: Google Maps မှ ကူးထည့်ပါ (16.8409, 96.1735) သို့မဟုတ် မြေပုံ link","How far from it, in metres":"ထိုနေရာမှ အကွာအဝေး (မီတာ)",
  "Enter a name":"အမည် ထည့်ပါ","Paste the place from Google Maps":"Google Maps မှ နေရာကို ကူးထည့်ပါ","At least 20 metres":"အနည်းဆုံး မီတာ ၂၀","Inside":"နေရာအတွင်း","Outside the allowed places":"ခွင့်ပြုနေရာ အပြင်ဘက်","Place not found":"နေရာ ရှာမတွေ့ပါ","Add as allowed place":"ခွင့်ပြုနေရာအဖြစ် ထည့်မည်",
@@ -695,7 +695,10 @@ V.customers.bind=()=>{bindSearch();bindTips();["#add","#add2"].forEach(s=>$(s)&&
 const custOpts=()=>[["",t("— choose —")]].concat(list("customers").sort(byName).map(c=>[c.id,c.name]));
 const prodOpts=keep=>[["",t("— choose —")]].concat(prodList().filter(p=>p.active!==false||p.id===keep).sort((a,b)=>prodName(a).localeCompare(prodName(b))).map(p=>[p.id,prodName(p)]));
 const priceFor=(p,u)=>{if(!p)return "";if(u==="bag")return num(p.priceBag)||(num(p.priceDz)&&num(p.perBag)?num(p.priceDz)*num(p.perBag):"");return num(p.priceDz)||""};
-function editSale(id,cust){if(id&&!DB.sales[id])return toast(t("Made in the Sales app. Change it there."));
+/* a record made in the Sales app: say who made it and on which computer (pc = the computer's hidden code) */
+function madeIn(raw){raw=raw||{};const c=raw.pc&&DB.computers[raw.pc],pc=c?(c.windowsName||c.code||raw.pc):raw.pc?String(raw.pc).slice(2).toUpperCase().match(/.{4}/g).join("-"):"";
+  return t("Made in the Sales app. Change it there.")+(raw.by||pc?" · "+[raw.by,pc?t("Computer")+" "+pc:""].filter(Boolean).join(" · "):"")}
+function editSale(id,cust){if(id&&!DB.sales[id])return toast(madeIn(DB.receipts[String(id).replace(/^sa:/,"")]));
   const firstCust=DB.customers[cust];
   const s=id?JSON.parse(JSON.stringify(DB.sales[id])):{date:today(),cust:cust||"",lines:[{p:"",unit:"dz",qty:"",price:""}],delivery:firstCust&&num(firstCust.deliveryKs)?num(firstCust.deliveryKs):"",paid:"",method:"Cash",no:list("sales").reduce((a,x)=>Math.max(a,num(x.no)),0)+1};
   if(!s.lines||!s.lines.length)s.lines=[{p:"",unit:"dz",qty:"",price:""}];
@@ -910,7 +913,7 @@ V.overview=()=>{const al=ALERTS=alerts();const cnt=k=>al.filter(a=>a.sev===k).le
 V.overview.bind=()=>{bindTips();$$("[data-al]").forEach(b=>b.onclick=()=>{const a=ALERTS[+b.dataset.al];if(a)a.go()})};
 
 /* ================= Payments ================= */
-function editPayment(id,cust){if(id&&!DB.payments[id])return toast(t("Made in the Sales app. Change it there."));const bal=balances();
+function editPayment(id,cust){if(id&&!DB.payments[id])return toast(madeIn(DB.receiptPayments[String(id).replace(/^sp:/,"")]));const bal=balances();
   const p=id?DB.payments[id]:{date:today(),cust:cust||"",amount:cust&&bal[cust]>0?Math.round(bal[cust]):"",method:"Cash"};
   openForm({title:id?"Payment":"Record payment",data:p,fields:[
     {k:"date",label:"Date",type:"date",half:1},{k:"cust",label:"Customer",type:"select",opts:custOpts(),half:1},
@@ -1154,18 +1157,17 @@ V.accounts=()=>{if(!Cloud.key)return `<div class="panel"><div class="empty"><b>$
      <div class="compb"><button class="btn sm" data-uedit="${esc(u.id)}">${T("Edit")}</button></div></div>`).join("")}</div>`
      :`<div class="empty"><b>${T("No accounts yet")}</b><button class="btn primary" id="uAdd2">${T("New account")}</button></div>`}</div></div>`};
 /* Each account has its own letter (A to Z), given only here: the numbers on that person's receipts, payments,
-   returns, orders and quotations start with it (A-000001). No two accounts share a letter, so numbers never clash. */
+   returns, orders and quotations start with it (A-000001). Several accounts may share a letter (the owner, 2026-11-23);
+   which computer made a record is kept in the record itself (pc: the computer's hidden code, written by the Sales app). */
 const LETTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-const freeLetters=id=>{const used=new Set(rawList("users").filter(x=>x.id!==id&&x.letter).map(x=>x.letter));return LETTERS.filter(L=>!used.has(L))};
-function editAccount(id){const u=id?DB.users[id]:{role:"sales",active:true},free=freeLetters(id);
-  openForm({title:id?(u.name||u.username):"New account",data:{name:u.name||"",username:u.username||"",letter:u.letter||(id?"":free[0]||""),role:u.role||"sales",active:u.active===false?"":"1",pw:"",pw2:""},fields:[
+function editAccount(id){const u=id?DB.users[id]:{role:"sales",active:true};
+  openForm({title:id?(u.name||u.username):"New account",data:{name:u.name||"",username:u.username||"",letter:u.letter||(id?"":"A"),role:u.role||"sales",active:u.active===false?"":"1",pw:"",pw2:""},fields:[
     {k:"name",label:"Name (goes on receipts)",half:1},{k:"username",label:"Username",half:1},
-    {k:"letter",label:"Letter (receipt numbers start with it)",type:"select",opts:[["","—"]].concat(free.map(L=>[L,L])),half:1},
+    {k:"letter",label:"Letter (receipt numbers start with it)",type:"select",opts:[["","—"]].concat(LETTERS.map(L=>[L,L])),half:1},
     {k:"role",label:"Kind",type:"select",opts:ROLES.map(([k,l])=>[k,t(l)]),half:1},{k:"active",label:"Can sign in?",type:"select",opts:[["1",t("Yes")],["",t("No, turn off")]]},
     {k:"pw",label:id?"New password (leave empty to keep)":"Password",type:"password",half:1},{k:"pw2",label:"Password again",type:"password",half:1}],
    collect:d=>{d.name=String(d.name||"").trim();d.username=String(d.username||"").trim().toLowerCase()},
    check:d=>!d.name?"Enter a name":!/^[a-z0-9._-]{2,30}$/.test(d.username)?"Username: small letters and numbers only":!d.letter?"Choose a letter":
-     rawList("users").some(x=>x.letter===d.letter&&x.id!==id)?"This letter is taken":
      rawList("users").some(x=>x.username===d.username&&x.id!==id)?"This username is taken":
      (!id&&!d.pw)?"Enter a password":(d.pw&&d.pw.length<6)?"Password: at least 6 characters":d.pw!==d.pw2?"The two passwords are not the same":null,
    onSave:async d=>{if(!(await askPass()))return;const now=Date.now(),rec=Object.assign({},u,{name:d.name,username:d.username,letter:d.letter,role:d.role,active:!!d.active,updatedBy:"main",updatedAt:now});

@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): several accounts may now share a letter (the owner changed his mind). Which computer made a record is known from the computer's hidden code (pc) the Sales app writes on each record; tapping a Sales app receipt or payment in AP Main says who made it and on which computer. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): each account now has its own letter (A to Z), given only in AP Main when making the account; the numbers on that person's receipts start with it (A-000001); a letter already taken cannot be chosen again. The Sales app chat is asked to use the account's letter instead of letting each computer choose one. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): account types renamed on screen: "Sales worker" is now "Sales person", "Main office" is now "Sales manager" (saved values stay sales and office, which the Sales app reads). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): removed the "No records file yet" bar at the top of every page and its Overview alert; the folder can still be chosen in Settings > Records file. Asked for by the owner.
