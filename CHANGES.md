@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): Orders tab has Current orders (waiting, ready, with quotations) and Past orders (delivered and cancelled, by month, with the receipt number or the reason). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): the language switch has flags (English with the UK flag, then Myanmar with the Myanmar flag), the same look as the Sales app. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): Sales app updates through AP Main: Settings > Sales app > Upload update sends the signed .apsu file to the cloud (POST /app/sales, main key only; kept in D1 tables app_files/app_meta, split in parts); sales computers fetch /app/sales/version and /app/sales and install it at start (AP Sales.exe checks the signature). AP Main shows the published version and each computer's version. The owner's choice, with the Sales app chat.
 - 2026-11-23, Thura (Main App Chat): read-only pages (Sales app receipts, payments, orders, quotations) have one Close button, at the top, instead of two. Asked for by the owner.
