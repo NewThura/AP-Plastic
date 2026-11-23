@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): agent commission (the owner, designed with the Sales app chat): new Sales > Agents tab (add, edit, rate, turn off; per month: receipts, returns, commission, paid, still to pay; Pay agent records agentPayouts); the customer form picks the agent (customers.agentId). Commission = round(total x agentRate/100) of receipts minus the same of returns, by receipt date, using the rate stamped on each receipt. The cloud makes agents and agentPayouts main-only.
 - 2026-11-23, Thura (Main App Chat): after a Sales app update is uploaded, AP Main also saves appSettings/sales.update {version, at, by}, so every open sales computer signs everyone out and updates (the Sales app side is the Sales app chat's). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): the Sales app panel (tabs, allowed places, tax, updates) moved from Settings to a new Sales > Sales app tab; Settings now holds only AP Main's own settings (records folder, cloud, passcode, language). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): Orders tab has Current orders (waiting, ready, with quotations) and Past orders (delivered and cancelled, by month, with the receipt number or the reason). Asked for by the owner.

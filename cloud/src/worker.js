@@ -47,7 +47,7 @@ function who(req, env) {
 
 const MAX_BATCH = 50;   // the free plan allows 50 database queries per request
 // commands, sign-in accounts and products/prices (the owner, 2026-11-23): main app (and the master key) only
-const MAIN_ONLY = ["appSettings", "users", "productList"];
+const MAIN_ONLY = ["appSettings", "users", "productList", "agents", "agentPayouts"];   // agents and their monthly payouts: the owner, 2026-11-23
 const TOP = ["main", "thura"];
 const okName =(s) => typeof s === "string" && s.length > 0 && s.length <= 200;
 
