@@ -56,6 +56,8 @@ Styles at the top, then the page, then one script.
   returns as read-only sales and payments.
 - Computers page: accept / lock the department apps' computers (`appSettings`/`sales` {tabs, accepted, locked});
   Accounts tab: the Sales app's sign-ins (`users`, password kept only as a PBKDF2 hash).
+- Production > Logistics tab: deliveries {date, orderId, orderNo, receiptNo, customer, address, items, driver, vehicle, cost,
+  status out|arrived} kept by AP Main; goods in = matMoves kind "in" (not entered twice). Orders are still changed only in AP Sales.
 - Sales > Agents tab: agents {name, phone, rate, active}, customers.agentId, monthly commission from the agentId/agentRate
   that AP Sales stamps on receipts and returns, and agentPayouts {agentId, month, amount, paidAt, by, note}.
 - Sales > Sales app tab: everything AP Main sets for the Sales app (tabs, allowed places, tax %, uploading updates).

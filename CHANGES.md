@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): new Production > Logistics tab (only in AP Main, the owner): orders to deliver (Send fills in a delivery from the order), deliveries with driver, car, cost and On the way / Arrived (new kind "deliveries"), goods in (the raw material arrivals already kept in Raw materials) and delivery costs per month. Sales app payment methods shown as K Pay, KBZ, STB, MAB (older ones kept).
 - 2026-11-23, Thura (Main App Chat): proof of payment (the owner, with the Sales app chat): the cloud keeps payment photos (POST /photos, GET /photos/<id>; any valid key; never replaced once saved; D1 app_files). AP Main shows the bank reference and the photo on Sales app payments and receipts, and lists "Reference used twice" alerts (paymentAlerts) on the Permissions page with both photos and a Seen button.
 - 2026-11-23, Thura (Main App Chat): a customer's agent is set only in AP Main (the owner): a customer saved with the Sales key keeps the agentId the cloud already has (or none).
 - 2026-11-23, Thura (Main App Chat): agent commission (the owner, designed with the Sales app chat): new Sales > Agents tab (add, edit, rate, turn off; per month: receipts, returns, commission, paid, still to pay; Pay agent records agentPayouts); the customer form picks the agent (customers.agentId). Commission = round(total x agentRate/100) of receipts minus the same of returns, by receipt date, using the rate stamped on each receipt. The cloud makes agents and agentPayouts main-only.
