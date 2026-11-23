@@ -58,7 +58,7 @@ Styles at the top, then the page, then one script.
   Accounts tab: the Sales app's sign-ins (`users`, password kept only as a PBKDF2 hash).
 - Passcode: important actions (records folder change, cloud link/unlink, Sales app tabs, computers, accounts) call
   `askPass()` first; set in Settings > Passcode, kept on that PC as a PBKDF2 hash, one minute of grace after a right
-  passcode. Forgotten: `apResetPasscode()` in the browser console, then set a new one.
+  passcode. Forgotten: "Forgot passcode?" in the passcode box (tap twice), then set a new one.
 - As little explaining text as possible: no hint lines, short buttons, short messages. White interface, blue only
   as a small touch.
 

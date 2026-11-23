@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): passcode box: "Forgot passcode?" (tap twice, then set a new one), a Show button, Myanmar numbers count the same as English ones, spaces are ignored, and a long number (like a phone number) also matches when the old box had cut it to 8. The owner's right passcode was refused.
 - 2026-11-23, Thura (Main App Chat): nobody chooses a letter any more: each new account gets its own record code automatically (S1, S2, … for a Sales person; A1, A2, … for a Sales manager), kept in users.letter and never changed, so numbers look like S1-000001. The Overview warns when two Sales app computers gave the same number (and names the computers). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): several accounts may now share a letter (the owner changed his mind). Which computer made a record is known from the computer's hidden code (pc) the Sales app writes on each record; tapping a Sales app receipt or payment in AP Main says who made it and on which computer. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): each account now has its own letter (A to Z), given only in AP Main when making the account; the numbers on that person's receipts start with it (A-000001); a letter already taken cannot be chosen again. The Sales app chat is asked to use the account's letter instead of letting each computer choose one. Asked for by the owner.
