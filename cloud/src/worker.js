@@ -63,6 +63,13 @@ async function saveRecords(req, env, app) {
   const refused = TOP.includes(app) ? [] : recs.filter((r) => MAIN_ONLY.includes(r.col));
   if (refused.length && refused.length === recs.length) return json({ error: "Only the main app can change " + MAIN_ONLY.join(", ") }, 403);
   if (refused.length) recs = recs.filter((r) => !MAIN_ONLY.includes(r.col));
+  // a sales computer rewrites its whole computers record: keep the newer lastOutside (written at sign-in) in it
+  const comps = TOP.includes(app) ? [] : recs.filter((r) => r.col === "computers" && !r.deleted);
+  if (comps.length && recs.length + comps.length <= MAX_BATCH) for (const r of comps) {
+    const old = await env.DB.prepare("SELECT data FROM records WHERE col='computers' AND id=?").bind(r.id).first();
+    const lo = old && JSON.parse(old.data).lastOutside, nw = r.data && r.data.lastOutside;
+    if (lo && (!nw || Number(nw.at || 0) < Number(lo.at || 0))) r.data = Object.assign({}, r.data, { lastOutside: lo });
+  }
   const now = new Date().toISOString();
   const st = env.DB.prepare(
     `INSERT INTO records (col,id,data,deleted,updated_at,updated_by) VALUES (?,?,?,?,?,?)
@@ -176,6 +183,8 @@ async function login(req, env) {
     const rec = Object.assign({}, comp, { code: showCode(code), windowsName: t(b.windowsName, 80) || comp.windowsName || "", ip: t(b.ip, 60) || comp.ip || "",
       publicIp: t(ip, 60), user: name, appVersion: t(b.appVersion, 40) || comp.appVersion || "", seenAt: Date.now(), waiting: !accepted,
       place: pl.place, placeState: pl.state, placeArea: pl.area });
+    // the last refused try outside the allowed places stays in its own field, for AP Main's Permissions page
+    if (pl.state === "out" && pl.place) rec.lastOutside = Object.assign({}, pl.place, { at: Date.now(), via: "login" });
     await env.DB.prepare(
       `INSERT INTO records (col,id,data,deleted,updated_at,updated_by) VALUES ('computers',?,?,0,?, 'login')
        ON CONFLICT(col,id) DO UPDATE SET data=excluded.data, deleted=0, updated_at=excluded.updated_at, updated_by='login'`)
