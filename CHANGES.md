@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): after a Sales app update is uploaded, AP Main also saves appSettings/sales.update {version, at, by}, so every open sales computer signs everyone out and updates (the Sales app side is the Sales app chat's). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): the Sales app panel (tabs, allowed places, tax, updates) moved from Settings to a new Sales > Sales app tab; Settings now holds only AP Main's own settings (records folder, cloud, passcode, language). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): Orders tab has Current orders (waiting, ready, with quotations) and Past orders (delivered and cancelled, by month, with the receipt number or the reason). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): the language switch has flags (English with the UK flag, then Myanmar with the Myanmar flag), the same look as the Sales app. Asked for by the owner.
