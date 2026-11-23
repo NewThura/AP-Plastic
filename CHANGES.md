@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): each account now has its own letter (A to Z), given only in AP Main when making the account; the numbers on that person's receipts start with it (A-000001); a letter already taken cannot be chosen again. The Sales app chat is asked to use the account's letter instead of letting each computer choose one. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): account types renamed on screen: "Sales worker" is now "Sales person", "Main office" is now "Sales manager" (saved values stay sales and office, which the Sales app reads). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): removed the "No records file yet" bar at the top of every page and its Overview alert; the folder can still be chosen in Settings > Records file. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): allowed places for sales computers: Settings > Sales app has a list of places (name, map point, metres; paste from Google Maps). The cloud refuses sign-in outside every place (403 outside) or when the place is not found (403 noplace); no places = no check. The Computers page shows where each computer is, with a map link and "Add as allowed place". Asked for by the owner through the Sales app chat.

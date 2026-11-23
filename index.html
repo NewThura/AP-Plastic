@@ -314,6 +314,7 @@ const MY={
  "Usual delivery charge (Ks)":"ပုံမှန် ပို့ခ (ကျပ်)","Address":"လိပ်စာ","Buys from these companies":"ဝယ်သည့် ကုမ္ပဏီများ","Tap a customer to see all their details and history.":"အချက်အလက်နှင့် မှတ်တမ်း အားလုံး ကြည့်ရန် ဖောက်သည်ကို နှိပ်ပါ။",
  "Bought, all time":"ဝယ်ငွေ စုစုပေါင်း","Last sale":"နောက်ဆုံး အရောင်း","Delivery charge (Ks)":"ပို့ခ (ကျပ်)","Delivery charge":"ပို့ခ",
  "Sales each day":"နေ့စဉ် အရောင်း","Sales, last 6 months":"အရောင်း၊ နောက်ဆုံး ၆ လ","Top products this month":"ဤလ အရောင်းရဆုံး ကုန်ပစ္စည်း","Top customers this month":"ဤလ အများဆုံးဝယ်သော ဖောက်သည်",
+ "Letter":"အက္ခရာ","Letter (receipt numbers start with it)":"အက္ခရာ (ပြေစာ နံပါတ်များ ၎င်းဖြင့် စမည်)","Choose a letter":"အက္ခရာ ရွေးပါ","This letter is taken":"ဤအက္ခရာ ယူပြီးသား",
  "Allowed places":"ခွင့်ပြုထားသော နေရာများ","Map":"မြေပုံ","No places yet. Sales computers work anywhere.":"နေရာ မသတ်မှတ်ရသေးပါ။ အရောင်း ကွန်ပျူတာများ ဘယ်နေရာမှာမဆို သုံးနိုင်သည်။","Add place":"နေရာ ထည့်မည်",
  "Name (for example: Office, Shop)":"အမည် (ဥပမာ: ရုံး၊ ဆိုင်)","Place: paste from Google Maps (16.8409, 96.1735) or a map link":"နေရာ: Google Maps မှ ကူးထည့်ပါ (16.8409, 96.1735) သို့မဟုတ် မြေပုံ link","How far from it, in metres":"ထိုနေရာမှ အကွာအဝေး (မီတာ)",
  "Enter a name":"အမည် ထည့်ပါ","Paste the place from Google Maps":"Google Maps မှ နေရာကို ကူးထည့်ပါ","At least 20 metres":"အနည်းဆုံး မီတာ ၂၀","Inside":"နေရာအတွင်း","Outside the allowed places":"ခွင့်ပြုနေရာ အပြင်ဘက်","Place not found":"နေရာ ရှာမတွေ့ပါ","Add as allowed place":"ခွင့်ပြုနေရာအဖြစ် ထည့်မည်",
@@ -1149,19 +1150,25 @@ V.accounts=()=>{if(!Cloud.key)return `<div class="panel"><div class="empty"><b>$
   return `<div class="bar"><div class="left"></div><div class="left"><button class="btn primary" id="uAdd">${T("New account")}</button></div></div>
    <div class="panel"><h2>${T("Sales app")}</h2><div class="pb">${us.length?`<div class="comps">${us.map(u=>`<div class="comp"><div class="compi">
      <div class="compt"><b class="notr">${esc(u.name||u.username)}</b> ${u.active===false?`<span class="chip mute">${T("Turned off")}</span>`:`<span class="chip ${u.role==="office"?"warn":"good"}">${role(u.role)}</span>`}</div>
-     <div class="muted small"><span>${T("Username")}</span> <span class="notr">${esc(u.username)}</span></div></div>
+     <div class="muted small"><span>${T("Username")}</span> <span class="notr">${esc(u.username)}</span> · <span>${T("Letter")}</span> <b class="notr">${esc(u.letter||"—")}</b></div></div>
      <div class="compb"><button class="btn sm" data-uedit="${esc(u.id)}">${T("Edit")}</button></div></div>`).join("")}</div>`
      :`<div class="empty"><b>${T("No accounts yet")}</b><button class="btn primary" id="uAdd2">${T("New account")}</button></div>`}</div></div>`};
-function editAccount(id){const u=id?DB.users[id]:{role:"sales",active:true};
-  openForm({title:id?(u.name||u.username):"New account",data:{name:u.name||"",username:u.username||"",role:u.role||"sales",active:u.active===false?"":"1",pw:"",pw2:""},fields:[
+/* Each account has its own letter (A to Z), given only here: the numbers on that person's receipts, payments,
+   returns, orders and quotations start with it (A-000001). No two accounts share a letter, so numbers never clash. */
+const LETTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const freeLetters=id=>{const used=new Set(rawList("users").filter(x=>x.id!==id&&x.letter).map(x=>x.letter));return LETTERS.filter(L=>!used.has(L))};
+function editAccount(id){const u=id?DB.users[id]:{role:"sales",active:true},free=freeLetters(id);
+  openForm({title:id?(u.name||u.username):"New account",data:{name:u.name||"",username:u.username||"",letter:u.letter||(id?"":free[0]||""),role:u.role||"sales",active:u.active===false?"":"1",pw:"",pw2:""},fields:[
     {k:"name",label:"Name (goes on receipts)",half:1},{k:"username",label:"Username",half:1},
-    {k:"role",label:"Kind",type:"select",opts:ROLES.map(([k,l])=>[k,t(l)]),half:1},{k:"active",label:"Can sign in?",type:"select",opts:[["1",t("Yes")],["",t("No, turn off")]],half:1},
+    {k:"letter",label:"Letter (receipt numbers start with it)",type:"select",opts:[["","—"]].concat(free.map(L=>[L,L])),half:1},
+    {k:"role",label:"Kind",type:"select",opts:ROLES.map(([k,l])=>[k,t(l)]),half:1},{k:"active",label:"Can sign in?",type:"select",opts:[["1",t("Yes")],["",t("No, turn off")]]},
     {k:"pw",label:id?"New password (leave empty to keep)":"Password",type:"password",half:1},{k:"pw2",label:"Password again",type:"password",half:1}],
    collect:d=>{d.name=String(d.name||"").trim();d.username=String(d.username||"").trim().toLowerCase()},
-   check:d=>!d.name?"Enter a name":!/^[a-z0-9._-]{2,30}$/.test(d.username)?"Username: small letters and numbers only":
+   check:d=>!d.name?"Enter a name":!/^[a-z0-9._-]{2,30}$/.test(d.username)?"Username: small letters and numbers only":!d.letter?"Choose a letter":
+     rawList("users").some(x=>x.letter===d.letter&&x.id!==id)?"This letter is taken":
      rawList("users").some(x=>x.username===d.username&&x.id!==id)?"This username is taken":
      (!id&&!d.pw)?"Enter a password":(d.pw&&d.pw.length<6)?"Password: at least 6 characters":d.pw!==d.pw2?"The two passwords are not the same":null,
-   onSave:async d=>{if(!(await askPass()))return;const now=Date.now(),rec=Object.assign({},u,{name:d.name,username:d.username,role:d.role,active:!!d.active,updatedBy:"main",updatedAt:now});
+   onSave:async d=>{if(!(await askPass()))return;const now=Date.now(),rec=Object.assign({},u,{name:d.name,username:d.username,letter:d.letter,role:d.role,active:!!d.active,updatedBy:"main",updatedAt:now});
      if(!id){rec.createdBy="main";rec.createdAt=now}
      if(d.pw){rec.salt=[...crypto.getRandomValues(new Uint8Array(16))].map(x=>x.toString(16).padStart(2,"0")).join("");rec.hash=await passHash(d.pw,rec.salt)}
      save("users",id||uid("u"),rec,"Saved")}})}
