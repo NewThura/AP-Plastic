@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): account types renamed on screen: "Sales worker" is now "Sales person", "Main office" is now "Sales manager" (saved values stay sales and office, which the Sales app reads). Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): removed the "No records file yet" bar at the top of every page and its Overview alert; the folder can still be chosen in Settings > Records file. Asked for by the owner.
 - 2026-11-23, Thura (Main App Chat): allowed places for sales computers: Settings > Sales app has a list of places (name, map point, metres; paste from Google Maps). The cloud refuses sign-in outside every place (403 outside) or when the place is not found (403 noplace); no places = no check. The Computers page shows where each computer is, with a map link and "Add as allowed place". Asked for by the owner through the Sales app chat.
 - 2026-11-23, Thura (Main App Chat): fixed: from Computers > Accounts the Computers tab would not open (the tab and the page share the name "computers", so it reopened the last tab). Tab buttons now open their own tab. Found by the owner.
