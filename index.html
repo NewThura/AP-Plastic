@@ -1171,7 +1171,7 @@ function bindMonth(){$("#mPrev")&&($("#mPrev").onclick=()=>{UI.month=addMonth(UI
 function bindSearch(){const q=$("#q");if(!q)return;q.oninput=()=>{UI.q=q.value;const pos=q.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)}}
 const langSeg=()=>`<span class="seg"><button data-lang="my" aria-pressed="${UI.lang==="my"}">မြန်မာ</button><button data-lang="en" aria-pressed="${UI.lang==="en"}">English</button></span>`;
 function bindLang(){$$("[data-lang]").forEach(b=>b.onclick=()=>{UI.lang=b.dataset.lang;ls("ap2.lang",UI.lang);render()})}
-function go(p){p=OLD[p]||p;const d=deptOf(p);if(d.id===p&&d.tabs)p=ls("ap2.tab."+d.id)||d.tabs[0][0];if(d.tabs)ls("ap2.tab."+d.id,p);UI.page=p;UI.q="";ls("ap2.page",p);render();window.scrollTo(0,0)}
+function go(p,exact){p=OLD[p]||p;const d=deptOf(p);if(!exact&&d.id===p&&d.tabs)p=ls("ap2.tab."+d.id)||d.tabs[0][0];if(d.tabs)ls("ap2.tab."+d.id,p);UI.page=p;UI.q="";ls("ap2.page",p);render();window.scrollTo(0,0)}
 function fileBanner(){const F=Store.file;if(!Store.ready)return "";
   if(F.state==="need")return `<div class="banner"><span>${T("Records file is closed")}</span><button class="btn sm primary" data-file="open">${T("Open")}</button></div>`;
   if(F.state==="none")return `<div class="banner"><span>${T("No records file yet")}</span><button class="btn sm primary" data-file="pick">${T("Choose folder")}</button></div>`;
@@ -1196,11 +1196,11 @@ function render(){
   const [cls,txt]=syncText();$("#dot").className="dot "+cls;$("#sync").textContent=txt;
   if(Store.ready)PAID=paidMap();
   const body=Store.ready?V[id]():`<div class="empty">${T("Loading…")}</div>`;
-  const tabs=dept.tabs?`<div class="tabs" role="tablist">${dept.tabs.map(([k,n])=>`<button role="tab" data-go="${k}" aria-selected="${k===id}">${T(n)}</button>`).join("")}</div>`:"";
+  const tabs=dept.tabs?`<div class="tabs" role="tablist">${dept.tabs.map(([k,n])=>`<button role="tab" data-go="${k}" data-exact="1" aria-selected="${k===id}">${T(n)}</button>`).join("")}</div>`:"";
   $("#main").innerHTML=`<div class="top"><div><h1>${T(name)}</h1></div><div class="tools">${id!=="settings"?langSeg():""}</div></div>${tabs}${fileBanner()}${body}`;
   bindLang();
   if(Store.ready&&V[id].bind)V[id].bind();
-  $$("#main [data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+  $$("#main [data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go,!!b.dataset.exact));
   $$("[data-file]").forEach(b=>b.onclick=()=>fileAction(b.dataset.file==="pick"?"pick":b.dataset.file));
   if(!Store.canChange())$$("#main .btn.primary:not([data-file])").forEach(b=>b.disabled=true);
 }
