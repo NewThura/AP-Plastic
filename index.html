@@ -864,7 +864,6 @@ function alerts(){const out=[],F=Store.file,td=today(),K=" "+t("Kyat");
   const over={};list("sales").forEach(s=>{const o=saleOwed(s);if(s.cust&&o>0.5&&dueDate(s)<td){const x=over[s.cust]||(over[s.cust]={amt:0,oldest:s.date});x.amt+=o;if(s.date<x.oldest)x.oldest=s.date}});
   Object.entries(over).sort((a,b)=>b[1].amt-a[1].amt).forEach(([c,x])=>out.push({sev:"bad",area:"Customers",head:custName(c),go:()=>openCustomer(c),
     txt:`${t("Overdue")}: ${fmt(x.amt)}${K} · ${t("oldest sale")} ${x.oldest} (${daysBetween(x.oldest,td)} ${t("days")})`}));
-  if(F.state==="none")out.push({sev:"warn",area:"Settings",go:()=>go("settings"),txt:t("No records file yet")});
   const notDue=list("sales").filter(s=>saleOwed(s)>0.5&&dueDate(s)>=td);
   if(notDue.length)out.push({sev:"warn",area:"Sales",go:()=>go("receipts"),txt:`${notDue.length} ${t("sales not paid yet, not overdue")} (${fmt(notDue.reduce((a,s)=>a+saleOwed(s),0))}${K})`});
   const noPrice=prodList().filter(p=>p.active!==false&&!num(p.priceDz)&&!num(p.priceBag));
@@ -1206,7 +1205,6 @@ function bindLang(){$$("[data-lang]").forEach(b=>b.onclick=()=>{UI.lang=b.datase
 function go(p,exact){p=OLD[p]||p;const d=deptOf(p);if(!exact&&d.id===p&&d.tabs)p=ls("ap2.tab."+d.id)||d.tabs[0][0];if(d.tabs)ls("ap2.tab."+d.id,p);UI.page=p;UI.q="";ls("ap2.page",p);render();window.scrollTo(0,0)}
 function fileBanner(){const F=Store.file;if(!Store.ready)return "";
   if(F.state==="need")return `<div class="banner"><span>${T("Records file is closed")}</span><button class="btn sm primary" data-file="open">${T("Open")}</button></div>`;
-  if(F.state==="none")return `<div class="banner"><span>${T("No records file yet")}</span><button class="btn sm primary" data-file="pick">${T("Choose folder")}</button></div>`;
   if(F.state==="on"&&F.err)return `<div class="banner bad"><span>${T("Could not save to the records file")}</span><button class="btn sm" data-file="pick">${T("Choose folder")}</button></div>`;
   return ""}
 function syncText(){const r=fileSyncText();if(!Store.ready||!Cloud.key)return r;
