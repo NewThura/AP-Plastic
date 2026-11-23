@@ -1228,8 +1228,12 @@ V.computers.bind=()=>{const st=()=>salesSet(),add=(k,v)=>[...new Set((st()[k]||[
    3. accepted computers that tried to sign in outside the allowed places in the last day (add the place). */
 const DAY_MS=24*3600*1000;
 const pendingFixes=()=>rawList("receiptFixes").filter(f=>f.status==="pending").sort((a,b)=>num(a.at)-num(b.at));
-// lastOutside {at, lat, lng, acc}: the last try outside the allowed places (written by the cloud at sign-in, or by the Sales app when it blocks)
-const outTry=c=>c.lastOutside&&c.lastOutside.lat!=null?c.lastOutside:c.placeState==="out"&&c.place&&c.place.lat!=null?Object.assign({at:compSeen(c)},c.place):null;
+// the last refused sign-in outside the allowed places, the newer of:
+//   lastOutside {at, lat, lng, acc} written by the cloud when it refused the sign-in;
+//   outsideTry {at, user, state "out"|"noplace", place {lat,lng,acc}|null} written by the Sales app when it refused it itself
+function outTry(c){const a=c.lastOutside&&c.lastOutside.at?Object.assign({state:"out"},c.lastOutside):null;
+  const t=c.outsideTry&&c.outsideTry.at?Object.assign({state:c.outsideTry.state||"out",at:c.outsideTry.at,user:c.outsideTry.user},c.outsideTry.place||{}):null;
+  return a&&t?(num(t.at)>num(a.at)?t:a):a||t}
 const outsideComps=()=>areas().length?rawList("computers").filter(c=>{const o=outTry(c);return compState(c)==="accepted"&&o&&Date.now()-num(o.at)<DAY_MS}):[];
 const permCount=()=>Cloud.key?waitingComps().length+pendingFixes().length+outsideComps().length:0;
 const plainRec=o=>{const x=Object.assign({},o);delete x.id;return x};
@@ -1252,8 +1256,8 @@ V.permissions=()=>{if(!Cloud.key)return `<div class="panel"><div class="empty"><
       <div class="fixcols small"><div><div class="muted">${T("Now")}</div>${fixLines(b)}</div><div><div class="muted">${T("Asked for")}</div>${fixLines(a)}</div></div>
       ${r?"":`<div class="small bad">${T("Receipt not found")}</div>`}</div>
       <div class="compb">${r?`<button class="btn sm primary" data-fixok="${esc(f.id)}">${T("Approve")}</button>`:""}<button class="btn sm" data-fixno="${esc(f.id)}">${T("Refuse")}</button></div></div>`};
-  const outCard=c=>{const o=outTry(c);return `<div class="comp"><div class="compi"><div class="compt">${who(c)} <span class="chip bad">${T("Outside the allowed places")}</span></div>
-      <div class="muted small">${c.user?`<span class="notr">${esc(c.user)}</span> · `:""}<span class="notr">${esc(when(o.at))}</span></div>${placeLine({placeState:"",place:o,id:c.id})}</div></div>`};
+  const outCard=c=>{const o=outTry(c);return `<div class="comp"><div class="compi"><div class="compt">${who(c)} ${o.state==="noplace"?`<span class="chip warn">${T("Place not found")}</span>`:`<span class="chip bad">${T("Outside the allowed places")}</span>`}</div>
+      <div class="muted small">${o.user||c.user?`<span class="notr">${esc(o.user||c.user)}</span> · `:""}<span class="notr">${esc(when(o.at))}</span></div>${o.lat!=null?placeLine({placeState:"",place:o,id:c.id}):""}</div></div>`};
   const sec=(title,items,card)=>items.length?`<div class="panel"><h2>${T(title)} · <span class="notr">${items.length}</span></h2><div class="pb"><div class="comps">${items.map(card).join("")}</div></div></div>`:"";
   if(!wc.length&&!fx.length&&!oc.length)return `<div class="panel"><div class="empty"><b>${T("Nothing is waiting for your permission.")}</b></div></div>`;
   return sec("New computers",wc,compCard)+sec("Receipt corrections",fx,fixCard)+sec("Signing in outside the allowed places",oc,outCard)};
