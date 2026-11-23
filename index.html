@@ -916,10 +916,13 @@ V.orders=()=>{const os=ordersOpen().sort((a,b)=>String(a.due||a.date||"").locale
   const n=k=>os.filter(o=>(o.status||"waiting")===k).length,exp=qs.filter(quoteExpired).length,K=" "+t("Kyat");
   const cust=x=>esc(DB.customers[x.customerId]?DB.customers[x.customerId].name:x.customer||"");
   const oChip=o=>o.status==="ready"?`<span class="chip good">${T("Ready to send")}</span>`:`<span class="chip warn">${T("Waiting")}</span>`;
-  const row=(no,cust,when,total,chips,by)=>`<div class="comp"><div class="compi"><div class="compt"><b class="notr">${esc(no||"")}</b> ${chips}</div>
-      <div class="small"><span class="notr">${cust}</span></div><div class="muted small">${when}${by?` · <span class="notr">${esc(by)}</span>`:""}</div></div>
-      <div class="compb"><b class="notr">${fmt(num(total))}${K}</b></div></div>`;
-  const oList=os.map(o=>row(o.no,cust(o),`${T("Deliver by")} <span class="notr">${esc(o.due||"–")}</span>`,o.total,oChip(o)+(orderLate(o)?` <span class="chip bad">${T("Late")}</span>`:""),o.by)).join("");
+  const row=(no,cust,when,total,chips,by,extra)=>`<div class="comp"><div class="compi"><div class="compt"><b class="notr">${esc(no||"")}</b> ${chips}</div>
+      <div class="small"><span class="notr">${cust}</span></div>${extra||""}<div class="muted small">${when}${by?` · <span class="notr">${esc(by)}</span>`:""}</div></div>
+      ${total==null?"":`<div class="compb"><b class="notr">${fmt(num(total))}${K}</b></div>`}</div>`;
+  // what to make and send: products and quantities, no prices
+  const items=o=>`<div class="small notr">${(o.lines||[]).map(l=>{const pl=DB.productList[l.productId]||{};return esc(pl.name||l.name||"?")+" × "+fmt(num(l.qty))+" "+esc(T(l.unit==="pc"?"pc":l.unit==="bag"?"bags":"dz"))}).join(", ")}</div>`;
+  const addr=o=>{const a=o.address||(DB.customers[o.customerId]||{}).address||"";return a?`<div class="muted small notr">${esc(a)}</div>`:""};
+  const oList=os.map(o=>row(o.no,cust(o),`${T("Deliver by")} <span class="notr">${esc(o.due||"–")}</span>`,null,oChip(o)+(orderLate(o)?` <span class="chip bad">${T("Late")}</span>`:""),o.by,addr(o)+items(o))).join("");
   const qList=qs.map(q=>row(q.no,cust(q),`${T("Prices hold until")} <span class="notr">${esc(q.validUntil||"–")}</span>`,q.total,quoteExpired(q)?`<span class="chip bad">${T("Expired")}</span>`:`<span class="chip mute">${T("Open")}</span>`,q.by)).join("");
   return kpiRow([kpi("Orders waiting",fmt(n("waiting")),T("Not ready yet"),n("waiting")?"warn":""),kpi("Orders ready",fmt(n("ready")),T("To send")),
       kpi("Open quotations",fmt(qs.length),T("Waiting for the customer")),kpi("Expired quotations",fmt(exp),T("Prices no longer hold"),exp?"warn":"")])

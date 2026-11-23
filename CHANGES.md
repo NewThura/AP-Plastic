@@ -2,6 +2,7 @@
 
 Newest first. Date, who (and which AI), what changed and why.
 
+- 2026-11-23, Thura (Main App Chat): Orders tab shows no prices on orders, only address and products with quantities (orders are for making and delivering; the owner). Quotations keep their totals.
 - 2026-11-23, Thura (Main App Chat): payment term "On invoice" is shown as "Pay now" (stored value unchanged), in the order Pay now, On delivery, Month-end, to match the Sales app (the owner).
 - 2026-11-23, Thura (Main App Chat): Sales app receipts and payments show who printed them and when (printedBy, printedAt from the Sales app's Save and print).
 - 2026-11-23, Thura (Main App Chat): the Permissions page also lists sign-ins the Sales app refused itself (computers.outsideTry, outside or place not found), next to the ones the cloud refused (lastOutside). Agreed with the Sales app chat.
